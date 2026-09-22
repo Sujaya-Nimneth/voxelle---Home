@@ -1,6 +1,6 @@
 # Voxelle Home 🏡✨
 
-> **Next-Generation Smart Home Web Application with Apple Home Design Aesthetics & 100% On-Device Local AI Model Intelligence.**
+> **Next-Generation Smart Home Web Application with Modern Frosted Glassmorphic Design & 100% On-Device Local AI Model Intelligence.**
 
 [![Vite](https://img.shields.io/badge/Vite-8.3.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=black)](https://react.dev/)
@@ -12,7 +12,7 @@
 
 ## 🌟 Overview
 
-**Voxelle Home** is a smart home interface designed to mirror the refined visual elegance of **Apple Home across macOS Sequoia, iPadOS, and iOS 18**, while introducing a privacy-first **Local AI Model Engine**.
+**Voxelle Home** is a smart home interface designed with refined frosted glassmorphism, dynamic ambient lighting, and fluid multi-device layouts, paired with a privacy-first **Local AI Model Engine**.
 
 Unlike conventional smart home hubs that transmit private camera feeds, audio recordings, and daily routines to remote cloud servers, Voxelle Home processes natural language intents, device mutations, scene orchestrations, and visual object detection **100% locally on your hardware**.
 
@@ -20,26 +20,26 @@ Unlike conventional smart home hubs that transmit private camera feeds, audio re
 
 ## 📸 Interface Showcase
 
-| macOS Studio Desktop | iPad Pro Split View | iPhone 16 Pro Frame |
+| Desktop Workspace | Tablet Split View | Mobile Chassis Frame |
 | :---: | :---: | :---: |
-| Full-featured sidebar, multi-column dashboard & camera grid | Floating glass navigation & responsive grid | Dynamic Island, home swipe bar & mobile bottom tabs |
+| Full-featured sidebar, multi-column dashboard & camera grid | Floating glass navigation & responsive grid | Sleek mobile frame with dynamic cut-out, swipe bar & bottom tabs |
 
 ### Key Aesthetic Highlights:
-- **Liquid Ambient Wallpapers**: Dynamic blurred gradient backdrops including *Warm Amber Sunset*, *macOS Sonoma Aurora Green*, and *Midnight OLED Dark*.
+- **Liquid Ambient Wallpapers**: Dynamic blurred gradient backdrops including *Warm Amber Sunset*, *Emerald Aurora Flow*, and *Midnight OLED Dark*.
 - **Frosted Glassmorphism**: Tailored CSS tokens (`backdrop-filter: blur(32px)`, specular highlights, inset borders, and ambient light refraction).
-- **Apple Intelligence Iridescent Glowing Orb**: Multilayer rotating gradient halo reflecting Siri and Apple Intelligence aesthetics.
+- **Iridescent Glowing Neural Orb**: Multilayer rotating gradient halo reflecting real-time local AI assistant activity.
 - **Micro-Animations & Visual Delight**: Spinning ceiling fan blades, glowing color-coordinated accessory states, and scene trigger confetti celebrations.
 
 ---
 
 ## 🚀 Key Features
 
-### 1. 🎛️ Apple Home Tile Controls & Status Hierarchy
+### 1. 🎛️ Glassmorphic Tile Controls & Status Hierarchy
 - **Header Status Pills**: Real-time counts for `Climate 68° - 72°`, `Lights X On`, `Security Armed/Unlocked`, `Speakers 1 Playing`, `Water All Off`, and `Local AI 100% Private`.
 - **One-Tap Scenes**: Quick scene buttons (*Arrive Home*, *Wake Up*, *Leave Home*, *Movie Night*, *Goodnight*, *Focus Work*) that instantly synchronize multiple accessories.
 - **Interactive Accessory Tiles**: One-tap toggles with stateful glows (Amber for warm lights, Cyan for fans, Emerald for security locks, Purple for media).
 - **Fine-Grained Detail Sheets**:
-  - Vertical Apple sliders for granular brightness (0–100%) and fan speeds.
+  - Smooth vertical touch sliders for granular brightness (0–100%) and fan speeds.
   - Atmosphere color spectrum swatches (from 2200K warm candlelight to 5000K daylight and vibrant neon hues).
   - Circular thermostat dials with Cool, Heat, Auto, and Eco modes.
   - Interactive deadbolt locks with secure lock/unlock confirmations.
@@ -65,10 +65,10 @@ Unlike conventional smart home hubs that transmit private camera feeds, audio re
 - **AI Automation Generator**: Describe an automation in plain English (e.g., *"Turn on backyard lights and notify me if the pool gate opens after 9 PM"*), and the local engine synthesizes the rule automatically.
 
 ### 5. 📱 Multi-Device Chassis Switcher
-- Test and experience the app across three Apple hardware form factors via the top window toolbar:
-  - **Mac Studio**: Full macOS window with traffic light controls, persistent translucent sidebar, and expanded grid.
-  - **iPad Pro**: Rounded tablet chassis with split-view layout.
-  - **iPhone 16 Pro**: Smartphone chassis with working Dynamic Island, bottom navigation tabs, and home indicator swipe bar.
+- Test and experience the app across three distinct device form factors via the top window toolbar:
+  - **Desktop Mode**: Full window view with window controls, persistent translucent sidebar, and expanded grid.
+  - **Tablet Mode**: Rounded tablet chassis with split-view layout and floating navigation.
+  - **Mobile Mode**: Smartphone chassis with working dynamic cut-out, bottom navigation tabs, and home indicator swipe bar.
 
 ---
 
@@ -86,18 +86,18 @@ voxelle-home/
 │       └── wallpaper_aurora.jpg
 ├── src/
 │   ├── components/
-│   │   ├── AccessoryTile.jsx       # Apple-style interactive accessory tile
+│   │   ├── AccessoryTile.jsx       # Frosted glass interactive accessory tile
 │   │   ├── AutomationsView.jsx     # Automation rules & AI synthesizer
 │   │   ├── CameraDetailModal.jsx   # 4K live feed inspector with intercom & AI vision
 │   │   ├── CameraGrid.jsx          # Live camera carousel/grid
 │   │   ├── DeviceDetailModal.jsx   # Dimmer sliders, dials, and color swatches
-│   │   ├── DiscoverView.jsx        # Matter & Thread ecosystem overview
+│   │   ├── DiscoverView.jsx        # Ecosystem & local architecture overview
 │   │   ├── HomeDashboard.jsx       # Main dashboard layout
-│   │   ├── LocalAiModal.jsx        # Apple Intelligence Siri-style assistant HUD
+│   │   ├── LocalAiModal.jsx        # Iridescent neural AI assistant HUD
 │   │   ├── ScenesBar.jsx           # Glowing scene trigger pills
 │   │   ├── Sidebar.jsx             # Translucent frosted glass sidebar
 │   │   ├── StatusPills.jsx         # Category status chips
-│   │   └── TopHeader.jsx           # macOS title bar, viewport & theme switchers
+│   │   └── TopHeader.jsx           # Top window bar, viewport & theme switchers
 │   ├── context/
 │   │   └── HomeContext.jsx         # Central reactive state management
 │   ├── services/
@@ -105,13 +105,13 @@ voxelle-home/
 │   ├── App.jsx                     # Top-level viewport chassis coordinator
 │   ├── index.css                   # Vanilla CSS glassmorphic design system
 │   └── main.jsx                    # Application entry point
-├── index.html                      # PWA meta tags & Apple typography fonts
+├── index.html                      # PWA meta tags & modern typography fonts
 └── package.json                    # Project dependencies
 ```
 
 - **Frontend**: React 19 + Vite 8
 - **Styling**: Vanilla CSS with customized glassmorphic tokens (Zero Tailwind, maximum CSS control)
-- **Icons**: Lucide Icons (SF Symbols-inspired configuration)
+- **Icons**: Lucide Icons (Curated minimalist icon set)
 - **Delight**: Canvas Confetti
 - **Local AI**: Browser Speech APIs, Local Fetch bridges for Ollama & LM Studio, In-Memory Semantic Parser
 
