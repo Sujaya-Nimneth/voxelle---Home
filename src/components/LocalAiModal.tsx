@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useHome } from '../context/HomeContext';
-import { localAi, LOCAL_AI_PROVIDERS } from '../services/localAiEngine';
+import { localAi, AI_PROVIDER_INFO, AI_PROVIDERS } from '../services/ai/orchestrator';
+import type { ProviderHealth } from '../services/ai/types';
 import {
   X,
   Send,
@@ -11,7 +12,8 @@ import {
   Cpu,
   RefreshCw,
   Volume2,
-  VolumeX
+  VolumeX,
+  AlertTriangle
 } from 'lucide-react';
 import type { AiProviderId, ChatMessage } from '../types';
 
@@ -49,12 +51,6 @@ const getSpeechRecognition = (): SpeechRecognitionCtor | null => {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 };
 
-interface OllamaStatusState {
-  online: boolean;
-  checking: boolean;
-  models: string[];
-}
-
 export const LocalAiModal = () => {
   const {
     isAiModalOpen,
@@ -71,7 +67,7 @@ export const LocalAiModal = () => {
     {
       id: 1,
       sender: 'assistant',
-      text: "Hello! I'm your Voxelle Local Assistant, running 100% on-device with zero cloud telemetry. How can I automate or control your home today?",
+      text: "Hello! I'm your Voxelle assistant. The built-in rule engine runs entirely in your browser; switch to Ollama or LM Studio to use a local LLM server. How can I help?",
       actions: []
     }
   ]);
@@ -79,10 +75,21 @@ export const LocalAiModal = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceReplyEnabled, setVoiceReplyEnabled] = useState(false);
-  const [ollamaStatus, setOllamaStatus] = useState<OllamaStatusState>({ online: false, checking: false, models: [] });
+  const [health, setHealth] = useState<ProviderHealth | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('llama3.2');
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const healthRequestSeq = useRef(0);
+  const lastQueryRef = useRef<string | null>(null);
+
+  const activeProvider = AI_PROVIDERS[provider];
+
+  // Auto-scroll chat
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   // Stop any active dictation and voice playback when the modal unmounts.
   useEffect(() => () => {
@@ -90,23 +97,45 @@ export const LocalAiModal = () => {
     window.speechSynthesis?.cancel();
   }, []);
 
-  // Auto-scroll chat
+  // Probe server-backed providers whenever the tab switches to them.
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  // Check Ollama status if selected
-  useEffect(() => {
-    if (provider === 'ollama') {
-      void checkOllama();
+    if (!activeProvider.requiresServer) {
+      setHealth(null);
+      return;
     }
+    void checkHealth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
-  const checkOllama = async () => {
-    setOllamaStatus(prev => ({ ...prev, checking: true }));
-    const result = await localAi.checkOllamaConnection();
-    setOllamaStatus({ online: result.online, checking: false, models: result.models });
+  // Health probe with a stale-response guard so rapid tab switches can't
+  // resolve out of order.
+  const checkHealth = async () => {
+    const requestSeq = ++healthRequestSeq.current;
+    setChecking(true);
+    try {
+      const result = await localAi.checkProviderHealth(provider);
+      if (healthRequestSeq.current === requestSeq) {
+        setHealth(result);
+        if (result.models.length > 0 && !result.models.includes(selectedModel)) {
+          const next = result.models[0] ?? selectedModel;
+          setSelectedModel(next);
+          localAi.setSelectedModel(provider, next);
+        }
+      }
+    } catch (error) {
+      if (healthRequestSeq.current === requestSeq) {
+        setHealth({
+          online: false,
+          models: [],
+          latencyMs: null,
+          error: error instanceof Error ? error.message : 'unreachable'
+        });
+      }
+    } finally {
+      if (healthRequestSeq.current === requestSeq) {
+        setChecking(false);
+      }
+    }
   };
 
   // Web Speech API Voice Recognition setup
@@ -149,39 +178,42 @@ export const LocalAiModal = () => {
     }
   };
 
-  const handleSendQuery = async (queryText?: string) => {
+  const executeResult = (response: import('../types').AiResult) => {
+    if (response.sceneTrigger) {
+      triggerScene(response.sceneTrigger);
+    }
+
+    if (response.cameraCheck) {
+      const targetCam = cameras.find(c => c.id === response.cameraCheck);
+      if (targetCam) setSelectedCamera(targetCam);
+    }
+
+    for (const action of response.actions) {
+      if (action.type === 'device_update' && action.deviceId) {
+        updateDevice(action.deviceId, action.updates ?? {});
+      }
+    }
+  };
+
+  const handleSendQuery = async (queryText?: string, options?: { forceBuiltin?: boolean }) => {
     const query = (queryText ?? inputQuery).trim();
     if (!query || isProcessing) return;
 
-    // Add user message
+    const useProvider: AiProviderId = options?.forceBuiltin ? 'voxelle-builtin' : provider;
+    lastQueryRef.current = query;
+
     const userMsg: ChatMessage = { id: Date.now(), sender: 'user', text: query, actions: [] };
     setMessages(prev => [...prev, userMsg]);
     setInputQuery('');
     setIsProcessing(true);
 
     try {
-      // Process through local AI orchestrator
-      const response = await localAi.processCommand(query, devices);
+      const response = useProvider === provider
+        ? await localAi.processCommand(query, devices, cameras)
+        : await AI_PROVIDERS[useProvider].processCommand(query, devices, cameras);
 
-      // Execute returned actions directly into smart home state
-      if (response.sceneTrigger) {
-        triggerScene(response.sceneTrigger);
-      }
+      executeResult(response);
 
-      if (response.cameraCheck) {
-        const targetCam = cameras.find(c => c.id === response.cameraCheck);
-        if (targetCam) setSelectedCamera(targetCam);
-      }
-
-      if (response.actions && response.actions.length > 0) {
-        response.actions.forEach(action => {
-          if (action.type === 'device_update' && action.deviceId) {
-            updateDevice(action.deviceId, action.updates ?? {});
-          }
-        });
-      }
-
-      // Voice synthesis reply if enabled
       if (voiceReplyEnabled && window.speechSynthesis) {
         const utterance = new SpeechSynthesisUtterance(response.reply);
         utterance.rate = 1.05;
@@ -194,22 +226,41 @@ export const LocalAiModal = () => {
           id: Date.now() + 1,
           sender: 'assistant',
           text: response.reply,
-          actions: response.actions ?? []
+          actions: response.actions
         }
       ]);
-    } catch {
+    } catch (err) {
+      // Honest failure reporting: never claim inference succeeded when it didn't.
+      const providerName = AI_PROVIDERS[useProvider].name;
+      const reason = err instanceof Error ? err.message : 'unknown error';
       setMessages(prev => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: 'assistant',
-          text: 'Local inference processed. Home state verified.',
-          actions: []
+          text: `${providerName} failed: ${reason}. Nothing was executed.`,
+          actions: [],
+          error: true
         }
       ]);
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const runFallback = () => {
+    const query = lastQueryRef.current;
+    if (query) void handleSendQuery(query, { forceBuiltin: true });
+  };
+
+  const handleProviderSwitch = (id: AiProviderId) => {
+    setProvider(id);
+    localAi.setProvider(id);
+  };
+
+  const handleModelChange = (model: string) => {
+    setSelectedModel(model);
+    localAi.setSelectedModel(provider, model);
   };
 
   if (!isAiModalOpen) return null;
@@ -226,20 +277,20 @@ export const LocalAiModal = () => {
               <Sparkles size={16} color="#ffffff" />
             </div>
             <div>
-              <div className="ai-modal-header-title">Voxelle Neural Assistant</div>
+              <div className="ai-modal-header-title">Voxelle Assistant</div>
               <div className="ai-modal-header-sub">
-                100% Private On-Device Intelligence • Zero Cloud Outbound
+                Local-first intelligence • built-in engine, or your own Ollama / LM Studio server
               </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {/* Voice Speech Synthesis Toggle */}
             <button
               className="action-circle-btn"
               style={{ width: 32, height: 32 }}
               onClick={() => setVoiceReplyEnabled(!voiceReplyEnabled)}
               title={voiceReplyEnabled ? 'Disable Voice Feedback' : 'Enable Voice Feedback'}
+              aria-pressed={voiceReplyEnabled}
             >
               {voiceReplyEnabled ? <Volume2 size={15} color="#34d399" /> : <VolumeX size={15} />}
             </button>
@@ -252,42 +303,75 @@ export const LocalAiModal = () => {
 
         {/* Engine Provider Switcher Tabs */}
         <div className="ai-engine-tabs">
-          {LOCAL_AI_PROVIDERS.map(p => (
+          {AI_PROVIDER_INFO.map(p => (
             <button
               key={p.id}
               className={`ai-tab-btn ${provider === p.id ? 'active' : ''}`}
-              onClick={() => {
-                setProvider(p.id);
-                localAi.setProvider(p.id);
-              }}
+              onClick={() => handleProviderSwitch(p.id)}
+              title={p.status}
             >
               <Cpu size={12} />
               <span>{p.name}</span>
             </button>
           ))}
 
-          {provider === 'ollama' && (
+          {activeProvider.requiresServer && (
             <button
               className="ai-tab-btn"
-              style={{ marginLeft: 'auto', background: ollamaStatus.online ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)' }}
-              onClick={() => void checkOllama()}
-              title="Ping Ollama server at localhost:11434"
+              style={{
+                marginLeft: 'auto',
+                background: health?.online ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'
+              }}
+              onClick={() => void checkHealth()}
+              title={`Ping ${activeProvider.name}`}
             >
-              <RefreshCw size={11} className={ollamaStatus.checking ? 'spin-anim' : ''} />
-              <span>{ollamaStatus.online ? 'Ollama Online' : 'Check localhost:11434'}</span>
+              <RefreshCw size={11} className={checking ? 'spin-anim' : ''} />
+              <span>
+                {checking
+                  ? 'Checking…'
+                  : health?.online
+                    ? `Online • ${health.latencyMs}ms`
+                    : 'Check connection'}
+              </span>
             </button>
           )}
         </div>
+
+        {/* Server provider status row: honest state + model picker */}
+        {activeProvider.requiresServer && health && !health.online && (
+          <div className="ai-provider-status offline">
+            <AlertTriangle size={12} />
+            <span>
+              {activeProvider.name} is not reachable{health.error ? ` (${health.error})` : ''}. Start the
+              server locally, or use the built-in engine.
+            </span>
+          </div>
+        )}
+        {activeProvider.requiresServer && health?.online && health.models.length > 0 && (
+          <div className="ai-provider-status online">
+            <span>Model:</span>
+            <select
+              className="ai-model-select"
+              value={selectedModel}
+              onChange={e => handleModelChange(e.target.value)}
+              aria-label="Selected model"
+            >
+              {health.models.map(model => (
+                <option key={model} value={model}>{model}</option>
+              ))}
+            </select>
+            <span className="ai-provider-latency">{health.latencyMs}ms round-trip</span>
+          </div>
+        )}
 
         {/* Chat Body */}
         <div className="ai-chat-body">
           {messages.map(msg => (
             <div key={msg.id} className={`ai-message ${msg.sender}`}>
-              <div className="ai-message-bubble">
+              <div className={`ai-message-bubble ${msg.error ? 'error' : ''}`}>
                 <div>{msg.text}</div>
 
-                {/* Render executed smart home actions */}
-                {msg.actions && msg.actions.length > 0 && (
+                {msg.actions.length > 0 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
                     {msg.actions.map((act, index) => (
                       <span key={index} className="ai-action-chip">
@@ -296,6 +380,12 @@ export const LocalAiModal = () => {
                       </span>
                     ))}
                   </div>
+                )}
+
+                {msg.error && (
+                  <button className="ai-fallback-btn" onClick={runFallback}>
+                    Run with built-in engine
+                  </button>
                 )}
               </div>
             </div>
@@ -306,7 +396,7 @@ export const LocalAiModal = () => {
               <div className="ai-message-bubble" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span className="live-dot" style={{ background: '#f59e0b' }} />
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
-                  Local neural model computing actions...
+                  {activeProvider.name} is thinking…
                 </span>
               </div>
             </div>
@@ -344,7 +434,6 @@ export const LocalAiModal = () => {
             onChange={(e) => setInputQuery(e.target.value)}
           />
 
-          {/* Voice dictation button */}
           <button
             type="button"
             className={`ai-mic-btn ${isListening ? 'is-listening' : ''}`}
@@ -354,7 +443,6 @@ export const LocalAiModal = () => {
             {isListening ? <MicOff size={16} /> : <Mic size={16} />}
           </button>
 
-          {/* Send query button */}
           <button
             type="submit"
             className="ai-send-btn"
