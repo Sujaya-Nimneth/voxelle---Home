@@ -89,7 +89,6 @@ export class LocalAiService {
 
     // 2. Camera & Security Queries
     if (q.includes('camera') || q.includes('package') || q.includes('doorstep') || q.includes('who is at the door')) {
-      const porchCam = cameras.find(c => c.id === 'porch');
       return {
         reply: "Checking front doorbell camera: Voxelle Vision Neural Model reports an Amazon delivery box was placed at your doorstep with 99% confidence. Walkway is currently clear.",
         cameraCheck: 'porch',

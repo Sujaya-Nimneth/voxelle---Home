@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Cpu, Wifi, Zap, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Cpu, Wifi, Sparkles } from 'lucide-react';
 
 export const DiscoverView = () => {
   return (

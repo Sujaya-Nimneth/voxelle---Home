@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHome } from '../context/HomeContext';
-import { ChevronRight, Video, Sparkles, Maximize2 } from 'lucide-react';
+import { ChevronRight, Sparkles, Maximize2 } from 'lucide-react';
 
 export const CameraGrid = () => {
   const { cameras, setSelectedCamera } = useHome();

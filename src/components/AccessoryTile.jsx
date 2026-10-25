@@ -42,7 +42,7 @@ export const AccessoryTile = ({ device }) => {
     }
   };
 
-  const handleTileClick = (e) => {
+  const handleTileClick = () => {
     // If it's a thermostat, open detail modal directly on tap
     if (device.type === 'thermostat') {
       setSelectedDevice(device);

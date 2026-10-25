@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHome } from '../context/HomeContext';
-import { X, Power, Minus, Plus, Lock, Unlock, SunMedium, Fan, Flame, Snowflake } from 'lucide-react';
+import { X, Power, Minus, Plus, Lock, Unlock, Flame, Snowflake } from 'lucide-react';
 
 const COLOR_SWATCHES = [
   '#fbbf24', // Warm Amber 2700K

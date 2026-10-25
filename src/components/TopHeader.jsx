@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHome } from '../context/HomeContext';
-import { Plus, ChevronDown, Monitor, Tablet, Smartphone, Sparkles, SlidersHorizontal, Image } from 'lucide-react';
+import { Plus, Monitor, Tablet, Smartphone, Sparkles } from 'lucide-react';
 
 export const TopHeader = () => {
   const {

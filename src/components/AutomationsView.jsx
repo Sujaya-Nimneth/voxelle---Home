@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHome } from '../context/HomeContext';
-import { Clock, Plus, Sparkles, Sun, Moon, MapPin, ShieldAlert, Check, ArrowRight } from 'lucide-react';
+import { Sparkles, Sun, Moon, MapPin, ShieldAlert } from 'lucide-react';
 
 const INITIAL_AUTOMATIONS = [
   {

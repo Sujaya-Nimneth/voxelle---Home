@@ -7,15 +7,11 @@ import {
   Mic,
   MicOff,
   Sparkles,
-  Bot,
-  User,
   CheckCircle2,
   Cpu,
   RefreshCw,
-  Terminal,
   Volume2,
-  VolumeX,
-  Radio
+  VolumeX
 } from 'lucide-react';
 
 const SUGGESTIONS = [

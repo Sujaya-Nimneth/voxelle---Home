@@ -4,7 +4,7 @@ import { StatusPills } from './StatusPills';
 import { CameraGrid } from './CameraGrid';
 import { ScenesBar } from './ScenesBar';
 import { AccessoryTile } from './AccessoryTile';
-import { ChevronDown, Plus, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, Plus, Sparkles } from 'lucide-react';
 
 export const HomeDashboard = () => {
   const {
