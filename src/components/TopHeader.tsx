@@ -1,4 +1,3 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import { Plus, Monitor, Tablet, Smartphone, Sparkles } from 'lucide-react';
 
@@ -99,7 +98,7 @@ export const TopHeader = () => {
         <button
           className="action-circle-btn"
           title="Add Accessory / Scene"
-          onClick={() => alert("Add Accessory: Matter, Thread, and HomeKit auto-discovery scanning locally...")}
+          onClick={() => alert('Add Accessory: Matter, Thread, and HomeKit auto-discovery scanning locally...')}
         >
           <Plus size={16} />
         </button>

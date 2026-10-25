@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { useHome } from '../context/HomeContext';
 import { X, Power, Minus, Plus, Lock, Unlock, Flame, Snowflake } from 'lucide-react';
+import type { ThermostatMode } from '../types';
 
 const COLOR_SWATCHES = [
   '#fbbf24', // Warm Amber 2700K
@@ -12,22 +12,24 @@ const COLOR_SWATCHES = [
   '#f43f5e'  // Ruby Night
 ];
 
+const THERMOSTAT_MODES: ThermostatMode[] = ['Cool', 'Heat', 'Auto', 'Eco'];
+
 export const DeviceDetailModal = () => {
   const { selectedDevice, setSelectedDevice, updateDevice, toggleDevice } = useHome();
 
   if (!selectedDevice) return null;
 
-  const handleSliderChange = (e) => {
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
     updateDevice(selectedDevice.id, { value: val });
   };
 
-  const handleTempAdjust = (delta) => {
-    const newTemp = (selectedDevice.targetTemp || selectedDevice.value) + delta;
+  const handleTempAdjust = (delta: number) => {
+    const newTemp = (selectedDevice.targetTemp ?? selectedDevice.value) + delta;
     updateDevice(selectedDevice.id, { targetTemp: newTemp });
   };
 
-  const handleColorChange = (hex) => {
+  const handleColorChange = (hex: string) => {
     updateDevice(selectedDevice.id, { color: hex });
   };
 
@@ -54,8 +56,8 @@ export const DeviceDetailModal = () => {
         {selectedDevice.type === 'thermostat' && (
           <div className="thermostat-dial-wrapper">
             <div className="thermostat-dial-circle">
-              <span className="dial-temp-text">{selectedDevice.targetTemp || selectedDevice.value}°</span>
-              <span className="dial-mode-text">{selectedDevice.mode || 'Cooling'}</span>
+              <span className="dial-temp-text">{selectedDevice.targetTemp ?? selectedDevice.value}°</span>
+              <span className="dial-mode-text">{selectedDevice.mode ?? 'Cooling'}</span>
             </div>
 
             <div className="thermostat-controls-row">
@@ -64,7 +66,7 @@ export const DeviceDetailModal = () => {
               </button>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Current Temp</div>
-                <div style={{ fontSize: 18, fontWeight: 700 }}>{selectedDevice.currentTemp || 69}°F</div>
+                <div style={{ fontSize: 18, fontWeight: 700 }}>{selectedDevice.currentTemp ?? 69}°F</div>
               </div>
               <button className="temp-adjust-btn" onClick={() => handleTempAdjust(1)}>
                 <Plus size={18} />
@@ -73,7 +75,7 @@ export const DeviceDetailModal = () => {
 
             {/* Mode Switcher */}
             <div className="viewport-switchers" style={{ marginTop: 8 }}>
-              {['Cool', 'Heat', 'Auto', 'Eco'].map(mode => (
+              {THERMOSTAT_MODES.map(mode => (
                 <button
                   key={mode}
                   className={`viewport-btn ${selectedDevice.mode === mode ? 'active' : ''}`}

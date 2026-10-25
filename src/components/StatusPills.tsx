@@ -1,6 +1,6 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import { Thermometer, Lightbulb, Shield, ShieldAlert, Volume2, Droplets, Cpu } from 'lucide-react';
+import type { DeviceCategory } from '../types';
 
 export const StatusPills = () => {
   const {
@@ -14,8 +14,8 @@ export const StatusPills = () => {
     setIsAiModalOpen
   } = useHome();
 
-  const handlePillClick = (cat) => {
-    setActiveCategory(prev => prev === cat ? null : cat);
+  const handlePillClick = (cat: DeviceCategory) => {
+    setActiveCategory(prev => (prev === cat ? null : cat));
   };
 
   return (

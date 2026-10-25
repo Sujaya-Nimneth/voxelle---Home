@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useHome } from '../context/HomeContext';
 import { localAi, LOCAL_AI_PROVIDERS } from '../services/localAiEngine';
 import {
@@ -13,15 +13,47 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
+import type { AiProviderId, ChatMessage } from '../types';
 
 const SUGGESTIONS = [
-  "Prepare the house for movie night",
-  "Dim the living room lights to 25% and turn on fan",
-  "Lock the front door and turn off entry lights",
-  "What happened at the front doorbell camera?",
-  "Adjust the thermostat to 68 degrees",
-  "Check the backyard pool and deck camera"
+  'Prepare the house for movie night',
+  'Dim the living room lights to 25% and turn on fan',
+  'Lock the front door and turn off entry lights',
+  'What happened at the front doorbell camera?',
+  'Adjust the thermostat to 68 degrees',
+  'Check the backyard pool and deck camera'
 ];
+
+/**
+ * Minimal structural type for the Web Speech API (not in lib.dom for all targets).
+ */
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
+
+const getSpeechRecognition = (): SpeechRecognitionCtor | null => {
+  const w = window as unknown as {
+    SpeechRecognition?: SpeechRecognitionCtor;
+    webkitSpeechRecognition?: SpeechRecognitionCtor;
+  };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+};
+
+interface OllamaStatusState {
+  online: boolean;
+  checking: boolean;
+  models: string[];
+}
 
 export const LocalAiModal = () => {
   const {
@@ -34,12 +66,12 @@ export const LocalAiModal = () => {
     setSelectedCamera
   } = useHome();
 
-  const [provider, setProvider] = useState('voxelle-builtin');
-  const [messages, setMessages] = useState([
+  const [provider, setProvider] = useState<AiProviderId>('voxelle-builtin');
+  const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 1,
       sender: 'assistant',
-      text: "Hello! I'm your Voxelle Local Neural Engine, running 100% on-device with zero cloud telemetry. How can I automate or control your home today?",
+      text: "Hello! I'm your Voxelle Local Assistant, running 100% on-device with zero cloud telemetry. How can I automate or control your home today?",
       actions: []
     }
   ]);
@@ -47,10 +79,10 @@ export const LocalAiModal = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceReplyEnabled, setVoiceReplyEnabled] = useState(false);
-  const [ollamaStatus, setOllamaStatus] = useState({ online: false, checking: false, models: [] });
+  const [ollamaStatus, setOllamaStatus] = useState<OllamaStatusState>({ online: false, checking: false, models: [] });
 
-  const chatEndRef = useRef(null);
-  const recognitionRef = useRef(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -60,8 +92,9 @@ export const LocalAiModal = () => {
   // Check Ollama status if selected
   useEffect(() => {
     if (provider === 'ollama') {
-      checkOllama();
+      void checkOllama();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
   const checkOllama = async () => {
@@ -72,9 +105,9 @@ export const LocalAiModal = () => {
 
   // Web Speech API Voice Recognition setup
   const toggleSpeechRecognition = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser. Please type your command.");
+    const SpeechRecognitionCtor = getSpeechRecognition();
+    if (!SpeechRecognitionCtor) {
+      alert('Speech recognition is not supported in this browser. Please type your command.');
       return;
     }
 
@@ -85,7 +118,7 @@ export const LocalAiModal = () => {
     }
 
     try {
-      const recognition = new SpeechRecognition();
+      const recognition = new SpeechRecognitionCtor();
       recognition.continuous = false;
       recognition.interimResults = false;
       recognition.lang = 'en-US';
@@ -95,9 +128,11 @@ export const LocalAiModal = () => {
       recognition.onerror = () => setIsListening(false);
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInputQuery(transcript);
-        handleSendQuery(transcript);
+        const transcript = event.results[0]?.[0]?.transcript;
+        if (transcript) {
+          setInputQuery(transcript);
+          void handleSendQuery(transcript);
+        }
       };
 
       recognitionRef.current = recognition;
@@ -108,12 +143,12 @@ export const LocalAiModal = () => {
     }
   };
 
-  const handleSendQuery = async (queryText) => {
-    const query = (queryText || inputQuery).trim();
+  const handleSendQuery = async (queryText?: string) => {
+    const query = (queryText ?? inputQuery).trim();
     if (!query || isProcessing) return;
 
     // Add user message
-    const userMsg = { id: Date.now(), sender: 'user', text: query, actions: [] };
+    const userMsg: ChatMessage = { id: Date.now(), sender: 'user', text: query, actions: [] };
     setMessages(prev => [...prev, userMsg]);
     setInputQuery('');
     setIsProcessing(true);
@@ -135,7 +170,7 @@ export const LocalAiModal = () => {
       if (response.actions && response.actions.length > 0) {
         response.actions.forEach(action => {
           if (action.type === 'device_update' && action.deviceId) {
-            updateDevice(action.deviceId, action.updates);
+            updateDevice(action.deviceId, action.updates ?? {});
           }
         });
       }
@@ -153,16 +188,16 @@ export const LocalAiModal = () => {
           id: Date.now() + 1,
           sender: 'assistant',
           text: response.reply,
-          actions: response.actions || []
+          actions: response.actions ?? []
         }
       ]);
-    } catch (err) {
+    } catch {
       setMessages(prev => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: 'assistant',
-          text: "Local inference processed. Home state verified.",
+          text: 'Local inference processed. Home state verified.',
           actions: []
         }
       ]);
@@ -198,7 +233,7 @@ export const LocalAiModal = () => {
               className="action-circle-btn"
               style={{ width: 32, height: 32 }}
               onClick={() => setVoiceReplyEnabled(!voiceReplyEnabled)}
-              title={voiceReplyEnabled ? "Disable Voice Feedback" : "Enable Voice Feedback"}
+              title={voiceReplyEnabled ? 'Disable Voice Feedback' : 'Enable Voice Feedback'}
             >
               {voiceReplyEnabled ? <Volume2 size={15} color="#34d399" /> : <VolumeX size={15} />}
             </button>
@@ -229,7 +264,7 @@ export const LocalAiModal = () => {
             <button
               className="ai-tab-btn"
               style={{ marginLeft: 'auto', background: ollamaStatus.online ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)' }}
-              onClick={checkOllama}
+              onClick={() => void checkOllama()}
               title="Ping Ollama server at localhost:11434"
             >
               <RefreshCw size={11} className={ollamaStatus.checking ? 'spin-anim' : ''} />
@@ -280,7 +315,7 @@ export const LocalAiModal = () => {
             <button
               key={i}
               className="ai-suggestion-pill"
-              onClick={() => handleSendQuery(sug)}
+              onClick={() => void handleSendQuery(sug)}
             >
               {sug}
             </button>
@@ -292,7 +327,7 @@ export const LocalAiModal = () => {
           className="ai-input-form"
           onSubmit={(e) => {
             e.preventDefault();
-            handleSendQuery();
+            void handleSendQuery();
           }}
         >
           <input
@@ -308,7 +343,7 @@ export const LocalAiModal = () => {
             type="button"
             className={`ai-mic-btn ${isListening ? 'is-listening' : ''}`}
             onClick={toggleSpeechRecognition}
-            title={isListening ? "Listening... click to stop" : "Speak natural language command"}
+            title={isListening ? 'Listening... click to stop' : 'Speak natural language command'}
           >
             {isListening ? <MicOff size={16} /> : <Mic size={16} />}
           </button>

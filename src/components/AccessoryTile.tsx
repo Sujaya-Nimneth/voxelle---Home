@@ -1,4 +1,3 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import {
   Lightbulb,
@@ -9,11 +8,11 @@ import {
   Tv,
   Music,
   Droplets,
-  SlidersHorizontal,
-  ChevronRight
+  SlidersHorizontal
 } from 'lucide-react';
+import type { Device } from '../types';
 
-export const AccessoryTile = ({ device }) => {
+export const AccessoryTile = ({ device }: { device: Device }) => {
   const { toggleDevice, setSelectedDevice } = useHome();
 
   const getIcon = () => {
@@ -51,7 +50,7 @@ export const AccessoryTile = ({ device }) => {
     toggleDevice(device.id);
   };
 
-  const handleDetailClick = (e) => {
+  const handleDetailClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedDevice(device);
   };

@@ -1,4 +1,3 @@
-import React from 'react';
 import { HomeProvider, useHome } from './context/HomeContext';
 import { TopHeader } from './components/TopHeader';
 import { Sidebar } from './components/Sidebar';

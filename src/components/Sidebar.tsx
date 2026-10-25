@@ -1,4 +1,3 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import {
   Home,
@@ -14,8 +13,17 @@ import {
   ArrowRight,
   Cpu
 } from 'lucide-react';
+import type { DeviceCategory } from '../types';
+import type { LucideIcon } from 'lucide-react';
 
-const CATEGORIES = [
+interface CategoryDef {
+  id: DeviceCategory;
+  name: string;
+  icon: LucideIcon;
+  color: string;
+}
+
+const CATEGORIES: CategoryDef[] = [
   { id: 'climate', name: 'Climate', icon: Thermometer, color: '#06b6d4' },
   { id: 'lights', name: 'Lights', icon: Lightbulb, color: '#f59e0b' },
   { id: 'security', name: 'Security', icon: Shield, color: '#10b981' },
@@ -44,11 +52,11 @@ export const Sidebar = () => {
     setIsAiModalOpen
   } = useHome();
 
-  const getCategoryCount = (catId) => {
+  const getCategoryCount = (catId: DeviceCategory) => {
     return devices.filter(d => d.category === catId).length;
   };
 
-  const getRoomCount = (roomName) => {
+  const getRoomCount = (roomName: string) => {
     if (roomName === 'All') return devices.length;
     return devices.filter(d => d.room === roomName).length;
   };

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useHome } from '../context/HomeContext';
 import { Sparkles, Sun, Moon, MapPin, ShieldAlert } from 'lucide-react';
+import type { Automation } from '../types';
 
-const INITIAL_AUTOMATIONS = [
+const INITIAL_AUTOMATIONS: Automation[] = [
   {
     id: 'sunset',
     title: 'Sunset Ambiance',
@@ -42,24 +43,24 @@ const INITIAL_AUTOMATIONS = [
 ];
 
 export const AutomationsView = () => {
-  const [automations, setAutomations] = useState(INITIAL_AUTOMATIONS);
+  const [automations, setAutomations] = useState<Automation[]>(INITIAL_AUTOMATIONS);
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const { setIsAiModalOpen } = useHome();
 
-  const toggleAutomation = (id) => {
-    setAutomations(prev => prev.map(a => a.id === id ? { ...a, enabled: !a.enabled } : a));
+  const toggleAutomation = (id: string) => {
+    setAutomations(prev => prev.map(a => (a.id === id ? { ...a, enabled: !a.enabled } : a)));
   };
 
-  const handleCreateWithAi = (e) => {
+  const handleCreateWithAi = (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiPrompt.trim()) return;
 
     setIsGenerating(true);
     setTimeout(() => {
-      const newAuto = {
+      const newAuto: Automation = {
         id: `auto-${Date.now()}`,
-        title: aiPrompt.slice(0, 30) + '...',
+        title: `${aiPrompt.slice(0, 30)}...`,
         trigger: 'AI Semantic Rule: Triggered by user condition',
         action: aiPrompt,
         icon: Sparkles,

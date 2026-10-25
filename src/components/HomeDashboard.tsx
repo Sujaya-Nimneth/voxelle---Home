@@ -1,4 +1,3 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import { StatusPills } from './StatusPills';
 import { CameraGrid } from './CameraGrid';
@@ -11,7 +10,6 @@ export const HomeDashboard = () => {
     devices,
     activeCategory,
     activeRoom,
-    setActiveRoom,
     setIsAiModalOpen
   } = useHome();
 
@@ -23,8 +21,8 @@ export const HomeDashboard = () => {
   });
 
   // Group filtered devices by room
-  const roomsList = activeRoom !== 'All' 
-    ? [activeRoom] 
+  const roomsList = activeRoom !== 'All'
+    ? [activeRoom]
     : ['Entry', 'Living Room', 'Kitchen', 'Bedroom', 'Backyard'];
 
   return (
@@ -54,7 +52,7 @@ export const HomeDashboard = () => {
             <button
               className="action-circle-btn"
               title="Add Accessory"
-              onClick={() => alert("Scanning local network for Matter, HomeKit, and Thread accessories...")}
+              onClick={() => alert('Scanning local network for Matter, HomeKit, and Thread accessories...')}
             >
               <Plus size={16} />
             </button>
@@ -89,7 +87,7 @@ export const HomeDashboard = () => {
               <h2 className="room-title">{room}</h2>
               {roomThermostat && (
                 <span className="room-temp-pill">
-                  {roomThermostat.targetTemp || roomThermostat.value}°
+                  {roomThermostat.targetTemp ?? roomThermostat.value}°
                 </span>
               )}
             </div>

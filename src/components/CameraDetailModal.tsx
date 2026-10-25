@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useHome } from '../context/HomeContext';
-import { X, Mic, Volume2, ShieldAlert, Camera, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
+import { X, Mic, ShieldAlert, Camera, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
 
 export const CameraDetailModal = () => {
   const { selectedCamera, setSelectedCamera } = useHome();

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import { ChevronRight, Sparkles, Maximize2 } from 'lucide-react';
 

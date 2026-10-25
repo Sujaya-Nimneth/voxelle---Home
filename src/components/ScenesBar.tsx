@@ -1,14 +1,14 @@
-import React from 'react';
 import { useHome } from '../context/HomeContext';
 import { SunMedium, Sunrise, DoorClosed, Film, Moon, Zap, Sparkles, ChevronRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-const SCENE_ICONS = {
-  SunMedium: SunMedium,
-  Sunrise: Sunrise,
-  DoorClosed: DoorClosed,
-  Film: Film,
-  Moon: Moon,
-  Zap: Zap
+const SCENE_ICONS: Record<string, LucideIcon> = {
+  SunMedium,
+  Sunrise,
+  DoorClosed,
+  Film,
+  Moon,
+  Zap
 };
 
 export const ScenesBar = () => {
@@ -25,7 +25,7 @@ export const ScenesBar = () => {
 
       <div className="scenes-scroll-row">
         {scenes.map(scene => {
-          const IconComponent = SCENE_ICONS[scene.icon] || Sparkles;
+          const IconComponent = SCENE_ICONS[scene.icon] ?? Sparkles;
           return (
             <button
               key={scene.id}
