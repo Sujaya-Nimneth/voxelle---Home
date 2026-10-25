@@ -28,28 +28,34 @@ export class LmStudioProvider {
 
   async checkHealth(): Promise<ProviderHealth> {
     const started = performance.now();
-    const data = await fetchJsonWithTimeout<LmStudioModelsResponse>(`${LMSTUDIO_URL}/v1/models`, this.id, { method: 'GET' });
+    const data = await fetchJsonWithTimeout<LmStudioModelsResponse>(`${LMSTUDIO_URL}/v1/models`, this.id, {
+      method: 'GET'
+    });
     const latencyMs = Math.round(performance.now() - started);
     return {
       online: true,
-      models: (data.data ?? []).map(m => m.id),
+      models: (data.data ?? []).map((m) => m.id),
       latencyMs,
       error: null
     };
   }
 
   async processCommand(query: string, devices: Device[], cameras: Camera[]): Promise<AiResult> {
-    const data = await fetchJsonWithTimeout<LmStudioChatResponse>(`${LMSTUDIO_URL}/v1/chat/completions`, this.id, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: this.selectedModel,
-        messages: [
-          { role: 'system', content: buildCommandSystemPrompt(devices, cameras) },
-          { role: 'user', content: query }
-        ]
-      })
-    });
+    const data = await fetchJsonWithTimeout<LmStudioChatResponse>(
+      `${LMSTUDIO_URL}/v1/chat/completions`,
+      this.id,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: this.selectedModel,
+          messages: [
+            { role: 'system', content: buildCommandSystemPrompt(devices, cameras) },
+            { role: 'user', content: query }
+          ]
+        })
+      }
+    );
 
     const content = data.choices?.[0]?.message?.content;
     if (!content) {

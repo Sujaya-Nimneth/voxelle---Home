@@ -89,12 +89,12 @@ const applyDeviceUpdates = (device: Device, updates: DeviceUpdates): Device => {
 };
 
 const updateDevices = (devices: Device[], id: string, transform: (device: Device) => Device): Device[] =>
-  devices.map(device => (device.id === id ? transform(device) : device));
+  devices.map((device) => (device.id === id ? transform(device) : device));
 
 /** Re-syncs the open modal snapshot from the new device list after any mutation. */
 const syncSelectedDevice = (state: HomeState, devices: Device[]): Device | null => {
   if (!state.selectedDevice) return null;
-  return devices.find(d => d.id === state.selectedDevice?.id) ?? null;
+  return devices.find((d) => d.id === state.selectedDevice?.id) ?? null;
 };
 
 // ---------------------------------------------------------------------------
@@ -131,13 +131,13 @@ const SCENE_DEVICE_PATCHES: Record<string, readonly SceneDevicePatch[]> = {
 
 /** Scenes expressed as a transform over every device (bulk lockdown scenes). */
 const BULK_SCENE_TRANSFORMS: Record<string, (device: Device) => Device> = {
-  'leave-home': device => {
+  'leave-home': (device) => {
     if (device.type === 'light') return { ...device, isOn: false, value: 0, statusText: 'Off' };
     if (device.type === 'lock') return { ...device, isOn: true, value: 1, statusText: 'Locked' };
     if (device.type === 'speaker') return { ...device, isOn: false, statusText: 'Paused' };
     return device;
   },
-  goodnight: device => {
+  goodnight: (device) => {
     if (device.type === 'light') return { ...device, isOn: false, value: 0, statusText: 'Off' };
     if (device.type === 'lock') return { ...device, isOn: true, value: 1, statusText: 'Locked' };
     if (device.type === 'shade') return { ...device, isOn: false, value: 0, statusText: 'Closed' };
@@ -173,20 +173,20 @@ export function homeReducer(state: HomeState, action: HomeAction): HomeState {
     }
 
     case 'UPDATE_DEVICE': {
-      const devices = updateDevices(state.devices, action.id, device =>
+      const devices = updateDevices(state.devices, action.id, (device) =>
         applyDeviceUpdates(device, action.updates)
       );
       return { ...state, devices, selectedDevice: syncSelectedDevice(state, devices) };
     }
 
     case 'APPLY_SCENE': {
-      const scenes = state.scenes.map(s => ({ ...s, isActive: s.id === action.sceneId }));
+      const scenes = state.scenes.map((s) => ({ ...s, isActive: s.id === action.sceneId }));
 
       let devices = state.devices;
       const patches = SCENE_DEVICE_PATCHES[action.sceneId];
       if (patches) {
         for (const [id, updates] of patches) {
-          devices = updateDevices(devices, id, device => applyDeviceUpdates(device, updates));
+          devices = updateDevices(devices, id, (device) => applyDeviceUpdates(device, updates));
         }
       }
       const bulk = BULK_SCENE_TRANSFORMS[action.sceneId];
@@ -203,9 +203,7 @@ export function homeReducer(state: HomeState, action: HomeAction): HomeState {
     case 'TOGGLE_AUTOMATION':
       return {
         ...state,
-        automations: state.automations.map(a =>
-          a.id === action.id ? { ...a, enabled: !a.enabled } : a
-        )
+        automations: state.automations.map((a) => (a.id === action.id ? { ...a, enabled: !a.enabled } : a))
       };
 
     case 'SET_ACTIVE_CATEGORY':

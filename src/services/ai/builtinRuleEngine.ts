@@ -23,7 +23,8 @@ export class BuiltinRuleEngine {
     // 1. Scene intents
     if (q.includes('arrive') || q.includes("i'm home") || q.includes('came home')) {
       return {
-        reply: "Welcome home! I've unlocked the front door, set the living room lights to 75%, and adjusted the climate to 70°F.",
+        reply:
+          "Welcome home! I've unlocked the front door, set the living room lights to 75%, and adjusted the climate to 70°F.",
         sceneTrigger: 'arrive-home',
         actions: [{ type: 'scene', sceneId: 'arrive-home', description: 'Triggered Arrive Home Scene' }]
       };
@@ -31,7 +32,8 @@ export class BuiltinRuleEngine {
 
     if (q.includes('goodnight') || q.includes('going to bed') || q.includes('sleep')) {
       return {
-        reply: 'Goodnight! I have locked all doors, turned off all interior lights, and armed the home security perimeter.',
+        reply:
+          'Goodnight! I have locked all doors, turned off all interior lights, and armed the home security perimeter.',
         sceneTrigger: 'goodnight',
         actions: [{ type: 'scene', sceneId: 'goodnight', description: 'Triggered Goodnight Scene' }]
       };
@@ -39,7 +41,8 @@ export class BuiltinRuleEngine {
 
     if (q.includes('movie') || q.includes('cinema') || q.includes('film')) {
       return {
-        reply: 'Enjoy the movie! Dimming living room overheads, activating purple accent backlights, and lowering shades.',
+        reply:
+          'Enjoy the movie! Dimming living room overheads, activating purple accent backlights, and lowering shades.',
         sceneTrigger: 'movie-night',
         actions: [{ type: 'scene', sceneId: 'movie-night', description: 'Triggered Movie Night Scene' }]
       };
@@ -47,7 +50,8 @@ export class BuiltinRuleEngine {
 
     if (q.includes('wake up') || q.includes('morning') || q.includes('good morning')) {
       return {
-        reply: 'Good morning! Opening shades, turning on warm morning lights, and setting bedroom AC to 72°F.',
+        reply:
+          'Good morning! Opening shades, turning on warm morning lights, and setting bedroom AC to 72°F.',
         sceneTrigger: 'wake-up',
         actions: [{ type: 'scene', sceneId: 'wake-up', description: 'Triggered Wake Up Scene' }]
       };
@@ -55,14 +59,20 @@ export class BuiltinRuleEngine {
 
     if (q.includes('leave') || q.includes('leaving') || q.includes('away')) {
       return {
-        reply: "Safe travels! I've locked all exterior doors, powered down active lights, and switched climate to eco mode.",
+        reply:
+          "Safe travels! I've locked all exterior doors, powered down active lights, and switched climate to eco mode.",
         sceneTrigger: 'leave-home',
         actions: [{ type: 'scene', sceneId: 'leave-home', description: 'Triggered Leave Home Scene' }]
       };
     }
 
     // 2. Camera & security queries — replies derive from the camera seed data
-    if (q.includes('camera') || q.includes('package') || q.includes('doorstep') || q.includes('who is at the door')) {
+    if (
+      q.includes('camera') ||
+      q.includes('package') ||
+      q.includes('doorstep') ||
+      q.includes('who is at the door')
+    ) {
       return cameraResult(cameras, 'porch', 'Analyzed Front Doorbell Feed');
     }
 
@@ -78,17 +88,29 @@ export class BuiltinRuleEngine {
     const actions: AiAction[] = [];
 
     // Lights
-    if (q.includes('light') || q.includes('lights') || q.includes('sconce') || q.includes('lamp') || q.includes('bright') || q.includes('dim')) {
+    if (
+      q.includes('light') ||
+      q.includes('lights') ||
+      q.includes('sconce') ||
+      q.includes('lamp') ||
+      q.includes('bright') ||
+      q.includes('dim')
+    ) {
       const isOff = q.includes('off') || q.includes('turn off') || q.includes('shut down');
       const percentMatch = q.match(/(\d+)\s*(?:%|percent)/);
-      const brightnessVal = percentMatch?.[1] ? parseInt(percentMatch[1], 10) : (isOff ? 0 : 80);
+      const brightnessVal = percentMatch?.[1] ? parseInt(percentMatch[1], 10) : isOff ? 0 : 80;
 
-      const targetRoom = q.includes('living') ? 'Living Room' :
-                         q.includes('kitchen') ? 'Kitchen' :
-                         q.includes('bedroom') ? 'Bedroom' :
-                         q.includes('entry') ? 'Entry' : 'All';
+      const targetRoom = q.includes('living')
+        ? 'Living Room'
+        : q.includes('kitchen')
+          ? 'Kitchen'
+          : q.includes('bedroom')
+            ? 'Bedroom'
+            : q.includes('entry')
+              ? 'Entry'
+              : 'All';
 
-      devices.forEach(d => {
+      devices.forEach((d) => {
         if (d.category === 'lights' && (targetRoom === 'All' || d.room === targetRoom)) {
           actions.push({
             type: 'device_update',
@@ -112,7 +134,11 @@ export class BuiltinRuleEngine {
       actions.push({
         type: 'device_update',
         deviceId: 'entry-door',
-        updates: { isOn: shouldLock, value: shouldLock ? 1 : 0, statusText: shouldLock ? 'Locked' : 'Unlocked' },
+        updates: {
+          isOn: shouldLock,
+          value: shouldLock ? 1 : 0,
+          statusText: shouldLock ? 'Locked' : 'Unlocked'
+        },
         description: `${shouldLock ? 'Locked' : 'Unlocked'} Front Door`
       });
       return {
@@ -122,10 +148,19 @@ export class BuiltinRuleEngine {
     }
 
     // Climate / thermostat — reply reflects the device's actual current reading
-    if (q.includes('temperature') || q.includes('temp') || q.includes('thermostat') || q.includes('degrees') || q.includes('cool') || q.includes('heat') || q.includes('warmer') || q.includes('colder')) {
+    if (
+      q.includes('temperature') ||
+      q.includes('temp') ||
+      q.includes('thermostat') ||
+      q.includes('degrees') ||
+      q.includes('cool') ||
+      q.includes('heat') ||
+      q.includes('warmer') ||
+      q.includes('colder')
+    ) {
       const tempMatch = q.match(/(\d{2})/);
       const targetTemp = tempMatch?.[1] ? parseInt(tempMatch[1], 10) : 70;
-      const thermostat = devices.find(d => d.id === 'lr-thermostat');
+      const thermostat = devices.find((d) => d.id === 'lr-thermostat');
       const currentTemp = thermostat?.currentTemp;
       actions.push({
         type: 'device_update',
@@ -156,14 +191,15 @@ export class BuiltinRuleEngine {
 
     // Honest fallback: no fabricated confidence, no "all systems verified"
     return {
-      reply: "I couldn't match that to a known intent. You can ask me to control lights, adjust thermostats, check camera detection feeds, or trigger scenes.",
+      reply:
+        "I couldn't match that to a known intent. You can ask me to control lights, adjust thermostats, check camera detection feeds, or trigger scenes.",
       actions: []
     };
   }
 }
 
 const cameraResult = (cameras: Camera[], cameraId: string, description: string): AiResult => {
-  const camera = cameras.find(c => c.id === cameraId);
+  const camera = cameras.find((c) => c.id === cameraId);
   const detection = camera?.aiTag.replace(/^AI:\s*/, '') ?? 'no recent detections';
   const latestEvent = camera?.recentEvents[0];
   const reply = camera

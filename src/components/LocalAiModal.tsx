@@ -54,15 +54,8 @@ const getSpeechRecognition = (): SpeechRecognitionCtor | null => {
 };
 
 export const LocalAiModal = () => {
-  const {
-    isAiModalOpen,
-    setIsAiModalOpen,
-    devices,
-    cameras,
-    updateDevice,
-    triggerScene,
-    setSelectedCamera
-  } = useHome();
+  const { isAiModalOpen, setIsAiModalOpen, devices, cameras, updateDevice, triggerScene, setSelectedCamera } =
+    useHome();
 
   const [provider, setProvider] = useState<AiProviderId>('voxelle-builtin');
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -97,10 +90,13 @@ export const LocalAiModal = () => {
   }, [messages]);
 
   // Stop any active dictation and voice playback when the modal unmounts.
-  useEffect(() => () => {
-    recognitionRef.current?.stop();
-    window.speechSynthesis?.cancel();
-  }, []);
+  useEffect(
+    () => () => {
+      recognitionRef.current?.stop();
+      window.speechSynthesis?.cancel();
+    },
+    []
+  );
 
   // Probe server-backed providers whenever the tab switches to them.
   useEffect(() => {
@@ -189,7 +185,7 @@ export const LocalAiModal = () => {
     }
 
     if (response.cameraCheck) {
-      const targetCam = cameras.find(c => c.id === response.cameraCheck);
+      const targetCam = cameras.find((c) => c.id === response.cameraCheck);
       if (targetCam) setSelectedCamera(targetCam);
     }
 
@@ -208,14 +204,15 @@ export const LocalAiModal = () => {
     lastQueryRef.current = query;
 
     const userMsg: ChatMessage = { id: Date.now(), sender: 'user', text: query, actions: [] };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInputQuery('');
     setIsProcessing(true);
 
     try {
-      const response = useProvider === provider
-        ? await localAi.processCommand(query, devices, cameras)
-        : await AI_PROVIDERS[useProvider].processCommand(query, devices, cameras);
+      const response =
+        useProvider === provider
+          ? await localAi.processCommand(query, devices, cameras)
+          : await AI_PROVIDERS[useProvider].processCommand(query, devices, cameras);
 
       executeResult(response);
 
@@ -225,7 +222,7 @@ export const LocalAiModal = () => {
         window.speechSynthesis.speak(utterance);
       }
 
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
@@ -238,7 +235,7 @@ export const LocalAiModal = () => {
       // Honest failure reporting: never claim inference succeeded when it didn't.
       const providerName = AI_PROVIDERS[useProvider].name;
       const reason = err instanceof Error ? err.message : 'unknown error';
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
@@ -279,7 +276,7 @@ export const LocalAiModal = () => {
         aria-labelledby="ai-modal-title"
         tabIndex={-1}
         className="ai-modal-container"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="ai-modal-iridescent-glow" />
 
@@ -290,7 +287,9 @@ export const LocalAiModal = () => {
               <Sparkles size={16} color="#ffffff" />
             </div>
             <div>
-              <div className="ai-modal-header-title" id="ai-modal-title">Voxelle Assistant</div>
+              <div className="ai-modal-header-title" id="ai-modal-title">
+                Voxelle Assistant
+              </div>
               <div className="ai-modal-header-sub">
                 Local-first intelligence • built-in engine, or your own Ollama / LM Studio server
               </div>
@@ -316,7 +315,7 @@ export const LocalAiModal = () => {
 
         {/* Engine Provider Switcher Tabs */}
         <div className="ai-engine-tabs">
-          {AI_PROVIDER_INFO.map(p => (
+          {AI_PROVIDER_INFO.map((p) => (
             <button
               key={p.id}
               className={`ai-tab-btn ${provider === p.id ? 'active' : ''}`}
@@ -366,11 +365,13 @@ export const LocalAiModal = () => {
             <select
               className="ai-model-select"
               value={selectedModel}
-              onChange={e => handleModelChange(e.target.value)}
+              onChange={(e) => handleModelChange(e.target.value)}
               aria-label="Selected model"
             >
-              {health.models.map(model => (
-                <option key={model} value={model}>{model}</option>
+              {health.models.map((model) => (
+                <option key={model} value={model}>
+                  {model}
+                </option>
               ))}
             </select>
             <span className="ai-provider-latency">{health.latencyMs}ms round-trip</span>
@@ -379,7 +380,7 @@ export const LocalAiModal = () => {
 
         {/* Chat Body */}
         <div className="ai-chat-body" aria-live="polite" aria-label="Assistant conversation">
-          {messages.map(msg => (
+          {messages.map((msg) => (
             <div key={msg.id} className={`ai-message ${msg.sender}`}>
               <div className={`ai-message-bubble ${msg.error ? 'error' : ''}`}>
                 <div>{msg.text}</div>
@@ -421,11 +422,7 @@ export const LocalAiModal = () => {
         {/* Quick Suggestion Pills */}
         <div className="ai-suggestions-row">
           {SUGGESTIONS.map((sug, i) => (
-            <button
-              key={i}
-              className="ai-suggestion-pill"
-              onClick={() => void handleSendQuery(sug)}
-            >
+            <button key={i} className="ai-suggestion-pill" onClick={() => void handleSendQuery(sug)}>
               {sug}
             </button>
           ))}

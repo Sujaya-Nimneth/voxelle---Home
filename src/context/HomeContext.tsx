@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 import confetti from 'canvas-confetti';
 import type {
   Automation,
@@ -18,15 +11,8 @@ import type {
   ViewId,
   Wallpaper
 } from '../types';
-import {
-  createInitialHomeState,
-  homeReducer
-} from '../store/homeReducer';
-import {
-  clearPersistedState,
-  loadPersistedState,
-  savePersistedState
-} from '../store/persistence';
+import { createInitialHomeState, homeReducer } from '../store/homeReducer';
+import { clearPersistedState, loadPersistedState, savePersistedState } from '../store/persistence';
 
 export interface HomeContextValue {
   devices: Device[];
@@ -99,10 +85,7 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
     (automation: Automation) => dispatch({ type: 'ADD_AUTOMATION', automation }),
     []
   );
-  const toggleAutomation = useCallback(
-    (id: string) => dispatch({ type: 'TOGGLE_AUTOMATION', id }),
-    []
-  );
+  const toggleAutomation = useCallback((id: string) => dispatch({ type: 'TOGGLE_AUTOMATION', id }), []);
   const resetHome = useCallback(() => {
     clearPersistedState();
     dispatch({ type: 'RESET_HOME' });
@@ -129,17 +112,12 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
     (camera: Camera | null) => dispatch({ type: 'SELECT_CAMERA', camera }),
     []
   );
-  const setIsAiModalOpen = useCallback(
-    (open: boolean) => dispatch({ type: 'SET_AI_MODAL_OPEN', open }),
-    []
-  );
+  const setIsAiModalOpen = useCallback((open: boolean) => dispatch({ type: 'SET_AI_MODAL_OPEN', open }), []);
 
   const value = useMemo<HomeContextValue>(() => {
-    const thermostats = state.devices.filter(d => d.type === 'thermostat');
-    const targets = thermostats.map(t => t.targetTemp ?? t.value);
-    const climateSummary = targets.length > 0
-      ? `${Math.min(...targets)}° - ${Math.max(...targets)}°`
-      : '—';
+    const thermostats = state.devices.filter((d) => d.type === 'thermostat');
+    const targets = thermostats.map((t) => t.targetTemp ?? t.value);
+    const climateSummary = targets.length > 0 ? `${Math.min(...targets)}° - ${Math.max(...targets)}°` : '—';
 
     return {
       ...state,
@@ -157,10 +135,10 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
       setSelectedDevice,
       setSelectedCamera,
       setIsAiModalOpen,
-      activeLightsCount: state.devices.filter(d => d.category === 'lights' && d.isOn).length,
-      unlockedDoorsCount: state.devices.filter(d => d.category === 'security' && !d.isOn).length,
-      playingSpeakersCount: state.devices.filter(d => d.category === 'speakers' && d.isOn).length,
-      waterStatus: state.devices.some(d => d.category === 'water' && d.isOn) ? 'Active' : 'All Off',
+      activeLightsCount: state.devices.filter((d) => d.category === 'lights' && d.isOn).length,
+      unlockedDoorsCount: state.devices.filter((d) => d.category === 'security' && !d.isOn).length,
+      playingSpeakersCount: state.devices.filter((d) => d.category === 'speakers' && d.isOn).length,
+      waterStatus: state.devices.some((d) => d.category === 'water' && d.isOn) ? 'Active' : 'All Off',
       climateSummary,
       automationCount: state.automations.length
     };

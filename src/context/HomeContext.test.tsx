@@ -6,9 +6,7 @@ import { SEED_AUTOMATIONS } from '../data/automations';
 
 vi.mock('canvas-confetti', () => ({ default: vi.fn() }));
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <HomeProvider>{children}</HomeProvider>
-);
+const wrapper = ({ children }: { children: ReactNode }) => <HomeProvider>{children}</HomeProvider>;
 
 const renderHome = () => renderHook(() => useHome(), { wrapper });
 
@@ -44,20 +42,20 @@ describe('toggleDevice', () => {
     const { result } = renderHome();
 
     act(() => result.current.toggleDevice('entry-sconces'));
-    const sconces = result.current.devices.find(d => d.id === 'entry-sconces')!;
+    const sconces = result.current.devices.find((d) => d.id === 'entry-sconces')!;
     expect(sconces.isOn).toBe(false);
     expect(sconces.value).toBe(0);
     expect(sconces.statusText).toBe('Off');
 
     act(() => result.current.toggleDevice('entry-sconces'));
-    expect(result.current.devices.find(d => d.id === 'entry-sconces')!.statusText).toBe('80%');
+    expect(result.current.devices.find((d) => d.id === 'entry-sconces')!.statusText).toBe('80%');
   });
 
   it('maps lock state to Locked/Unlocked text', () => {
     const { result } = renderHome();
 
     act(() => result.current.toggleDevice('entry-door'));
-    const door = result.current.devices.find(d => d.id === 'entry-door')!;
+    const door = result.current.devices.find((d) => d.id === 'entry-door')!;
     expect(door.isOn).toBe(false);
     expect(door.statusText).toBe('Unlocked');
     expect(door.value).toBe(0);
@@ -69,7 +67,7 @@ describe('updateDevice', () => {
     const { result } = renderHome();
 
     act(() => result.current.updateDevice('lr-ceiling-lights', { value: 0 }));
-    const light = result.current.devices.find(d => d.id === 'lr-ceiling-lights')!;
+    const light = result.current.devices.find((d) => d.id === 'lr-ceiling-lights')!;
     expect(light.isOn).toBe(false);
     expect(light.statusText).toBe('Off');
   });
@@ -78,7 +76,7 @@ describe('updateDevice', () => {
     const { result } = renderHome();
 
     act(() => result.current.updateDevice('lr-thermostat', { targetTemp: 74 }));
-    const thermostat = result.current.devices.find(d => d.id === 'lr-thermostat')!;
+    const thermostat = result.current.devices.find((d) => d.id === 'lr-thermostat')!;
     expect(thermostat.value).toBe(74);
     expect(thermostat.statusText).toContain('74°');
   });
@@ -90,18 +88,18 @@ describe('triggerScene', () => {
 
     act(() => result.current.triggerScene('goodnight'));
 
-    const lights = result.current.devices.filter(d => d.type === 'light');
-    lights.forEach(light => {
+    const lights = result.current.devices.filter((d) => d.type === 'light');
+    lights.forEach((light) => {
       expect(light.isOn, `${light.name} should be off`).toBe(false);
     });
-    const door = result.current.devices.find(d => d.id === 'entry-door')!;
+    const door = result.current.devices.find((d) => d.id === 'entry-door')!;
     expect(door.isOn).toBe(true);
     expect(door.statusText).toBe('Locked');
-    const shades = result.current.devices.filter(d => d.type === 'shade');
-    shades.forEach(shade => expect(shade.statusText).toBe('Closed'));
+    const shades = result.current.devices.filter((d) => d.type === 'shade');
+    shades.forEach((shade) => expect(shade.statusText).toBe('Closed'));
 
     // Scene marked active
-    expect(result.current.scenes.find(s => s.id === 'goodnight')!.isActive).toBe(true);
+    expect(result.current.scenes.find((s) => s.id === 'goodnight')!.isActive).toBe(true);
   });
 
   it('movie night dims overheads, sets cinema accent, and starts the TV', () => {
@@ -109,15 +107,15 @@ describe('triggerScene', () => {
 
     act(() => result.current.triggerScene('movie-night'));
 
-    const ceiling = result.current.devices.find(d => d.id === 'lr-ceiling-lights')!;
+    const ceiling = result.current.devices.find((d) => d.id === 'lr-ceiling-lights')!;
     expect(ceiling.isOn).toBe(false);
 
-    const accent = result.current.devices.find(d => d.id === 'lr-accent-lights')!;
+    const accent = result.current.devices.find((d) => d.id === 'lr-accent-lights')!;
     expect(accent.isOn).toBe(true);
     expect(accent.value).toBe(25);
     expect(accent.statusText).toContain('Cinema');
 
-    const tv = result.current.devices.find(d => d.id === 'lr-tv')!;
+    const tv = result.current.devices.find((d) => d.id === 'lr-tv')!;
     expect(tv.isOn).toBe(true);
     expect(tv.statusText).toContain('4K HDR');
   });
@@ -127,11 +125,11 @@ describe('triggerScene', () => {
 
     act(() => result.current.triggerScene('leave-home'));
 
-    const door = result.current.devices.find(d => d.id === 'entry-door')!;
+    const door = result.current.devices.find((d) => d.id === 'entry-door')!;
     expect(door.statusText).toBe('Locked');
     result.current.devices
-      .filter(d => d.type === 'light')
-      .forEach(light => expect(light.isOn, `${light.name} should be off`).toBe(false));
+      .filter((d) => d.type === 'light')
+      .forEach((light) => expect(light.isOn, `${light.name} should be off`).toBe(false));
   });
 });
 
@@ -139,7 +137,9 @@ describe('selectedDevice modal sync', () => {
   it('keeps the open modal in sync when updateDevice runs', () => {
     const { result } = renderHome();
 
-    act(() => result.current.setSelectedDevice(result.current.devices.find(d => d.id === 'lr-accent-lights')!));
+    act(() =>
+      result.current.setSelectedDevice(result.current.devices.find((d) => d.id === 'lr-accent-lights')!)
+    );
     act(() => result.current.updateDevice('lr-accent-lights', { value: 10 }));
 
     expect(result.current.selectedDevice?.value).toBe(10);
@@ -148,7 +148,9 @@ describe('selectedDevice modal sync', () => {
   it('keeps the open modal in sync when toggleDevice runs', () => {
     const { result } = renderHome();
 
-    act(() => result.current.setSelectedDevice(result.current.devices.find(d => d.id === 'entry-sconces')!));
+    act(() =>
+      result.current.setSelectedDevice(result.current.devices.find((d) => d.id === 'entry-sconces')!)
+    );
     act(() => result.current.toggleDevice('entry-sconces'));
 
     expect(result.current.selectedDevice?.isOn).toBe(false);
@@ -186,12 +188,12 @@ describe('automations', () => {
 
   it('toggles an automation enabled flag', () => {
     const { result } = renderHome();
-    const sentry = SEED_AUTOMATIONS.find(a => a.id === 'sentry')!;
+    const sentry = SEED_AUTOMATIONS.find((a) => a.id === 'sentry')!;
 
     expect(sentry.enabled).toBe(false);
     act(() => result.current.toggleAutomation('sentry'));
 
-    expect(result.current.automations.find(a => a.id === 'sentry')!.enabled).toBe(true);
+    expect(result.current.automations.find((a) => a.id === 'sentry')!.enabled).toBe(true);
   });
 });
 
@@ -203,7 +205,9 @@ describe('persistence', () => {
 
     const stored = JSON.parse(window.localStorage.getItem(PERSISTENCE_KEY)!);
     expect(stored.version).toBe(1);
-    const sconces = (stored.devices as Array<{ id: string; isOn: boolean }>).find(d => d.id === 'entry-sconces');
+    const sconces = (stored.devices as Array<{ id: string; isOn: boolean }>).find(
+      (d) => d.id === 'entry-sconces'
+    );
     expect(sconces?.isOn).toBe(false);
   });
 
@@ -213,7 +217,19 @@ describe('persistence', () => {
       JSON.stringify({
         version: 1,
         devices: [
-          { id: 'lone-bulb', name: 'Lone Bulb', room: 'Entry', category: 'lights', type: 'light', isOn: false, value: 0, unit: '%', color: '#fff', theme: 'amber', statusText: 'Off' }
+          {
+            id: 'lone-bulb',
+            name: 'Lone Bulb',
+            room: 'Entry',
+            category: 'lights',
+            type: 'light',
+            isOn: false,
+            value: 0,
+            unit: '%',
+            color: '#fff',
+            theme: 'amber',
+            statusText: 'Off'
+          }
         ],
         scenes: [],
         automations: []
@@ -241,14 +257,14 @@ describe('persistence', () => {
     act(() => result.current.toggleDevice('entry-sconces'));
     act(() => result.current.resetHome());
 
-    expect(result.current.devices.find(d => d.id === 'entry-sconces')!.isOn).toBe(true);
+    expect(result.current.devices.find((d) => d.id === 'entry-sconces')!.isOn).toBe(true);
     expect(result.current.automations).toHaveLength(4);
 
     // The reset state is immediately re-persisted with the seed values.
     const stored = JSON.parse(window.localStorage.getItem(PERSISTENCE_KEY)!) as {
       devices: Array<{ id: string; isOn: boolean }>;
     };
-    expect(stored.devices.find(d => d.id === 'entry-sconces')!.isOn).toBe(true);
+    expect(stored.devices.find((d) => d.id === 'entry-sconces')!.isOn).toBe(true);
   });
 });
 

@@ -31,7 +31,9 @@ export const QuickActions = ({ showReset = false }: QuickActionsProps) => {
       <button
         className="action-circle-btn"
         title="Add Accessory / Scene"
-        onClick={() => notify('Accessory discovery is simulated in this demo build — no real hardware is scanned.')}
+        onClick={() =>
+          notify('Accessory discovery is simulated in this demo build — no real hardware is scanned.')
+        }
       >
         <Plus size={16} />
       </button>

@@ -20,12 +20,13 @@ Unlike conventional smart home hubs that transmit private camera feeds, audio re
 
 ## 📸 Interface Showcase
 
-| Desktop Workspace | Tablet Split View | Mobile Chassis Frame |
-| :---: | :---: | :---: |
+|                      Desktop Workspace                      |              Tablet Split View              |                       Mobile Chassis Frame                       |
+| :---------------------------------------------------------: | :-----------------------------------------: | :--------------------------------------------------------------: |
 | Full-featured sidebar, multi-column dashboard & camera grid | Floating glass navigation & responsive grid | Sleek mobile frame with dynamic cut-out, swipe bar & bottom tabs |
 
 ### Key Aesthetic Highlights:
-- **Liquid Ambient Wallpapers**: Dynamic blurred gradient backdrops including *Warm Amber Sunset*, *Emerald Aurora Flow*, and *Midnight OLED Dark*.
+
+- **Liquid Ambient Wallpapers**: Dynamic blurred gradient backdrops including _Warm Amber Sunset_, _Emerald Aurora Flow_, and _Midnight OLED Dark_.
 - **Frosted Glassmorphism**: Tailored CSS tokens (`backdrop-filter: blur(32px)`, specular highlights, inset borders, and ambient light refraction).
 - **Iridescent Glowing Neural Orb**: Multilayer rotating gradient halo reflecting real-time local AI assistant activity.
 - **Micro-Animations & Visual Delight**: Spinning ceiling fan blades, glowing color-coordinated accessory states, and scene trigger confetti celebrations.
@@ -35,8 +36,9 @@ Unlike conventional smart home hubs that transmit private camera feeds, audio re
 ## 🚀 Key Features
 
 ### 1. 🎛️ Glassmorphic Tile Controls & Status Hierarchy
+
 - **Header Status Pills**: Real-time counts for `Climate 68° - 72°`, `Lights X On`, `Security Armed/Unlocked`, `Speakers 1 Playing`, `Water All Off`, and `Local AI 100% Private`.
-- **One-Tap Scenes**: Quick scene buttons (*Arrive Home*, *Wake Up*, *Leave Home*, *Movie Night*, *Goodnight*, *Focus Work*) that instantly synchronize multiple accessories.
+- **One-Tap Scenes**: Quick scene buttons (_Arrive Home_, _Wake Up_, _Leave Home_, _Movie Night_, _Goodnight_, _Focus Work_) that instantly synchronize multiple accessories.
 - **Interactive Accessory Tiles**: One-tap toggles with stateful glows (Amber for warm lights, Cyan for fans, Emerald for security locks, Purple for media).
 - **Fine-Grained Detail Sheets**:
   - Smooth vertical touch sliders for granular brightness (0–100%) and fan speeds.
@@ -45,6 +47,7 @@ Unlike conventional smart home hubs that transmit private camera feeds, audio re
   - Interactive deadbolt locks with secure lock/unlock confirmations.
 
 ### 2. 📹 Multi-Camera Live Grid & Local Vision AI
+
 - **High-Resolution Realistic Feeds**:
   - **Front Porch Doorbell**: Fisheye lens with AI package detection bounding box (`Package Delivered 99%`).
   - **Garage & Driveway**: Wide-angle overview with vehicle security monitoring (`SUV Secured 98%`).
@@ -53,18 +56,21 @@ Unlike conventional smart home hubs that transmit private camera feeds, audio re
 - **Camera Inspector Modal**: Equipped with **Two-Way Intercom (Push to Talk)**, **Emergency Siren**, **Instant Snapshot Capture**, and **Local AI Event Timeline**.
 
 ### 3. 🧠 Privacy-First Local AI Model Engine ("Voxelle Neural")
+
 - **3 Execution Providers**:
   1. **Built-in Local Neural Engine**: Instant sub-5ms semantic parsing with intent extraction and device action execution that runs completely offline with zero setup.
   2. **Ollama Local Bridge**: Real-time ping and model switcher for `http://localhost:11434` (supporting `llama3.2`, `mistral`, `phi3`, `gemma2`, `qwen2.5`).
   3. **LM Studio / LocalAI Connector**: Compatible with local OpenAI-compatible endpoints at `http://localhost:1234/v1`.
 - **Voice Dictation & Speech Synthesis**: Integrated with Web Speech API for hands-free voice commands and voice feedback.
-- **Direct Tool Calling**: Translates natural language into smart home state mutations with visual execution chips (e.g. *"Dim the living room lights to 25% and turn on fan"*).
+- **Direct Tool Calling**: Translates natural language into smart home state mutations with visual execution chips (e.g. _"Dim the living room lights to 25% and turn on fan"_).
 
 ### 4. ⚡ Natural Language Automations Synthesizer
+
 - **Smart Event Triggers**: Schedule or geo-fence rules (Sunset ambiance, geofence arrivals, night-time security sentry).
-- **AI Automation Generator**: Describe an automation in plain English (e.g., *"Turn on backyard lights and notify me if the pool gate opens after 9 PM"*), and the local engine synthesizes the rule automatically.
+- **AI Automation Generator**: Describe an automation in plain English (e.g., _"Turn on backyard lights and notify me if the pool gate opens after 9 PM"_), and the local engine synthesizes the rule automatically.
 
 ### 5. 📱 Multi-Device Chassis Switcher
+
 - Test and experience the app across three distinct device form factors via the top window toolbar:
   - **Desktop Mode**: Full window view with window controls, persistent translucent sidebar, and expanded grid.
   - **Tablet Mode**: Rounded tablet chassis with split-view layout and floating navigation.
@@ -120,11 +126,13 @@ voxelle-home/
 ## 🚦 Getting Started
 
 ### Prerequisites
+
 - [Node.js](https://nodejs.org/) (version 18.0.0 or higher)
 - [npm](https://www.npmjs.com/) (version 9.0.0 or higher)
-- *(Optional)* [Ollama](https://ollama.com/) or [LM Studio](https://lmstudio.ai/) for running external local LLMs.
+- _(Optional)_ [Ollama](https://ollama.com/) or [LM Studio](https://lmstudio.ai/) for running external local LLMs.
 
 ### 1. Clone & Install Dependencies
+
 ```bash
 git clone https://github.com/Sujaya-Nimneth/voxelle---Home.git
 cd "voxelle - Home"
@@ -132,20 +140,27 @@ npm install
 ```
 
 ### 2. Start Local Development Server
+
 ```bash
 npm run dev
 ```
+
 Open your browser and navigate to:
+
 ```
 http://localhost:5173/
 ```
 
 ### 3. Build for Production
+
 To generate an optimized production bundle:
+
 ```bash
 npm run build
 ```
+
 To preview the production build locally:
+
 ```bash
 npm run preview
 ```
@@ -157,6 +172,7 @@ npm run preview
 Voxelle Home includes a **built-in zero-configuration local engine** that works immediately without installing external software. If you would like to connect larger local LLMs:
 
 ### Using Ollama:
+
 1. Install Ollama from [ollama.com](https://ollama.com/).
 2. Pull your preferred model:
    ```bash
@@ -169,6 +185,7 @@ Voxelle Home includes a **built-in zero-configuration local engine** that works 
 4. In Voxelle Home, click the **Voxelle AI** glowing orb in the top bar, switch the provider tab to **Ollama Bridge (localhost:11434)**, and click **Check localhost:11434**.
 
 ### Using LM Studio:
+
 1. Open LM Studio and start the **Local Inference Server** on port `1234`.
 2. In Voxelle Home, select the **LM Studio Bridge** tab in the AI Assistant modal.
 
@@ -177,7 +194,7 @@ Voxelle Home includes a **built-in zero-configuration local engine** that works 
 ## 🔒 Privacy & Security
 
 - **Zero Cloud Outbound**: Smart home states, accessory commands, camera snapshots, and voice recognition are kept entirely on your local machine.
-- **Local Vision Analysis**: AI detection tags (*Package Delivered*, *Vehicle Secured*) simulate edge AI running on local smart cameras.
+- **Local Vision Analysis**: AI detection tags (_Package Delivered_, _Vehicle Secured_) simulate edge AI running on local smart cameras.
 - **No Tracking or Analytics**: No external telemetry scripts or third-party ad pixels.
 
 ---

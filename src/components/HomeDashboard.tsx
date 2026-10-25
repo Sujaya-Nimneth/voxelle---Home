@@ -8,14 +8,10 @@ import { ChevronDown } from 'lucide-react';
 import { PHYSICAL_ROOMS } from '../data/rooms';
 
 export const HomeDashboard = () => {
-  const {
-    devices,
-    activeCategory,
-    activeRoom
-  } = useHome();
+  const { devices, activeCategory, activeRoom } = useHome();
 
   // Filter devices by category and room
-  const filteredDevices = devices.filter(dev => {
+  const filteredDevices = devices.filter((dev) => {
     if (activeCategory && dev.category !== activeCategory) return false;
     if (activeRoom !== 'All' && dev.room !== activeRoom) return false;
     return true;
@@ -30,9 +26,7 @@ export const HomeDashboard = () => {
       <div className="dashboard-top-bar">
         <div className="dashboard-title-row">
           <div className="home-name-dropdown">
-            <span className="home-name-text">
-              {activeRoom !== 'All' ? activeRoom : 'My Home'}
-            </span>
+            <span className="home-name-text">{activeRoom !== 'All' ? activeRoom : 'My Home'}</span>
             <ChevronDown size={22} color="rgba(255,255,255,0.7)" />
           </div>
 
@@ -44,36 +38,30 @@ export const HomeDashboard = () => {
       </div>
 
       {/* Camera Grid (Only show when not filtered to specific narrow category, or when category is security) */}
-      {(!activeCategory || activeCategory === 'security') && activeRoom === 'All' && (
-        <CameraGrid />
-      )}
+      {(!activeCategory || activeCategory === 'security') && activeRoom === 'All' && <CameraGrid />}
 
       {/* Scenes Row */}
-      {!activeCategory && activeRoom === 'All' && (
-        <ScenesBar />
-      )}
+      {!activeCategory && activeRoom === 'All' && <ScenesBar />}
 
       {/* Room Device Grids */}
-      {roomsList.map(room => {
-        const roomDevices = filteredDevices.filter(d => d.room === room);
+      {roomsList.map((room) => {
+        const roomDevices = filteredDevices.filter((d) => d.room === room);
         if (roomDevices.length === 0) return null;
 
         // Find room climate if any
-        const roomThermostat = devices.find(d => d.room === room && d.type === 'thermostat');
+        const roomThermostat = devices.find((d) => d.room === room && d.type === 'thermostat');
 
         return (
           <section key={room} className="room-section">
             <div className="room-header">
               <h2 className="room-title">{room}</h2>
               {roomThermostat && (
-                <span className="room-temp-pill">
-                  {roomThermostat.targetTemp ?? roomThermostat.value}°
-                </span>
+                <span className="room-temp-pill">{roomThermostat.targetTemp ?? roomThermostat.value}°</span>
               )}
             </div>
 
             <div className="accessory-grid">
-              {roomDevices.map(device => (
+              {roomDevices.map((device) => (
                 <AccessoryTile key={device.id} device={device} />
               ))}
             </div>

@@ -5,23 +5,21 @@ import { AUTOMATION_ICONS, GENERATED_AUTOMATION_ICON } from '../data/automations
 import type { Automation } from '../types';
 
 export const AutomationsView = () => {
-  const {
-    automations,
-    addAutomation,
-    toggleAutomation,
-    setIsAiModalOpen
-  } = useHome();
+  const { automations, addAutomation, toggleAutomation, setIsAiModalOpen } = useHome();
 
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const generateTimer = useRef<number | null>(null);
 
   // Clear any in-flight synthesis timer when navigating away.
-  useEffect(() => () => {
-    if (generateTimer.current !== null) {
-      window.clearTimeout(generateTimer.current);
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      if (generateTimer.current !== null) {
+        window.clearTimeout(generateTimer.current);
+      }
+    },
+    []
+  );
 
   const handleCreateWithAi = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +73,17 @@ export const AutomationsView = () => {
           backdropFilter: 'blur(20px)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, color: '#fbbf24', fontWeight: 700, fontSize: 14 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: 8,
+            color: '#fbbf24',
+            fontWeight: 700,
+            fontSize: 14
+          }}
+        >
           <Sparkles size={16} />
           <span>Natural Language Automation Synthesizer</span>
         </div>
@@ -85,7 +93,7 @@ export const AutomationsView = () => {
             className="ai-input-field"
             placeholder="e.g. Turn on backyard lights and notify me if the pool gate opens after 9 PM..."
             value={aiPrompt}
-            onChange={e => setAiPrompt(e.target.value)}
+            onChange={(e) => setAiPrompt(e.target.value)}
           />
           <button
             type="submit"
@@ -100,7 +108,7 @@ export const AutomationsView = () => {
 
       {/* Automations List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {automations.map(auto => {
+        {automations.map((auto) => {
           const Icon = AUTOMATION_ICONS[auto.icon] ?? Sparkles;
           return (
             <div

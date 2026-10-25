@@ -70,9 +70,7 @@ describe('LocalAiModal', () => {
     const errorBubble = await screen.findByText(/Ollama Bridge failed/i);
     expect(errorBubble).toBeInTheDocument();
     expect(screen.queryByText(/Home state verified/i)).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Run with built-in engine/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Run with built-in engine/i })).toBeInTheDocument();
   });
 
   it('falls back to the built-in engine from an error bubble', async () => {

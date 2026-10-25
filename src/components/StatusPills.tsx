@@ -94,7 +94,9 @@ export const StatusPills = () => {
           <Cpu size={15} />
         </span>
         <span className="status-pill-title">Local AI</span>
-        <span className="status-pill-sub" style={{ color: '#34d399', fontWeight: 600 }}>100% Private</span>
+        <span className="status-pill-sub" style={{ color: '#34d399', fontWeight: 600 }}>
+          100% Private
+        </span>
       </button>
     </div>
   );

@@ -2,23 +2,9 @@
 // Devices
 // ---------------------------------------------------------------------------
 
-export type DeviceCategory =
-  | 'climate'
-  | 'lights'
-  | 'security'
-  | 'speakers'
-  | 'water'
-  | 'fans'
-  | 'shades';
+export type DeviceCategory = 'climate' | 'lights' | 'security' | 'speakers' | 'water' | 'fans' | 'shades';
 
-export type DeviceType =
-  | 'light'
-  | 'lock'
-  | 'fan'
-  | 'thermostat'
-  | 'speaker'
-  | 'shade'
-  | 'water';
+export type DeviceType = 'light' | 'lock' | 'fan' | 'thermostat' | 'speaker' | 'shade' | 'water';
 
 export type DeviceTheme = 'amber' | 'emerald' | 'cyan' | 'purple';
 

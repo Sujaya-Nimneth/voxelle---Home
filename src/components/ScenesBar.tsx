@@ -24,7 +24,7 @@ export const ScenesBar = () => {
       </div>
 
       <div className="scenes-scroll-row">
-        {scenes.map(scene => {
+        {scenes.map((scene) => {
           const IconComponent = SCENE_ICONS[scene.icon] ?? Sparkles;
           return (
             <button

@@ -3,12 +3,7 @@ import { Monitor, Tablet, Smartphone } from 'lucide-react';
 import { QuickActions } from './QuickActions';
 
 export const TopHeader = () => {
-  const {
-    deviceFrame,
-    setDeviceFrame,
-    wallpaper,
-    setWallpaper
-  } = useHome();
+  const { deviceFrame, setDeviceFrame, wallpaper, setWallpaper } = useHome();
 
   return (
     <header className="macos-window-header">
@@ -60,7 +55,15 @@ export const TopHeader = () => {
             onClick={() => setWallpaper('amber')}
             title="Amber Sunset Wallpaper"
           >
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }} />
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: '#f59e0b',
+                display: 'inline-block'
+              }}
+            />
             <span>Amber</span>
           </button>
           <button
@@ -68,7 +71,15 @@ export const TopHeader = () => {
             onClick={() => setWallpaper('aurora')}
             title="Sonoma Aurora Wallpaper"
           >
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: '#10b981',
+                display: 'inline-block'
+              }}
+            />
             <span>Aurora</span>
           </button>
           <button
@@ -76,7 +87,15 @@ export const TopHeader = () => {
             onClick={() => setWallpaper('midnight')}
             title="Midnight Dark Wallpaper"
           >
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#6366f1', display: 'inline-block' }} />
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: '#6366f1',
+                display: 'inline-block'
+              }}
+            />
             <span>Midnight</span>
           </button>
         </div>

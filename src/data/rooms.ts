@@ -7,4 +7,4 @@ export const ROOMS = ['All', 'Entry', 'Living Room', 'Kitchen', 'Bedroom', 'Back
 export type RoomFilter = (typeof ROOMS)[number];
 
 /** Rooms excluding the 'All' sentinel — used for dashboard section grouping. */
-export const PHYSICAL_ROOMS: readonly string[] = ROOMS.filter(room => room !== 'All');
+export const PHYSICAL_ROOMS: readonly string[] = ROOMS.filter((room) => room !== 'All');

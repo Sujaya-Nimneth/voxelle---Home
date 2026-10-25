@@ -50,7 +50,9 @@
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), var(--glass-specular);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.16),
+    var(--glass-specular);
   padding: 12px;
   display: flex;
   flex-direction: column;

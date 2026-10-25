@@ -50,7 +50,7 @@ describe('OllamaProvider', () => {
   it('reports an honest offline error when the server is down', async () => {
     vi.mocked(fetch).mockRejectedValueOnce(new TypeError('fetch failed'));
 
-    const health = await ollamaProvider.checkHealth().catch(error => {
+    const health = await ollamaProvider.checkHealth().catch((error) => {
       // checkHealth lets ProviderUnavailableError propagate for the UI to render
       expect(error).toBeInstanceOf(ProviderUnavailableError);
       return null;
@@ -161,7 +161,12 @@ describe('result parsing helpers', () => {
       JSON.stringify({
         reply: 'ok',
         actions: [
-          { type: 'device_update', deviceId: 'lr-thermostat', updates: { mode: 'Party' }, description: 'bad mode' },
+          {
+            type: 'device_update',
+            deviceId: 'lr-thermostat',
+            updates: { mode: 'Party' },
+            description: 'bad mode'
+          },
           { type: 'device_update', deviceId: 'br-ac', updates: { mode: 'Eco' }, description: 'good mode' }
         ]
       }),

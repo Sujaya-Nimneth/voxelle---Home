@@ -18,7 +18,7 @@ const CameraCard = memo(function CameraCard({
       aria-label={`Open ${camera.name} camera feed, ${camera.location}. Simulated demo feed.`}
       className="camera-card"
       onClick={() => onOpen(camera)}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           onOpen(camera);
@@ -57,7 +57,7 @@ const CameraCard = memo(function CameraCard({
           className="action-circle-btn"
           style={{ width: 28, height: 28, background: 'rgba(0,0,0,0.4)' }}
           aria-label={`Open ${camera.name}`}
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             onOpen(camera);
           }}
@@ -82,7 +82,7 @@ export const CameraGrid = () => {
       </div>
 
       <div className="camera-grid">
-        {cameras.map(cam => (
+        {cameras.map((cam) => (
           <CameraCard key={cam.id} camera={cam} onOpen={setSelectedCamera} />
         ))}
       </div>

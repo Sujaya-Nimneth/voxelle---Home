@@ -31,7 +31,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const timers = useRef<Map<number, number>>(new Map());
 
   const dismiss = useCallback((id: number) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
     const timer = timers.current.get(id);
     if (timer !== undefined) {
       window.clearTimeout(timer);
@@ -39,11 +39,17 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const notify = useCallback((message: string) => {
-    const id = ++nextId.current;
-    setToasts(prev => [...prev.slice(-(TOAST_LIMIT - 1)), { id, message }]);
-    timers.current.set(id, window.setTimeout(() => dismiss(id), TOAST_TTL_MS));
-  }, [dismiss]);
+  const notify = useCallback(
+    (message: string) => {
+      const id = ++nextId.current;
+      setToasts((prev) => [...prev.slice(-(TOAST_LIMIT - 1)), { id, message }]);
+      timers.current.set(
+        id,
+        window.setTimeout(() => dismiss(id), TOAST_TTL_MS)
+      );
+    },
+    [dismiss]
+  );
 
   const value = useMemo(() => ({ notify }), [notify]);
 
@@ -51,13 +57,8 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     <ToastContext.Provider value={value}>
       {children}
       <div className="toast-stack" role="status" aria-live="polite">
-        {toasts.map(toast => (
-          <button
-            key={toast.id}
-            type="button"
-            className="toast-item"
-            onClick={() => dismiss(toast.id)}
-          >
+        {toasts.map((toast) => (
+          <button key={toast.id} type="button" className="toast-item" onClick={() => dismiss(toast.id)}>
             <CheckCircle2 size={14} />
             <span>{toast.message}</span>
           </button>

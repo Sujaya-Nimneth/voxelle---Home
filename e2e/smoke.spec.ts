@@ -42,7 +42,10 @@ test('device detail modal opens and closes with Escape', async ({ page }) => {
 });
 
 test('AI assistant executes a built-in rule engine command', async ({ page }) => {
-  await page.getByRole('button', { name: /Voxelle AI/i }).first().click();
+  await page
+    .getByRole('button', { name: /Voxelle AI/i })
+    .first()
+    .click();
 
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();

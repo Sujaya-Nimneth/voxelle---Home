@@ -57,7 +57,7 @@ const IPhoneTabBar = () => {
 
   return (
     <nav style={TAB_BAR_STYLE} aria-label="Primary">
-      {IPHONE_TABS.map(tab => {
+      {IPHONE_TABS.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeNav === tab.id;
         return (
@@ -72,10 +72,7 @@ const IPhoneTabBar = () => {
         );
       })}
 
-      <button
-        style={{ ...TAB_BUTTON_STYLE, color: '#fbbf24' }}
-        onClick={() => setIsAiModalOpen(true)}
-      >
+      <button style={{ ...TAB_BUTTON_STYLE, color: '#fbbf24' }} onClick={() => setIsAiModalOpen(true)}>
         <Sparkles size={19} />
         <span>Voxelle AI</span>
       </button>
@@ -112,9 +109,7 @@ const AppContent = () => {
           <TopHeader />
           <div className="voxelle-main-layout">
             <Sidebar />
-            <main style={{ ...MAIN_STYLE, overflow: 'hidden' }}>
-              {renderActiveView()}
-            </main>
+            <main style={{ ...MAIN_STYLE, overflow: 'hidden' }}>{renderActiveView()}</main>
           </div>
         </div>
 
@@ -136,9 +131,7 @@ const AppContent = () => {
         <div className="device-frame-ipad">
           <div className="voxelle-main-layout">
             <Sidebar />
-            <main style={{ ...MAIN_STYLE, overflow: 'hidden' }}>
-              {renderActiveView()}
-            </main>
+            <main style={{ ...MAIN_STYLE, overflow: 'hidden' }}>{renderActiveView()}</main>
           </div>
         </div>
 
@@ -166,9 +159,7 @@ const AppContent = () => {
 
           {/* iPhone Main Scrollable Content */}
           <div className="voxelle-main-layout">
-            <main style={{ ...MAIN_STYLE, overflowY: 'auto' }}>
-              {renderActiveView()}
-            </main>
+            <main style={{ ...MAIN_STYLE, overflowY: 'auto' }}>{renderActiveView()}</main>
           </div>
 
           <IPhoneTabBar />

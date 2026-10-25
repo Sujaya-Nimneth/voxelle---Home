@@ -29,7 +29,9 @@
   gap: 12px;
   cursor: pointer;
   transition: all 0.2s var(--transition-snappy);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15), var(--glass-specular);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.15),
+    var(--glass-specular);
 }
 
 .scene-tile:hover {

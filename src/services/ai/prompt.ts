@@ -8,16 +8,17 @@ const SCENE_IDS = ['arrive-home', 'wake-up', 'leave-home', 'movie-night', 'goodn
  */
 export function buildCommandSystemPrompt(devices: Device[], cameras: Camera[]): string {
   const deviceLines = devices
-    .map(d => {
-      const state = d.type === 'thermostat'
-        ? `target ${d.targetTemp ?? d.value}°F, currently ${d.currentTemp ?? '?'}°F, mode ${d.mode ?? '—'}`
-        : `${d.isOn ? 'on' : 'off'} at ${d.value}${d.unit}`;
+    .map((d) => {
+      const state =
+        d.type === 'thermostat'
+          ? `target ${d.targetTemp ?? d.value}°F, currently ${d.currentTemp ?? '?'}°F, mode ${d.mode ?? '—'}`
+          : `${d.isOn ? 'on' : 'off'} at ${d.value}${d.unit}`;
       return `- ${d.id} | ${d.name} | ${d.room} | ${d.category}/${d.type} | ${state}`;
     })
     .join('\n');
 
   const cameraLines = cameras
-    .map(c => `- ${c.id} | ${c.name} | ${c.location} | last detection: ${c.aiTag}`)
+    .map((c) => `- ${c.id} | ${c.name} | ${c.location} | last detection: ${c.aiTag}`)
     .join('\n');
 
   return [

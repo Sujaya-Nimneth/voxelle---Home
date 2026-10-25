@@ -40,7 +40,9 @@ export const CameraDetailModal = () => {
         <div className="ai-modal-header">
           <div className="ai-modal-header-left">
             <div>
-              <div className="ai-modal-header-title" id="camera-detail-title">{selectedCamera.name}</div>
+              <div className="ai-modal-header-title" id="camera-detail-title">
+                {selectedCamera.name}
+              </div>
               <div className="ai-modal-header-sub">
                 {selectedCamera.location} • demo feed • simulated detection overlay
               </div>
@@ -220,20 +222,53 @@ export const CameraDetailModal = () => {
             </div>
 
             {/* Neural Vision Status */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#34d399', fontWeight: 600 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 12,
+                color: '#34d399',
+                fontWeight: 600
+              }}
+            >
               <Sparkles size={14} />
               <span>Voxelle Vision Neural Engine Active</span>
             </div>
           </div>
 
           {/* Recent Events Log */}
-          <div style={{ background: 'rgba(0,0,0,0.25)', padding: 12, borderRadius: 14, border: '1px solid rgba(255,255,255,0.08)' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>
+          <div
+            style={{
+              background: 'rgba(0,0,0,0.25)',
+              padding: 12,
+              borderRadius: 14,
+              border: '1px solid rgba(255,255,255,0.08)'
+            }}
+          >
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.5)',
+                marginBottom: 6
+              }}
+            >
               Recent Neural Timeline
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {selectedCamera.recentEvents.map((evt, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: 'rgba(255,255,255,0.85)' }}>
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontSize: 12.5,
+                    color: 'rgba(255,255,255,0.85)'
+                  }}
+                >
                   <Activity size={12} color="#f59e0b" />
                   <span>{evt}</span>
                 </div>

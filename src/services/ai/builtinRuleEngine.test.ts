@@ -9,7 +9,7 @@ const CAMERAS = SEED_CAMERAS;
 
 describe('AI provider registry', () => {
   it('exposes the three documented providers with unique ids', () => {
-    expect(AI_PROVIDER_INFO.map(p => p.id)).toEqual(['voxelle-builtin', 'ollama', 'lmstudio']);
+    expect(AI_PROVIDER_INFO.map((p) => p.id)).toEqual(['voxelle-builtin', 'ollama', 'lmstudio']);
     expect(Object.keys(AI_PROVIDERS)).toEqual(['voxelle-builtin', 'ollama', 'lmstudio']);
   });
 
@@ -22,7 +22,11 @@ describe('AI provider registry', () => {
 
 describe('BuiltinRuleEngine.processCommand', () => {
   it('matches the movie night scene intent and returns a scene trigger', async () => {
-    const result = await builtinRuleEngine.processCommand('Prepare the house for movie night', DEVICES, CAMERAS);
+    const result = await builtinRuleEngine.processCommand(
+      'Prepare the house for movie night',
+      DEVICES,
+      CAMERAS
+    );
 
     expect(result.sceneTrigger).toBe('movie-night');
     expect(result.actions).toHaveLength(1);
@@ -31,22 +35,26 @@ describe('BuiltinRuleEngine.processCommand', () => {
   });
 
   it('dims living room lights to an explicit percentage', async () => {
-    const result = await builtinRuleEngine.processCommand('Dim the living room lights to 25%', DEVICES, CAMERAS);
+    const result = await builtinRuleEngine.processCommand(
+      'Dim the living room lights to 25%',
+      DEVICES,
+      CAMERAS
+    );
 
     expect(result.actions.length).toBeGreaterThan(0);
-    const action = result.actions.find(a => a.deviceId === 'lr-ceiling-lights');
+    const action = result.actions.find((a) => a.deviceId === 'lr-ceiling-lights');
     expect(action?.type).toBe('device_update');
     expect(action?.updates?.value).toBe(25);
     expect(action?.updates?.isOn).toBe(true);
     // Kitchen light must not be touched when a room is targeted
-    expect(result.actions.find(a => a.deviceId === 'kitchen-island')).toBeUndefined();
+    expect(result.actions.find((a) => a.deviceId === 'kitchen-island')).toBeUndefined();
   });
 
   it('turns off all lights when no room is specified', async () => {
     const result = await builtinRuleEngine.processCommand('turn off the lights', DEVICES, CAMERAS);
 
     expect(result.actions).toHaveLength(9); // nine lights in the seed home
-    result.actions.forEach(action => {
+    result.actions.forEach((action) => {
       expect(action.updates?.isOn).toBe(false);
       expect(action.updates?.value).toBe(0);
     });
@@ -62,16 +70,24 @@ describe('BuiltinRuleEngine.processCommand', () => {
   });
 
   it('extracts the target temperature and reports the real current reading', async () => {
-    const result = await builtinRuleEngine.processCommand('Adjust the thermostat to 68 degrees', DEVICES, CAMERAS);
+    const result = await builtinRuleEngine.processCommand(
+      'Adjust the thermostat to 68 degrees',
+      DEVICES,
+      CAMERAS
+    );
 
-    const action = result.actions.find(a => a.deviceId === 'lr-thermostat');
+    const action = result.actions.find((a) => a.deviceId === 'lr-thermostat');
     expect(action?.updates?.targetTemp).toBe(68);
     // lr-thermostat seeds currentTemp 69 — the reply must use it, not a fabricated number
     expect(result.reply).toContain('currently 69°F');
   });
 
   it('routes camera queries to the porch camera and uses seed detection data', async () => {
-    const result = await builtinRuleEngine.processCommand('What happened at the front doorbell camera?', DEVICES, CAMERAS);
+    const result = await builtinRuleEngine.processCommand(
+      'What happened at the front doorbell camera?',
+      DEVICES,
+      CAMERAS
+    );
 
     expect(result.cameraCheck).toBe('porch');
     expect(result.actions[0]?.type).toBe('camera_inspect');

@@ -4,13 +4,13 @@ import { X, Power, Minus, Plus, Lock, Unlock, Flame, Snowflake } from 'lucide-re
 import type { ThermostatMode } from '../types';
 
 const COLOR_SWATCHES = [
-  '#fbbf24', // Warm Amber 2700K
-  '#f59e0b', // Candlelight 2200K
-  '#ffffff', // Daylight 5000K
-  '#a855f7', // Sunset Purple
-  '#3b82f6', // Ocean Blue
-  '#10b981', // Emerald Relax
-  '#f43f5e'  // Ruby Night
+  { hex: '#fbbf24', name: 'Warm Amber 2700K' },
+  { hex: '#f59e0b', name: 'Candlelight 2200K' },
+  { hex: '#ffffff', name: 'Daylight 5000K' },
+  { hex: '#a855f7', name: 'Sunset Purple' },
+  { hex: '#3b82f6', name: 'Ocean Blue' },
+  { hex: '#10b981', name: 'Emerald Relax' },
+  { hex: '#f43f5e', name: 'Ruby Night' }
 ];
 
 const THERMOSTAT_MODES: ThermostatMode[] = ['Cool', 'Heat', 'Auto', 'Eco'];
@@ -50,7 +50,9 @@ export const DeviceDetailModal = () => {
         {/* Header */}
         <div className="detail-modal-header">
           <div>
-            <div className="detail-modal-title" id="device-detail-title">{selectedDevice.name}</div>
+            <div className="detail-modal-title" id="device-detail-title">
+              {selectedDevice.name}
+            </div>
             <div className="detail-modal-subtitle">
               {selectedDevice.room} • {selectedDevice.category.toUpperCase()}
             </div>
@@ -83,7 +85,7 @@ export const DeviceDetailModal = () => {
 
             {/* Mode Switcher */}
             <div className="viewport-switchers" style={{ marginTop: 8 }}>
-              {THERMOSTAT_MODES.map(mode => (
+              {THERMOSTAT_MODES.map((mode) => (
                 <button
                   key={mode}
                   className={`viewport-btn ${selectedDevice.mode === mode ? 'active' : ''}`}
@@ -124,16 +126,20 @@ export const DeviceDetailModal = () => {
 
             {/* Color swatches */}
             <div style={{ marginTop: 8, width: '100%' }}>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 8, textAlign: 'center' }}>
+              <div
+                style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 8, textAlign: 'center' }}
+              >
                 Light Atmosphere & Spectrum
               </div>
               <div className="color-swatches-row">
-                {COLOR_SWATCHES.map(color => (
+                {COLOR_SWATCHES.map((swatch) => (
                   <button
-                    key={color}
-                    className={`color-swatch-dot ${selectedDevice.color === color ? 'active' : ''}`}
-                    style={{ background: color }}
-                    onClick={() => handleColorChange(color)}
+                    key={swatch.hex}
+                    className={`color-swatch-dot ${selectedDevice.color === swatch.hex ? 'active' : ''}`}
+                    style={{ background: swatch.hex }}
+                    aria-label={`Set light color to ${swatch.name}`}
+                    aria-pressed={selectedDevice.color === swatch.hex}
+                    onClick={() => handleColorChange(swatch.hex)}
                   />
                 ))}
               </div>
@@ -148,12 +154,21 @@ export const DeviceDetailModal = () => {
               {selectedDevice.isOn ? `${selectedDevice.value}% Speed` : 'Off'}
             </div>
 
-            <div className="viewport-switchers" style={{ width: '100%', justifyContent: 'space-around', padding: '6px' }}>
-              {[0, 25, 50, 75, 100].map(speed => (
+            <div
+              className="viewport-switchers"
+              style={{ width: '100%', justifyContent: 'space-around', padding: '6px' }}
+            >
+              {[0, 25, 50, 75, 100].map((speed) => (
                 <button
                   key={speed}
                   className={`viewport-btn ${selectedDevice.isOn && selectedDevice.value === speed ? 'active' : ''}`}
-                  onClick={() => updateDevice(selectedDevice.id, { isOn: speed > 0, value: speed, statusText: speed > 0 ? `${speed}%` : 'Off' })}
+                  onClick={() =>
+                    updateDevice(selectedDevice.id, {
+                      isOn: speed > 0,
+                      value: speed,
+                      statusText: speed > 0 ? `${speed}%` : 'Off'
+                    })
+                  }
                 >
                   <span>{speed === 0 ? 'Off' : `${speed}%`}</span>
                 </button>
@@ -164,7 +179,15 @@ export const DeviceDetailModal = () => {
 
         {/* 4. DOOR LOCK CONTROLS */}
         {selectedDevice.type === 'lock' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '20px 0' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 16,
+              padding: '20px 0'
+            }}
+          >
             <div
               style={{
                 width: 80,
@@ -198,7 +221,15 @@ export const DeviceDetailModal = () => {
         )}
 
         {/* Power Toggle Button at footer */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            paddingTop: 16,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Accessory Power</span>
           <button
             className={`action-circle-btn ${selectedDevice.isOn ? 'active' : ''}`}

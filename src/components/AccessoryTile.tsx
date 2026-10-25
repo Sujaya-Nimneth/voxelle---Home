@@ -75,9 +75,7 @@ export const AccessoryTile = memo(function AccessoryTile({ device }: { device: D
     >
       {/* Top row: Icon and Detail Trigger */}
       <div className="accessory-top-row">
-        <div className="accessory-icon-circle">
-          {getIcon()}
-        </div>
+        <div className="accessory-icon-circle">{getIcon()}</div>
         <button
           className="accessory-more-dots"
           onClick={handleDetailClick}

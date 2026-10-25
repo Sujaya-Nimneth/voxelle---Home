@@ -46,12 +46,12 @@ export const Sidebar = () => {
   } = useHome();
 
   const getCategoryCount = (catId: DeviceCategory) => {
-    return devices.filter(d => d.category === catId).length;
+    return devices.filter((d) => d.category === catId).length;
   };
 
   const getRoomCount = (roomName: string) => {
     if (roomName === 'All') return devices.length;
-    return devices.filter(d => d.room === roomName).length;
+    return devices.filter((d) => d.room === roomName).length;
   };
 
   return (
@@ -110,7 +110,7 @@ export const Sidebar = () => {
       {/* Categories */}
       <div className="sidebar-section">
         <div className="sidebar-section-title">Categories</div>
-        {CATEGORIES.map(cat => {
+        {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           const isCatActive = activeCategory === cat.id;
           return (
@@ -137,7 +137,7 @@ export const Sidebar = () => {
       {/* Rooms */}
       <div className="sidebar-section">
         <div className="sidebar-section-title">Rooms</div>
-        {ROOMS.map(room => {
+        {ROOMS.map((room) => {
           const isRoomActive = activeRoom === room && !activeCategory;
           return (
             <button
@@ -175,10 +175,7 @@ export const Sidebar = () => {
         <div className="ai-card-desc">
           Zero data leaves your local network. Offline semantic home automation active.
         </div>
-        <button
-          className="ai-card-button"
-          onClick={() => setIsAiModalOpen(true)}
-        >
+        <button className="ai-card-button" onClick={() => setIsAiModalOpen(true)}>
           <Sparkles size={13} color="#f59e0b" />
           <span>Launch AI Assistant</span>
           <ArrowRight size={12} />

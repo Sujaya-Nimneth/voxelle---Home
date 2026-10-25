@@ -17,8 +17,12 @@
 }
 
 @keyframes modal-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .ai-modal-container {
@@ -30,7 +34,9 @@
   -webkit-backdrop-filter: blur(40px);
   border-radius: var(--radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 32px 80px -10px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 32px 80px -10px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -299,7 +305,9 @@
   -webkit-backdrop-filter: blur(40px);
   border-radius: var(--radius-xl);
   border: 1px solid var(--glass-border-light);
-  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.65), var(--glass-specular);
+  box-shadow:
+    0 32px 70px rgba(0, 0, 0, 0.65),
+    var(--glass-specular);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -413,7 +421,9 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(20, 21, 26, 0.8) 70%);
   border: 8px solid rgba(245, 158, 11, 0.4);
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.25), inset 0 0 20px rgba(245, 158, 11, 0.15);
+  box-shadow:
+    0 0 30px rgba(245, 158, 11, 0.25),
+    inset 0 0 20px rgba(245, 158, 11, 0.15);
   display: flex;
   flex-direction: column;
   align-items: center;

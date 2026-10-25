@@ -18,11 +18,13 @@
 }
 
 .wallpaper-amber {
-  background-image: linear-gradient(rgba(15, 12, 10, 0.32), rgba(15, 12, 10, 0.48)), url('/assets/wallpaper_amber.webp');
+  background-image:
+    linear-gradient(rgba(15, 12, 10, 0.32), rgba(15, 12, 10, 0.48)), url('/assets/wallpaper_amber.webp');
 }
 
 .wallpaper-aurora {
-  background-image: linear-gradient(rgba(10, 18, 14, 0.35), rgba(10, 18, 14, 0.55)), url('/assets/wallpaper_aurora.webp');
+  background-image:
+    linear-gradient(rgba(10, 18, 14, 0.35), rgba(10, 18, 14, 0.55)), url('/assets/wallpaper_aurora.webp');
 }
 
 .wallpaper-midnight {
@@ -34,8 +36,9 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 80% 10%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
-              radial-gradient(circle at 10% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+  background:
+    radial-gradient(circle at 80% 10%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 10% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
   z-index: 1;
 }
 
@@ -81,9 +84,15 @@
   border-radius: 50%;
   display: inline-block;
 }
-.traffic-close { background: #ff5f56; }
-.traffic-min { background: #ffbd2e; }
-.traffic-max { background: #27c93f; }
+.traffic-close {
+  background: #ff5f56;
+}
+.traffic-min {
+  background: #ffbd2e;
+}
+.traffic-max {
+  background: #27c93f;
+}
 
 .macos-app-title {
   display: flex;
@@ -151,7 +160,9 @@
   -webkit-backdrop-filter: blur(36px);
   border-radius: 36px;
   border: 12px solid #1c1d24;
-  box-shadow: 0 28px 70px -12px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 28px 70px -12px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -178,7 +189,9 @@
   -webkit-backdrop-filter: blur(40px);
   border-radius: 54px;
   border: 12px solid #1e1f26;
-  box-shadow: 0 32px 80px -10px rgba(0, 0, 0, 0.75), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 32px 80px -10px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -200,7 +213,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
-  transition: width 0.3s var(--transition-spring), height 0.3s var(--transition-spring);
+  transition:
+    width 0.3s var(--transition-spring),
+    height 0.3s var(--transition-spring);
 }
 
 .dynamic-island-camera {

@@ -28,11 +28,13 @@ export class OllamaProvider {
 
   async checkHealth(): Promise<ProviderHealth> {
     const started = performance.now();
-    const data = await fetchJsonWithTimeout<OllamaTagsResponse>(`${OLLAMA_URL}/api/tags`, this.id, { method: 'GET' });
+    const data = await fetchJsonWithTimeout<OllamaTagsResponse>(`${OLLAMA_URL}/api/tags`, this.id, {
+      method: 'GET'
+    });
     const latencyMs = Math.round(performance.now() - started);
     return {
       online: true,
-      models: (data.models ?? []).map(m => m.name),
+      models: (data.models ?? []).map((m) => m.name),
       latencyMs,
       error: null
     };

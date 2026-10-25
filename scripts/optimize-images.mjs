@@ -16,7 +16,7 @@ const ASSETS_DIR = path.resolve(process.cwd(), 'public/assets');
 const MAX_WIDTH = 1600;
 const WEBP_QUALITY = 72;
 
-const exists = async file => {
+const exists = async (file) => {
   try {
     await access(file, constants.F_OK);
     return true;
@@ -27,7 +27,7 @@ const exists = async file => {
 
 const run = async () => {
   const entries = await readdir(ASSETS_DIR);
-  const sources = entries.filter(file => /\.(jpe?g|png)$/i.test(file));
+  const sources = entries.filter((file) => /\.(jpe?g|png)$/i.test(file));
 
   if (sources.length === 0) {
     console.log('No JPG/PNG sources found in public/assets — nothing to do.');
@@ -64,8 +64,8 @@ const run = async () => {
     converted += 1;
     console.log(
       `✓ ${file} -> ${path.basename(targetPath)} ` +
-      `${(before / 1024).toFixed(0)} kB -> ${(after / 1024).toFixed(0)} kB ` +
-      `(-${(100 - (after / before) * 100).toFixed(0)}%)`
+        `${(before / 1024).toFixed(0)} kB -> ${(after / 1024).toFixed(0)} kB ` +
+        `(-${(100 - (after / before) * 100).toFixed(0)}%)`
     );
   }
 
@@ -77,7 +77,7 @@ const run = async () => {
   console.log('Remember to update code references to the .webp files and remove the originals.');
 };
 
-run().catch(error => {
+run().catch((error) => {
   console.error(error);
   process.exit(1);
 });
