@@ -39,6 +39,7 @@ First engineering-hardened release of the Voxelle Home dashboard demo.
 
 ### Changed
 
+- Hosting moved from GitHub Pages to Vercel (Pages deploy workflow removed; `vercel.json` added).
 - Camera feeds are honestly badged DEMO with simulated-detection labeling.
 - Camera and AI reply copy derives from actual state instead of fabricated telemetry.
 - Stylesheet split from a single 1,635-line file into scoped modules (no visual changes).
