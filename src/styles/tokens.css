@@ -2,13 +2,11 @@
    VOXELLE HOME - APPLE HOME DESIGN SYSTEM & GLASSMORPHISM
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
-
 :root {
-  /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Outfit', sans-serif;
-  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
+  /* Typography — self-hosted variable fonts via @fontsource (no CDN) */
+  --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --font-display: 'Outfit Variable', 'Inter Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace;
 
   /* Color Palette */
   --color-white: #ffffff;

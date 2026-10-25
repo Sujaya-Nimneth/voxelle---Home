@@ -1,5 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Self-hosted variable fonts — keeps the zero-CDN privacy promise
+import '@fontsource-variable/inter'
+import '@fontsource-variable/outfit'
+import '@fontsource-variable/jetbrains-mono'
 import './styles/tokens.css'
 import './styles/layout.css'
 import './styles/sidebar.css'

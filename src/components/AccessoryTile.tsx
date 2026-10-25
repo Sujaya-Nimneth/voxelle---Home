@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useHome } from '../context/HomeContext';
 import {
   Lightbulb,
@@ -12,7 +13,8 @@ import {
 } from 'lucide-react';
 import type { Device } from '../types';
 
-export const AccessoryTile = ({ device }: { device: Device }) => {
+/** Memoized: tiles only re-render when their own device object changes. */
+export const AccessoryTile = memo(function AccessoryTile({ device }: { device: Device }) {
   const { toggleDevice, setSelectedDevice } = useHome();
 
   const getIcon = () => {
@@ -92,4 +94,4 @@ export const AccessoryTile = ({ device }: { device: Device }) => {
       </div>
     </div>
   );
-};
+});
