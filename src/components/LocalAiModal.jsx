@@ -28,7 +28,6 @@ export const LocalAiModal = () => {
     isAiModalOpen,
     setIsAiModalOpen,
     devices,
-    scenes,
     cameras,
     updateDevice,
     triggerScene,
@@ -121,7 +120,7 @@ export const LocalAiModal = () => {
 
     try {
       // Process through local AI orchestrator
-      const response = await localAi.processCommand(query, devices, scenes, cameras);
+      const response = await localAi.processCommand(query, devices);
 
       // Execute returned actions directly into smart home state
       if (response.sceneTrigger) {
