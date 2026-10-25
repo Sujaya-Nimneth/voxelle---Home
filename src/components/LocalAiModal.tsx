@@ -3,6 +3,7 @@ import { useHome } from '../context/HomeContext';
 import { localAi, AI_PROVIDER_INFO, AI_PROVIDERS } from '../services/ai/orchestrator';
 import type { ProviderHealth } from '../services/ai/types';
 import { useModalDialog } from '../hooks/useModalDialog';
+import { useToast } from './Toast';
 import {
   X,
   Send,
@@ -86,6 +87,7 @@ export const LocalAiModal = () => {
   const lastQueryRef = useRef<string | null>(null);
 
   const dialogRef = useModalDialog(isAiModalOpen, () => setIsAiModalOpen(false));
+  const { notify } = useToast();
 
   const activeProvider = AI_PROVIDERS[provider];
 
@@ -145,7 +147,7 @@ export const LocalAiModal = () => {
   const toggleSpeechRecognition = () => {
     const SpeechRecognitionCtor = getSpeechRecognition();
     if (!SpeechRecognitionCtor) {
-      alert('Speech recognition is not supported in this browser. Please type your command.');
+      notify('Speech recognition is not supported in this browser — please type your command.');
       return;
     }
 

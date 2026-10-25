@@ -1,4 +1,5 @@
 import { useHome } from '../context/HomeContext';
+import { useToast } from './Toast';
 import { Plus, Sparkles, RotateCcw } from 'lucide-react';
 
 interface QuickActionsProps {
@@ -12,13 +13,14 @@ interface QuickActionsProps {
  */
 export const QuickActions = ({ showReset = false }: QuickActionsProps) => {
   const { setIsAiModalOpen, resetHome } = useHome();
+  const { notify } = useToast();
 
   return (
     <div className="home-actions-group">
       <button
         className="ai-trigger-orb-btn"
         onClick={() => setIsAiModalOpen(true)}
-        title="Open Voxelle Local AI Neural Assistant"
+        title="Open Voxelle Local AI Assistant"
       >
         <div className="glowing-orb">
           <Sparkles size={12} color="#ffffff" />
@@ -29,7 +31,7 @@ export const QuickActions = ({ showReset = false }: QuickActionsProps) => {
       <button
         className="action-circle-btn"
         title="Add Accessory / Scene"
-        onClick={() => alert('Add Accessory: Matter, Thread, and HomeKit auto-discovery scanning locally...')}
+        onClick={() => notify('Accessory discovery is simulated in this demo build — no real hardware is scanned.')}
       >
         <Plus size={16} />
       </button>
@@ -38,7 +40,10 @@ export const QuickActions = ({ showReset = false }: QuickActionsProps) => {
         <button
           className="action-circle-btn"
           title="Reset demo home to its initial state"
-          onClick={resetHome}
+          onClick={() => {
+            resetHome();
+            notify('Demo home reset to its initial state.');
+          }}
         >
           <RotateCcw size={14} />
         </button>

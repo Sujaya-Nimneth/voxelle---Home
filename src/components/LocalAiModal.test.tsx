@@ -3,6 +3,7 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HomeProvider, useHome } from '../context/HomeContext';
 import { LocalAiModal } from './LocalAiModal';
+import { ToastProvider } from './Toast';
 
 vi.mock('canvas-confetti', () => ({ default: vi.fn() }));
 
@@ -20,7 +21,9 @@ const Probe = () => {
 const renderModal = () =>
   render(
     <HomeProvider>
-      <Probe />
+      <ToastProvider>
+        <Probe />
+      </ToastProvider>
     </HomeProvider>
   );
 
