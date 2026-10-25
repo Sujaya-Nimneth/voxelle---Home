@@ -1,5 +1,15 @@
 import { Sun, Moon, MapPin, ShieldAlert, Sparkles } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { Automation } from '../types';
+
+/** Registry mapping serializable icon keys to Lucide components. */
+export const AUTOMATION_ICONS: Record<string, LucideIcon> = {
+  sun: Sun,
+  mapPin: MapPin,
+  moon: Moon,
+  shieldAlert: ShieldAlert,
+  sparkles: Sparkles
+};
 
 export const SEED_AUTOMATIONS: Automation[] = [
   {
@@ -7,7 +17,7 @@ export const SEED_AUTOMATIONS: Automation[] = [
     title: 'Sunset Ambiance',
     trigger: 'Every day at Sunset',
     action: 'Turn on Patio Strings and dim Living Room Accent Lights to 60% purple',
-    icon: Sun,
+    icon: 'sun',
     enabled: true,
     color: '#f59e0b'
   },
@@ -16,7 +26,7 @@ export const SEED_AUTOMATIONS: Automation[] = [
     title: 'Arrive Home Geo-Trigger',
     trigger: 'When your iPhone enters home perimeter',
     action: 'Unlock Front Door, set Living Room Thermostat to 70°F, and turn on Entry Sconces',
-    icon: MapPin,
+    icon: 'mapPin',
     enabled: true,
     color: '#06b6d4'
   },
@@ -25,7 +35,7 @@ export const SEED_AUTOMATIONS: Automation[] = [
     title: 'Goodnight Security & Darken',
     trigger: 'Every night at 11:00 PM',
     action: 'Lock all doors, close blackout shades, turn off all indoor lights, arm cameras',
-    icon: Moon,
+    icon: 'moon',
     enabled: true,
     color: '#a855f7'
   },
@@ -34,11 +44,11 @@ export const SEED_AUTOMATIONS: Automation[] = [
     title: 'Porch AI Detection Sentry',
     trigger: 'When Porch Camera AI detects person between 12:00 AM - 6:00 AM',
     action: 'Turn Entry Overhead to 100%, send local notification to Mac & iPhone',
-    icon: ShieldAlert,
+    icon: 'shieldAlert',
     enabled: false,
     color: '#ef4444'
   }
 ];
 
-/** Icon used for automations generated at runtime by the natural-language synthesizer. */
-export const GENERATED_AUTOMATION_ICON = Sparkles;
+/** Icon key used for automations generated at runtime by the synthesizer. */
+export const GENERATED_AUTOMATION_ICON = 'sparkles';

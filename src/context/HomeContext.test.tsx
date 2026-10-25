@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { HomeProvider, useHome } from './HomeContext';
+import { SEED_AUTOMATIONS } from '../data/automations';
 
 vi.mock('canvas-confetti', () => ({ default: vi.fn() }));
 
@@ -10,6 +11,12 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const renderHome = () => renderHook(() => useHome(), { wrapper });
+
+const PERSISTENCE_KEY = 'voxelle-home-state-v1';
+
+beforeEach(() => {
+  window.localStorage.clear();
+});
 
 describe('HomeProvider initial state', () => {
   it('seeds 20 devices, 6 scenes, and 4 cameras', () => {
@@ -136,5 +143,123 @@ describe('selectedDevice modal sync', () => {
     act(() => result.current.updateDevice('lr-accent-lights', { value: 10 }));
 
     expect(result.current.selectedDevice?.value).toBe(10);
+  });
+
+  it('keeps the open modal in sync when toggleDevice runs', () => {
+    const { result } = renderHome();
+
+    act(() => result.current.setSelectedDevice(result.current.devices.find(d => d.id === 'entry-sconces')!));
+    act(() => result.current.toggleDevice('entry-sconces'));
+
+    expect(result.current.selectedDevice?.isOn).toBe(false);
+    expect(result.current.selectedDevice?.statusText).toBe('Off');
+  });
+});
+
+describe('automations', () => {
+  it('starts with the four seeded automations', () => {
+    const { result } = renderHome();
+
+    expect(result.current.automations).toHaveLength(4);
+    expect(result.current.automationCount).toBe(4);
+  });
+
+  it('adds a generated automation at the top of the list and bumps the count', () => {
+    const { result } = renderHome();
+
+    act(() => {
+      result.current.addAutomation({
+        id: 'auto-1',
+        title: 'Pool gate alert...',
+        trigger: 'AI Semantic Rule: Triggered by user condition',
+        action: 'Turn on backyard lights and notify me if the pool gate opens after 9 PM',
+        icon: 'sparkles',
+        enabled: true,
+        color: '#10b981'
+      });
+    });
+
+    expect(result.current.automations).toHaveLength(5);
+    expect(result.current.automations[0]?.id).toBe('auto-1');
+    expect(result.current.automationCount).toBe(5);
+  });
+
+  it('toggles an automation enabled flag', () => {
+    const { result } = renderHome();
+    const sentry = SEED_AUTOMATIONS.find(a => a.id === 'sentry')!;
+
+    expect(sentry.enabled).toBe(false);
+    act(() => result.current.toggleAutomation('sentry'));
+
+    expect(result.current.automations.find(a => a.id === 'sentry')!.enabled).toBe(true);
+  });
+});
+
+describe('persistence', () => {
+  it('persists mutated home state to localStorage', () => {
+    const { result } = renderHome();
+
+    act(() => result.current.toggleDevice('entry-sconces'));
+
+    const stored = JSON.parse(window.localStorage.getItem(PERSISTENCE_KEY)!);
+    expect(stored.version).toBe(1);
+    const sconces = (stored.devices as Array<{ id: string; isOn: boolean }>).find(d => d.id === 'entry-sconces');
+    expect(sconces?.isOn).toBe(false);
+  });
+
+  it('restores persisted state on a fresh provider mount', () => {
+    window.localStorage.setItem(
+      PERSISTENCE_KEY,
+      JSON.stringify({
+        version: 1,
+        devices: [
+          { id: 'lone-bulb', name: 'Lone Bulb', room: 'Entry', category: 'lights', type: 'light', isOn: false, value: 0, unit: '%', color: '#fff', theme: 'amber', statusText: 'Off' }
+        ],
+        scenes: [],
+        automations: []
+      })
+    );
+
+    const { result } = renderHome();
+
+    expect(result.current.devices).toHaveLength(1);
+    expect(result.current.devices[0]?.id).toBe('lone-bulb');
+    expect(result.current.activeLightsCount).toBe(0);
+  });
+
+  it('ignores persisted state written by an unknown schema version', () => {
+    window.localStorage.setItem(PERSISTENCE_KEY, JSON.stringify({ version: 999, devices: [] }));
+
+    const { result } = renderHome();
+
+    expect(result.current.devices).toHaveLength(20);
+  });
+
+  it('resetHome restores the seed state and re-persists it', () => {
+    const { result } = renderHome();
+
+    act(() => result.current.toggleDevice('entry-sconces'));
+    act(() => result.current.resetHome());
+
+    expect(result.current.devices.find(d => d.id === 'entry-sconces')!.isOn).toBe(true);
+    expect(result.current.automations).toHaveLength(4);
+
+    // The reset state is immediately re-persisted with the seed values.
+    const stored = JSON.parse(window.localStorage.getItem(PERSISTENCE_KEY)!) as {
+      devices: Array<{ id: string; isOn: boolean }>;
+    };
+    expect(stored.devices.find(d => d.id === 'entry-sconces')!.isOn).toBe(true);
+  });
+});
+
+describe('derived climate summary', () => {
+  it('reflects the thermostat target range', () => {
+    const { result } = renderHome();
+
+    // Seeds: living room 68°, bedroom 72°
+    expect(result.current.climateSummary).toBe('68° - 72°');
+
+    act(() => result.current.updateDevice('lr-thermostat', { targetTemp: 75 }));
+    expect(result.current.climateSummary).toBe('72° - 75°');
   });
 });

@@ -84,6 +84,12 @@ export const LocalAiModal = () => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
+  // Stop any active dictation and voice playback when the modal unmounts.
+  useEffect(() => () => {
+    recognitionRef.current?.stop();
+    window.speechSynthesis?.cancel();
+  }, []);
+
   // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });

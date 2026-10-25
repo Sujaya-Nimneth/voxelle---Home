@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHome } from '../context/HomeContext';
 import { X, Mic, ShieldAlert, Camera, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
 
@@ -8,11 +8,17 @@ export const CameraDetailModal = () => {
   const [isSirenActive, setIsSirenActive] = useState(false);
   const [snapshotTaken, setSnapshotTaken] = useState(false);
 
+  // Snapshot confirmation auto-dismiss, cleaned up on unmount.
+  useEffect(() => {
+    if (!snapshotTaken) return;
+    const timer = window.setTimeout(() => setSnapshotTaken(false), 2500);
+    return () => window.clearTimeout(timer);
+  }, [snapshotTaken]);
+
   if (!selectedCamera) return null;
 
   const handleTakeSnapshot = () => {
     setSnapshotTaken(true);
-    setTimeout(() => setSnapshotTaken(false), 2500);
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useHome } from '../context/HomeContext';
-import { Plus, Monitor, Tablet, Smartphone, Sparkles } from 'lucide-react';
+import { Plus, Monitor, Tablet, Smartphone, Sparkles, RotateCcw } from 'lucide-react';
 
 export const TopHeader = () => {
   const {
@@ -7,7 +7,8 @@ export const TopHeader = () => {
     setDeviceFrame,
     wallpaper,
     setWallpaper,
-    setIsAiModalOpen
+    setIsAiModalOpen,
+    resetHome
   } = useHome();
 
   return (
@@ -101,6 +102,14 @@ export const TopHeader = () => {
           onClick={() => alert('Add Accessory: Matter, Thread, and HomeKit auto-discovery scanning locally...')}
         >
           <Plus size={16} />
+        </button>
+
+        <button
+          className="action-circle-btn"
+          title="Reset demo home to its initial state"
+          onClick={resetHome}
+        >
+          <RotateCcw size={14} />
         </button>
       </div>
     </header>

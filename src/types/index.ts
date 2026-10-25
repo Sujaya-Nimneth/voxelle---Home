@@ -1,5 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
-
 // ---------------------------------------------------------------------------
 // Devices
 // ---------------------------------------------------------------------------
@@ -76,7 +74,8 @@ export interface Automation {
   title: string;
   trigger: string;
   action: string;
-  icon: LucideIcon;
+  /** Key into the AUTOMATION_ICONS registry — kept as a string for JSON persistence */
+  icon: string;
   enabled: boolean;
   color: string;
 }

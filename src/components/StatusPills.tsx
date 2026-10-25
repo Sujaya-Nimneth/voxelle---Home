@@ -15,7 +15,7 @@ export const StatusPills = () => {
   } = useHome();
 
   const handlePillClick = (cat: DeviceCategory) => {
-    setActiveCategory(prev => (prev === cat ? null : cat));
+    setActiveCategory(activeCategory === cat ? null : cat);
   };
 
   return (

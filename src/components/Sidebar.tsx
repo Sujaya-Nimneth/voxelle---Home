@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import type { DeviceCategory } from '../types';
 import type { LucideIcon } from 'lucide-react';
+import { ROOMS } from '../data/rooms';
 
 interface CategoryDef {
   id: DeviceCategory;
@@ -31,15 +32,6 @@ const CATEGORIES: CategoryDef[] = [
   { id: 'water', name: 'Water', icon: Droplets, color: '#38bdf8' }
 ];
 
-const ROOMS = [
-  'All',
-  'Entry',
-  'Living Room',
-  'Kitchen',
-  'Bedroom',
-  'Backyard'
-];
-
 export const Sidebar = () => {
   const {
     activeNav,
@@ -49,6 +41,7 @@ export const Sidebar = () => {
     activeRoom,
     setActiveRoom,
     devices,
+    automationCount,
     setIsAiModalOpen
   } = useHome();
 
@@ -97,7 +90,7 @@ export const Sidebar = () => {
             <Clock size={17} />
             <span>Automation</span>
           </div>
-          <span className="sidebar-count-badge">4</span>
+          <span className="sidebar-count-badge">{automationCount}</span>
         </div>
 
         <div

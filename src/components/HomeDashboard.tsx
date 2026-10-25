@@ -4,6 +4,7 @@ import { CameraGrid } from './CameraGrid';
 import { ScenesBar } from './ScenesBar';
 import { AccessoryTile } from './AccessoryTile';
 import { ChevronDown, Plus, Sparkles } from 'lucide-react';
+import { PHYSICAL_ROOMS } from '../data/rooms';
 
 export const HomeDashboard = () => {
   const {
@@ -21,9 +22,7 @@ export const HomeDashboard = () => {
   });
 
   // Group filtered devices by room
-  const roomsList = activeRoom !== 'All'
-    ? [activeRoom]
-    : ['Entry', 'Living Room', 'Kitchen', 'Bedroom', 'Backyard'];
+  const roomsList = activeRoom !== 'All' ? [activeRoom] : PHYSICAL_ROOMS;
 
   return (
     <div className="voxelle-content-area">

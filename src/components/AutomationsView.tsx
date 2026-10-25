@@ -1,75 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHome } from '../context/HomeContext';
-import { Sparkles, Sun, Moon, MapPin, ShieldAlert } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { AUTOMATION_ICONS, GENERATED_AUTOMATION_ICON } from '../data/automations';
 import type { Automation } from '../types';
 
-const INITIAL_AUTOMATIONS: Automation[] = [
-  {
-    id: 'sunset',
-    title: 'Sunset Ambiance',
-    trigger: 'Every day at Sunset',
-    action: 'Turn on Patio Strings and dim Living Room Accent Lights to 60% purple',
-    icon: Sun,
-    enabled: true,
-    color: '#f59e0b'
-  },
-  {
-    id: 'geofence',
-    title: 'Arrive Home Geo-Trigger',
-    trigger: 'When your iPhone enters home perimeter',
-    action: 'Unlock Front Door, set Living Room Thermostat to 70°F, and turn on Entry Sconces',
-    icon: MapPin,
-    enabled: true,
-    color: '#06b6d4'
-  },
-  {
-    id: 'goodnight',
-    title: 'Goodnight Security & Darken',
-    trigger: 'Every night at 11:00 PM',
-    action: 'Lock all doors, close blackout shades, turn off all indoor lights, arm cameras',
-    icon: Moon,
-    enabled: true,
-    color: '#a855f7'
-  },
-  {
-    id: 'sentry',
-    title: 'Porch AI Detection Sentry',
-    trigger: 'When Porch Camera AI detects person between 12:00 AM - 6:00 AM',
-    action: 'Turn Entry Overhead to 100%, send local notification to Mac & iPhone',
-    icon: ShieldAlert,
-    enabled: false,
-    color: '#ef4444'
-  }
-];
-
 export const AutomationsView = () => {
-  const [automations, setAutomations] = useState<Automation[]>(INITIAL_AUTOMATIONS);
+  const {
+    automations,
+    addAutomation,
+    toggleAutomation,
+    setIsAiModalOpen
+  } = useHome();
+
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const { setIsAiModalOpen } = useHome();
+  const generateTimer = useRef<number | null>(null);
 
-  const toggleAutomation = (id: string) => {
-    setAutomations(prev => prev.map(a => (a.id === id ? { ...a, enabled: !a.enabled } : a)));
-  };
+  // Clear any in-flight synthesis timer when navigating away.
+  useEffect(() => () => {
+    if (generateTimer.current !== null) {
+      window.clearTimeout(generateTimer.current);
+    }
+  }, []);
 
   const handleCreateWithAi = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!aiPrompt.trim()) return;
+    if (!aiPrompt.trim() || isGenerating) return;
 
     setIsGenerating(true);
-    setTimeout(() => {
+    generateTimer.current = window.setTimeout(() => {
       const newAuto: Automation = {
         id: `auto-${Date.now()}`,
         title: `${aiPrompt.slice(0, 30)}...`,
         trigger: 'AI Semantic Rule: Triggered by user condition',
         action: aiPrompt,
-        icon: Sparkles,
+        icon: GENERATED_AUTOMATION_ICON,
         enabled: true,
         color: '#10b981'
       };
-      setAutomations(prev => [newAuto, ...prev]);
+      addAutomation(newAuto);
       setAiPrompt('');
       setIsGenerating(false);
+      generateTimer.current = null;
     }, 600);
   };
 
@@ -129,7 +101,7 @@ export const AutomationsView = () => {
       {/* Automations List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {automations.map(auto => {
-          const Icon = auto.icon;
+          const Icon = AUTOMATION_ICONS[auto.icon] ?? Sparkles;
           return (
             <div
               key={auto.id}
