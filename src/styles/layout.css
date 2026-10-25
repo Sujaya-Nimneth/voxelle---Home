@@ -18,11 +18,11 @@
 }
 
 .wallpaper-amber {
-  background-image: linear-gradient(rgba(15, 12, 10, 0.32), rgba(15, 12, 10, 0.48)), url('/assets/wallpaper_amber.jpg');
+  background-image: linear-gradient(rgba(15, 12, 10, 0.32), rgba(15, 12, 10, 0.48)), url('/assets/wallpaper_amber.webp');
 }
 
 .wallpaper-aurora {
-  background-image: linear-gradient(rgba(10, 18, 14, 0.35), rgba(10, 18, 14, 0.55)), url('/assets/wallpaper_aurora.jpg');
+  background-image: linear-gradient(rgba(10, 18, 14, 0.35), rgba(10, 18, 14, 0.55)), url('/assets/wallpaper_aurora.webp');
 }
 
 .wallpaper-midnight {

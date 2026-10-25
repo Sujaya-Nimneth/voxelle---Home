@@ -9,7 +9,7 @@ export const SEED_CAMERAS: Camera[] = [
     id: 'pool',
     name: 'Pool & Deck',
     location: 'Backyard',
-    image: '/assets/camera_pool.jpg',
+    image: '/assets/camera_pool.webp',
     live: true,
     aiTag: 'AI: Clear • 82°F water',
     recentEvents: ['Water circulation active', 'No motion detected in last 45m']
@@ -18,7 +18,7 @@ export const SEED_CAMERAS: Camera[] = [
     id: 'driveway',
     name: 'Garage & Driveway',
     location: 'Driveway',
-    image: '/assets/camera_driveway.jpg',
+    image: '/assets/camera_driveway.webp',
     live: true,
     aiTag: 'AI: Vehicle Secured',
     recentEvents: ['Car parked at 14:32', 'Bicycles detected in garage']
@@ -27,7 +27,7 @@ export const SEED_CAMERAS: Camera[] = [
     id: 'livingroom',
     name: 'Interior Lounge',
     location: 'Living Room',
-    image: '/assets/camera_livingroom.jpg',
+    image: '/assets/camera_livingroom.webp',
     live: true,
     aiTag: 'AI: Motion 2m ago',
     recentEvents: ['Ambient daylight detected', 'Pet movement at 14:36']
@@ -36,7 +36,7 @@ export const SEED_CAMERAS: Camera[] = [
     id: 'porch',
     name: 'Front Doorbell',
     location: 'Entry',
-    image: '/assets/camera_porch.jpg',
+    image: '/assets/camera_porch.webp',
     live: true,
     aiTag: 'AI: Package Delivered (99%)',
     recentEvents: ['Amazon delivery box at doorstep', 'Person departed 5m ago']
