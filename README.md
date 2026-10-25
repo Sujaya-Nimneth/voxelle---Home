@@ -3,11 +3,11 @@
 > **A design-forward smart home dashboard demo with frosted glassmorphism, three device chassis, and a local-first AI assistant.**
 
 [![CI](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/ci.yml/badge.svg)](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/ci.yml)
-[![Deploy](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/deploy.yml/badge.svg)](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/deploy.yml)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-000000?logo=vercel)](https://voxelle-home.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](tsconfig.json)
 
-**Live demo:** <https://sujaya-nimneth.github.io/voxelle---Home/> _(deployed from `main` by GitHub Actions)_
+**Live demo:** <https://voxelle-home.vercel.app/> _(deployed from `main` by Vercel)_
 
 ---
 
