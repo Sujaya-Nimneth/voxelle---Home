@@ -1,9 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import confetti from 'canvas-confetti';
+import type { Camera, Device, DeviceCategory, DeviceFrame, DeviceUpdates, Scene, ViewId, Wallpaper } from '../types';
 
-const HomeContext = createContext(null);
-
-const INITIAL_DEVICES = [
+const INITIAL_DEVICES: Device[] = [
   // Entry
   {
     id: 'entry-sconces',
@@ -281,7 +280,7 @@ const INITIAL_DEVICES = [
   }
 ];
 
-const INITIAL_SCENES = [
+const INITIAL_SCENES: Scene[] = [
   { id: 'arrive-home', label: 'Arrive Home', icon: 'SunMedium', isActive: false },
   { id: 'wake-up', label: 'Wake Up', icon: 'Sunrise', isActive: false },
   { id: 'leave-home', label: 'Leave Home', icon: 'DoorClosed', isActive: false },
@@ -290,7 +289,7 @@ const INITIAL_SCENES = [
   { id: 'focus-mode', label: 'Focus Work', icon: 'Zap', isActive: false }
 ];
 
-const INITIAL_CAMERAS = [
+const INITIAL_CAMERAS: Camera[] = [
   {
     id: 'pool',
     name: 'Pool & Deck',
@@ -329,22 +328,54 @@ const INITIAL_CAMERAS = [
   }
 ];
 
-export const HomeProvider = ({ children }) => {
-  const [devices, setDevices] = useState(INITIAL_DEVICES);
-  const [scenes, setScenes] = useState(INITIAL_SCENES);
-  const [cameras, setCameras] = useState(INITIAL_CAMERAS);
-  const [activeCategory, setActiveCategory] = useState(null); // null = all
-  const [activeRoom, setActiveRoom] = useState('All');
-  const [activeNav, setActiveNav] = useState('home'); // 'home' | 'automations' | 'discover' | 'ai-studio'
-  const [deviceFrame, setDeviceFrame] = useState('mac'); // 'mac' | 'ipad' | 'iphone'
-  const [wallpaper, setWallpaper] = useState('amber'); // 'amber' | 'aurora' | 'midnight'
+export interface HomeContextValue {
+  devices: Device[];
+  scenes: Scene[];
+  cameras: Camera[];
+  activeCategory: DeviceCategory | null;
+  setActiveCategory: React.Dispatch<React.SetStateAction<DeviceCategory | null>>;
+  activeRoom: string;
+  setActiveRoom: React.Dispatch<React.SetStateAction<string>>;
+  activeNav: ViewId;
+  setActiveNav: React.Dispatch<React.SetStateAction<ViewId>>;
+  deviceFrame: DeviceFrame;
+  setDeviceFrame: React.Dispatch<React.SetStateAction<DeviceFrame>>;
+  wallpaper: Wallpaper;
+  setWallpaper: React.Dispatch<React.SetStateAction<Wallpaper>>;
+  selectedDevice: Device | null;
+  setSelectedDevice: React.Dispatch<React.SetStateAction<Device | null>>;
+  selectedCamera: Camera | null;
+  setSelectedCamera: React.Dispatch<React.SetStateAction<Camera | null>>;
+  isAiModalOpen: boolean;
+  setIsAiModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleDevice: (id: string) => void;
+  updateDevice: (id: string, updates: DeviceUpdates) => void;
+  triggerScene: (sceneId: string) => void;
+  activeLightsCount: number;
+  unlockedDoorsCount: number;
+  playingSpeakersCount: number;
+  waterStatus: string;
+  climateSummary: string;
+}
 
-  const [selectedDevice, setSelectedDevice] = useState(null);
-  const [selectedCamera, setSelectedCamera] = useState(null);
+const HomeContext = createContext<HomeContextValue | null>(null);
+
+export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [devices, setDevices] = useState<Device[]>(INITIAL_DEVICES);
+  const [scenes, setScenes] = useState<Scene[]>(INITIAL_SCENES);
+  const [cameras] = useState<Camera[]>(INITIAL_CAMERAS);
+  const [activeCategory, setActiveCategory] = useState<DeviceCategory | null>(null); // null = all
+  const [activeRoom, setActiveRoom] = useState('All');
+  const [activeNav, setActiveNav] = useState<ViewId>('home');
+  const [deviceFrame, setDeviceFrame] = useState<DeviceFrame>('mac');
+  const [wallpaper, setWallpaper] = useState<Wallpaper>('amber');
+
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   // Toggle device on/off directly
-  const toggleDevice = (id) => {
+  const toggleDevice = (id: string) => {
     setDevices(prev => prev.map(dev => {
       if (dev.id === id) {
         const nextState = !dev.isOn;
@@ -379,7 +410,7 @@ export const HomeProvider = ({ children }) => {
   };
 
   // Update specific device parameters (brightness, temp, color, etc.)
-  const updateDevice = (id, updates) => {
+  const updateDevice = (id: string, updates: DeviceUpdates) => {
     setDevices(prev => prev.map(dev => {
       if (dev.id === id) {
         const updated = { ...dev, ...updates };
@@ -397,12 +428,12 @@ export const HomeProvider = ({ children }) => {
 
     // Also update selected device modal if open
     if (selectedDevice && selectedDevice.id === id) {
-      setSelectedDevice(prev => ({ ...prev, ...updates }));
+      setSelectedDevice(prev => (prev ? { ...prev, ...updates } : prev));
     }
   };
 
   // Trigger Scene with micro-animation celebration
-  const triggerScene = (sceneId) => {
+  const triggerScene = (sceneId: string) => {
     setScenes(prev => prev.map(s => ({
       ...s,
       isActive: s.id === sceneId
@@ -457,44 +488,44 @@ export const HomeProvider = ({ children }) => {
   const waterStatus = devices.some(d => d.category === 'water' && d.isOn) ? 'Active' : 'All Off';
   const climateSummary = '68° - 72°';
 
+  const value: HomeContextValue = {
+    devices,
+    scenes,
+    cameras,
+    activeCategory,
+    setActiveCategory,
+    activeRoom,
+    setActiveRoom,
+    activeNav,
+    setActiveNav,
+    deviceFrame,
+    setDeviceFrame,
+    wallpaper,
+    setWallpaper,
+    selectedDevice,
+    setSelectedDevice,
+    selectedCamera,
+    setSelectedCamera,
+    isAiModalOpen,
+    setIsAiModalOpen,
+    toggleDevice,
+    updateDevice,
+    triggerScene,
+    activeLightsCount,
+    unlockedDoorsCount,
+    playingSpeakersCount,
+    waterStatus,
+    climateSummary
+  };
+
   return (
-    <HomeContext.Provider
-      value={{
-        devices,
-        scenes,
-        cameras,
-        activeCategory,
-        setActiveCategory,
-        activeRoom,
-        setActiveRoom,
-        activeNav,
-        setActiveNav,
-        deviceFrame,
-        setDeviceFrame,
-        wallpaper,
-        setWallpaper,
-        selectedDevice,
-        setSelectedDevice,
-        selectedCamera,
-        setSelectedCamera,
-        isAiModalOpen,
-        setIsAiModalOpen,
-        toggleDevice,
-        updateDevice,
-        triggerScene,
-        activeLightsCount,
-        unlockedDoorsCount,
-        playingSpeakersCount,
-        waterStatus,
-        climateSummary
-      }}
-    >
+    <HomeContext.Provider value={value}>
       {children}
     </HomeContext.Provider>
   );
 };
 
-export const useHome = () => {
+export const useHome = (): HomeContextValue => {
   const context = useContext(HomeContext);
   if (!context) {
     throw new Error('useHome must be used within a HomeProvider');
