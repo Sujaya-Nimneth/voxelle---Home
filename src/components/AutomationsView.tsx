@@ -146,6 +146,10 @@ export const AutomationsView = () => {
 
               {/* Toggle Switch */}
               <button
+                type="button"
+                role="switch"
+                aria-checked={auto.enabled}
+                aria-label={`${auto.enabled ? 'Disable' : 'Enable'} automation: ${auto.title}`}
                 onClick={() => toggleAutomation(auto.id)}
                 style={{
                   width: 52,

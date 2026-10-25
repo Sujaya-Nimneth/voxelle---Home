@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useHome } from '../context/HomeContext';
 import { localAi, AI_PROVIDER_INFO, AI_PROVIDERS } from '../services/ai/orchestrator';
 import type { ProviderHealth } from '../services/ai/types';
+import { useModalDialog } from '../hooks/useModalDialog';
 import {
   X,
   Send,
@@ -83,6 +84,8 @@ export const LocalAiModal = () => {
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const healthRequestSeq = useRef(0);
   const lastQueryRef = useRef<string | null>(null);
+
+  const dialogRef = useModalDialog(isAiModalOpen, () => setIsAiModalOpen(false));
 
   const activeProvider = AI_PROVIDERS[provider];
 
@@ -267,7 +270,15 @@ export const LocalAiModal = () => {
 
   return (
     <div className="modal-backdrop" onClick={() => setIsAiModalOpen(false)}>
-      <div className="ai-modal-container" onClick={e => e.stopPropagation()}>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-modal-title"
+        tabIndex={-1}
+        className="ai-modal-container"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="ai-modal-iridescent-glow" />
 
         {/* Header */}
@@ -277,7 +288,7 @@ export const LocalAiModal = () => {
               <Sparkles size={16} color="#ffffff" />
             </div>
             <div>
-              <div className="ai-modal-header-title">Voxelle Assistant</div>
+              <div className="ai-modal-header-title" id="ai-modal-title">Voxelle Assistant</div>
               <div className="ai-modal-header-sub">
                 Local-first intelligence • built-in engine, or your own Ollama / LM Studio server
               </div>
@@ -365,7 +376,7 @@ export const LocalAiModal = () => {
         )}
 
         {/* Chat Body */}
-        <div className="ai-chat-body">
+        <div className="ai-chat-body" aria-live="polite" aria-label="Assistant conversation">
           {messages.map(msg => (
             <div key={msg.id} className={`ai-message ${msg.sender}`}>
               <div className={`ai-message-bubble ${msg.error ? 'error' : ''}`}>

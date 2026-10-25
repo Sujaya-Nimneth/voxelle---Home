@@ -55,7 +55,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="voxelle-sidebar">
+    <aside className="voxelle-sidebar" aria-label="Home navigation">
       {/* Brand */}
       <div className="sidebar-header">
         <div className="sidebar-brand">
@@ -69,39 +69,42 @@ export const Sidebar = () => {
 
       {/* Primary Navigation */}
       <div className="sidebar-section">
-        <div
+        <button
+          type="button"
           className={`sidebar-nav-item ${activeNav === 'home' && !activeCategory ? 'active' : ''}`}
           onClick={() => {
             setActiveNav('home');
             setActiveCategory(null);
           }}
         >
-          <div className="sidebar-nav-item-left">
+          <span className="sidebar-nav-item-left">
             <Home size={17} />
             <span>Home</span>
-          </div>
-        </div>
+          </span>
+        </button>
 
-        <div
+        <button
+          type="button"
           className={`sidebar-nav-item ${activeNav === 'automations' ? 'active' : ''}`}
           onClick={() => setActiveNav('automations')}
         >
-          <div className="sidebar-nav-item-left">
+          <span className="sidebar-nav-item-left">
             <Clock size={17} />
             <span>Automation</span>
-          </div>
+          </span>
           <span className="sidebar-count-badge">{automationCount}</span>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           className={`sidebar-nav-item ${activeNav === 'discover' ? 'active' : ''}`}
           onClick={() => setActiveNav('discover')}
         >
-          <div className="sidebar-nav-item-left">
+          <span className="sidebar-nav-item-left">
             <Compass size={17} />
             <span>Discover</span>
-          </div>
-        </div>
+          </span>
+        </button>
       </div>
 
       {/* Categories */}
@@ -111,20 +114,22 @@ export const Sidebar = () => {
           const Icon = cat.icon;
           const isCatActive = activeCategory === cat.id;
           return (
-            <div
+            <button
+              type="button"
               key={cat.id}
               className={`sidebar-nav-item ${isCatActive ? 'active' : ''}`}
+              aria-pressed={isCatActive}
               onClick={() => {
                 setActiveNav('home');
                 setActiveCategory(isCatActive ? null : cat.id);
               }}
             >
-              <div className="sidebar-nav-item-left">
+              <span className="sidebar-nav-item-left">
                 <Icon size={17} style={{ color: cat.color }} />
                 <span>{cat.name}</span>
-              </div>
+              </span>
               <span className="sidebar-count-badge">{getCategoryCount(cat.id)}</span>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -135,21 +140,23 @@ export const Sidebar = () => {
         {ROOMS.map(room => {
           const isRoomActive = activeRoom === room && !activeCategory;
           return (
-            <div
+            <button
+              type="button"
               key={room}
               className={`sidebar-nav-item ${isRoomActive ? 'active' : ''}`}
+              aria-pressed={isRoomActive}
               onClick={() => {
                 setActiveNav('home');
                 setActiveCategory(null);
                 setActiveRoom(room);
               }}
             >
-              <div className="sidebar-nav-item-left">
+              <span className="sidebar-nav-item-left">
                 <Layers size={17} />
                 <span>{room}</span>
-              </div>
+              </span>
               <span className="sidebar-count-badge">{getRoomCount(room)}</span>
-            </div>
+            </button>
           );
         })}
       </div>

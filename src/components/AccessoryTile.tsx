@@ -55,11 +55,21 @@ export const AccessoryTile = ({ device }: { device: Device }) => {
     setSelectedDevice(device);
   };
 
+  const handleTileKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleTileClick();
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`${device.name}, ${device.room}: ${device.statusText}. Activate to toggle.`}
       className={`accessory-tile ${device.isOn ? `is-active theme-${device.theme}` : ''}`}
       onClick={handleTileClick}
-      title={`${device.name} - Tap to toggle or adjust`}
+      onKeyDown={handleTileKeyDown}
     >
       {/* Top row: Icon and Detail Trigger */}
       <div className="accessory-top-row">

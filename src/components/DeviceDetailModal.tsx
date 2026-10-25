@@ -1,4 +1,5 @@
 import { useHome } from '../context/HomeContext';
+import { useModalDialog } from '../hooks/useModalDialog';
 import { X, Power, Minus, Plus, Lock, Unlock, Flame, Snowflake } from 'lucide-react';
 import type { ThermostatMode } from '../types';
 
@@ -16,6 +17,8 @@ const THERMOSTAT_MODES: ThermostatMode[] = ['Cool', 'Heat', 'Auto', 'Eco'];
 
 export const DeviceDetailModal = () => {
   const { selectedDevice, setSelectedDevice, updateDevice, toggleDevice } = useHome();
+
+  const dialogRef = useModalDialog(!!selectedDevice, () => setSelectedDevice(null));
 
   if (!selectedDevice) return null;
 
@@ -36,13 +39,18 @@ export const DeviceDetailModal = () => {
   return (
     <div className="modal-backdrop" onClick={() => setSelectedDevice(null)}>
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="device-detail-title"
+        tabIndex={-1}
         className="detail-modal-card"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="detail-modal-header">
           <div>
-            <div className="detail-modal-title">{selectedDevice.name}</div>
+            <div className="detail-modal-title" id="device-detail-title">{selectedDevice.name}</div>
             <div className="detail-modal-subtitle">
               {selectedDevice.room} • {selectedDevice.category.toUpperCase()}
             </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHome } from '../context/HomeContext';
+import { useModalDialog } from '../hooks/useModalDialog';
 import { X, Mic, ShieldAlert, Camera, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
 
 export const CameraDetailModal = () => {
@@ -7,6 +8,8 @@ export const CameraDetailModal = () => {
   const [isTalking, setIsTalking] = useState(false);
   const [isSirenActive, setIsSirenActive] = useState(false);
   const [snapshotTaken, setSnapshotTaken] = useState(false);
+
+  const dialogRef = useModalDialog(!!selectedCamera, () => setSelectedCamera(null));
 
   // Snapshot confirmation auto-dismiss, cleaned up on unmount.
   useEffect(() => {
@@ -24,6 +27,11 @@ export const CameraDetailModal = () => {
   return (
     <div className="modal-backdrop" onClick={() => setSelectedCamera(null)}>
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="camera-detail-title"
+        tabIndex={-1}
         className="ai-modal-container"
         style={{ maxWidth: 840 }}
         onClick={(e) => e.stopPropagation()}
@@ -32,9 +40,9 @@ export const CameraDetailModal = () => {
         <div className="ai-modal-header">
           <div className="ai-modal-header-left">
             <div>
-              <div className="ai-modal-header-title">{selectedCamera.name}</div>
+              <div className="ai-modal-header-title" id="camera-detail-title">{selectedCamera.name}</div>
               <div className="ai-modal-header-sub">
-                {selectedCamera.location} • 4K HDR • 60 FPS • 100% On-Device Neural Vision
+                {selectedCamera.location} • demo feed • simulated detection overlay
               </div>
             </div>
           </div>
@@ -128,7 +136,7 @@ export const CameraDetailModal = () => {
             }}
           >
             <span className="camera-live-badge">
-              <span className="live-dot" /> LIVE
+              <span className="live-dot" aria-hidden="true" /> DEMO
             </span>
             <span
               style={{

@@ -109,3 +109,24 @@ input, textarea, select {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* =========================================================
+   ACCESSIBILITY BASELINE
+   ========================================================= */
+
+/* Visible keyboard focus ring for every interactive element */
+:focus-visible {
+  outline: 2px solid rgba(245, 158, 11, 0.9);
+  outline-offset: 2px;
+}
+
+/* App chrome is not selectable, but user-facing content text is */
+.ai-message-bubble,
+.ai-modal-header-sub,
+.detail-modal-subtitle,
+.camera-name,
+.camera-location,
+.home-name-text,
+.room-title {
+  user-select: text;
+}

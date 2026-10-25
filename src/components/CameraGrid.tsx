@@ -17,17 +17,25 @@ export const CameraGrid = () => {
         {cameras.map(cam => (
           <div
             key={cam.id}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${cam.name} camera feed, ${cam.location}. Simulated demo feed.`}
             className="camera-card"
             onClick={() => setSelectedCamera(cam)}
-            title={`View ${cam.name} live feed & local vision analysis`}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setSelectedCamera(cam);
+              }
+            }}
           >
-            <img src={cam.image} alt={cam.name} className="camera-image" />
+            <img src={cam.image} alt={`${cam.name} still frame`} className="camera-image" loading="lazy" decoding="async" />
 
             {/* Top Overlay: Live badge and AI vision detection */}
             <div className="camera-overlay-top">
               <span className="camera-live-badge">
-                <span className="live-dot"></span>
-                LIVE
+                <span className="live-dot" aria-hidden="true"></span>
+                DEMO
               </span>
               <span className="camera-ai-tag">
                 <Sparkles size={11} />
