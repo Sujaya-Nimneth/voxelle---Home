@@ -49,9 +49,12 @@
     "vitest": "^5.0.5"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,css,md}": [
-      "prettier --write",
-      "oxlint --fix"
+    "*.{ts,tsx,js,jsx}": [
+      "oxlint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
     ]
   }
 }
