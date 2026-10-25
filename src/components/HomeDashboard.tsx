@@ -3,15 +3,15 @@ import { StatusPills } from './StatusPills';
 import { CameraGrid } from './CameraGrid';
 import { ScenesBar } from './ScenesBar';
 import { AccessoryTile } from './AccessoryTile';
-import { ChevronDown, Plus, Sparkles } from 'lucide-react';
+import { QuickActions } from './QuickActions';
+import { ChevronDown } from 'lucide-react';
 import { PHYSICAL_ROOMS } from '../data/rooms';
 
 export const HomeDashboard = () => {
   const {
     devices,
     activeCategory,
-    activeRoom,
-    setIsAiModalOpen
+    activeRoom
   } = useHome();
 
   // Filter devices by category and room
@@ -36,26 +36,7 @@ export const HomeDashboard = () => {
             <ChevronDown size={22} color="rgba(255,255,255,0.7)" />
           </div>
 
-          <div className="home-actions-group">
-            <button
-              className="ai-trigger-orb-btn"
-              onClick={() => setIsAiModalOpen(true)}
-              title="Open Voxelle Local AI Neural Assistant"
-            >
-              <div className="glowing-orb">
-                <Sparkles size={12} color="#ffffff" />
-              </div>
-              <span className="ai-trigger-text">Voxelle AI</span>
-            </button>
-
-            <button
-              className="action-circle-btn"
-              title="Add Accessory"
-              onClick={() => alert('Scanning local network for Matter, HomeKit, and Thread accessories...')}
-            >
-              <Plus size={16} />
-            </button>
-          </div>
+          <QuickActions />
         </div>
 
         {/* Top Status Chips */}

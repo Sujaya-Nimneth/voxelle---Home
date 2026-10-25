@@ -1,14 +1,13 @@
 import { useHome } from '../context/HomeContext';
-import { Plus, Monitor, Tablet, Smartphone, Sparkles, RotateCcw } from 'lucide-react';
+import { Monitor, Tablet, Smartphone } from 'lucide-react';
+import { QuickActions } from './QuickActions';
 
 export const TopHeader = () => {
   const {
     deviceFrame,
     setDeviceFrame,
     wallpaper,
-    setWallpaper,
-    setIsAiModalOpen,
-    resetHome
+    setWallpaper
   } = useHome();
 
   return (
@@ -84,34 +83,7 @@ export const TopHeader = () => {
       </div>
 
       {/* Right: Quick AI Orb and Actions */}
-      <div className="home-actions-group">
-        <button
-          className="ai-trigger-orb-btn"
-          onClick={() => setIsAiModalOpen(true)}
-          title="Open Voxelle Local AI Neural Assistant"
-        >
-          <div className="glowing-orb">
-            <Sparkles size={12} color="#ffffff" />
-          </div>
-          <span className="ai-trigger-text">Voxelle AI</span>
-        </button>
-
-        <button
-          className="action-circle-btn"
-          title="Add Accessory / Scene"
-          onClick={() => alert('Add Accessory: Matter, Thread, and HomeKit auto-discovery scanning locally...')}
-        >
-          <Plus size={16} />
-        </button>
-
-        <button
-          className="action-circle-btn"
-          title="Reset demo home to its initial state"
-          onClick={resetHome}
-        >
-          <RotateCcw size={14} />
-        </button>
-      </div>
+      <QuickActions showReset />
     </header>
   );
 };
