@@ -8,8 +8,16 @@ export const CameraDetailModal = () => {
   const [isTalking, setIsTalking] = useState(false);
   const [isSirenActive, setIsSirenActive] = useState(false);
   const [snapshotTaken, setSnapshotTaken] = useState(false);
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString());
 
   const dialogRef = useModalDialog(!!selectedCamera, () => setSelectedCamera(null));
+
+  // Ticking overlay clock (the old implementation rendered a timestamp
+  // frozen at mount, pretending to be live).
+  useEffect(() => {
+    const tick = window.setInterval(() => setClock(new Date().toLocaleTimeString()), 1000);
+    return () => window.clearInterval(tick);
+  }, []);
 
   // Snapshot confirmation auto-dismiss, cleaned up on unmount.
   useEffect(() => {
@@ -151,7 +159,7 @@ export const CameraDetailModal = () => {
                 color: '#fff'
               }}
             >
-              {new Date().toLocaleTimeString()}
+              {clock}
             </span>
           </div>
 
