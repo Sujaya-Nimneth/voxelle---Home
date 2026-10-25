@@ -130,4 +130,6 @@ export interface ChatMessage {
   sender: 'user' | 'assistant';
   text: string;
   actions: AiAction[];
+  /** Marks a provider failure bubble so it renders with error styling + fallback affordance. */
+  error?: boolean;
 }

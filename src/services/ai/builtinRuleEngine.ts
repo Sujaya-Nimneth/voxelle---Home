@@ -1,60 +1,27 @@
-// =========================================================
-// VOXELLE LOCAL AI ENGINE - INTENT ORCHESTRATOR
-// =========================================================
+import type { AiAction, AiResult, Camera, Device } from '../../types';
+import type { ProviderHealth } from './types';
 
-import type {
-  AiAction,
-  AiProviderId,
-  AiProviderInfo,
-  AiResult,
-  ConnectionCheck,
-  Device,
-} from '../types';
+/**
+ * Built-in offline rule engine: a deterministic keyword matcher that maps
+ * natural language to scenes, device updates, and camera checks. It runs
+ * entirely in the browser with zero configuration — and it never invents
+ * telemetry: every reply is derived from the live device/camera state it
+ * is handed.
+ */
+export class BuiltinRuleEngine {
+  readonly id = 'voxelle-builtin' as const;
+  readonly name = 'Built-in Rule Engine (offline)';
+  readonly requiresServer = false;
 
-export const LOCAL_AI_PROVIDERS: AiProviderInfo[] = [
-  { id: 'voxelle-builtin', name: 'Built-in Local Engine', status: 'Active', latency: '~1ms', offline: true },
-  { id: 'ollama', name: 'Ollama Bridge', status: 'Connectable', latency: '—', offline: true },
-  { id: 'lmstudio', name: 'LM Studio Bridge', status: 'Connectable', latency: '—', offline: true }
-];
-
-export class LocalAiService {
-  provider: AiProviderId = 'voxelle-builtin';
-  ollamaUrl = 'http://localhost:11434';
-  lmStudioUrl = 'http://localhost:1234';
-  selectedModel = 'llama3.2';
-
-  setProvider(provider: AiProviderId): void {
-    this.provider = provider;
+  async checkHealth(): Promise<ProviderHealth> {
+    return { online: true, models: [], latencyMs: null, error: null };
   }
 
-  setOllamaUrl(url: string): void {
-    this.ollamaUrl = url;
-  }
-
-  // Check if Ollama is running locally
-  async checkOllamaConnection(): Promise<ConnectionCheck> {
-    try {
-      const response = await fetch(`${this.ollamaUrl}/api/tags`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      if (response.ok) {
-        const data = (await response.json()) as { models?: Array<{ name: string }> };
-        const models = data.models ? data.models.map(m => m.name) : ['llama3.2', 'mistral'];
-        return { online: true, models };
-      }
-      return { online: false, models: [] };
-    } catch {
-      return { online: false, models: [] };
-    }
-  }
-
-  // Process natural language command and return executed actions & response
-  async processCommand(query: string, devices: Device[]): Promise<AiResult> {
+  async processCommand(query: string, devices: Device[], cameras: Camera[]): Promise<AiResult> {
     const q = query.toLowerCase().trim();
 
-    // 1. Scene Intent Matcher
-    if (q.includes('arrive') || q.includes('i\'m home') || q.includes('came home')) {
+    // 1. Scene intents
+    if (q.includes('arrive') || q.includes("i'm home") || q.includes('came home')) {
       return {
         reply: "Welcome home! I've unlocked the front door, set the living room lights to 75%, and adjusted the climate to 70°F.",
         sceneTrigger: 'arrive-home',
@@ -94,40 +61,25 @@ export class LocalAiService {
       };
     }
 
-    // 2. Camera & Security Queries
+    // 2. Camera & security queries — replies derive from the camera seed data
     if (q.includes('camera') || q.includes('package') || q.includes('doorstep') || q.includes('who is at the door')) {
-      return {
-        reply: 'Checking front doorbell camera: Voxelle Vision reports an Amazon delivery box was placed at your doorstep. Walkway is currently clear.',
-        cameraCheck: 'porch',
-        actions: [{ type: 'camera_inspect', cameraId: 'porch', description: 'Analyzed Front Doorbell Feed' }]
-      };
+      return cameraResult(cameras, 'porch', 'Analyzed Front Doorbell Feed');
     }
 
     if (q.includes('pool') || q.includes('backyard')) {
-      return {
-        reply: 'Backyard Pool camera is clear. Water temperature is steady with normal surface filtration. No movement detected.',
-        cameraCheck: 'pool',
-        actions: [{ type: 'camera_inspect', cameraId: 'pool', description: 'Analyzed Pool & Deck Feed' }]
-      };
+      return cameraResult(cameras, 'pool', 'Analyzed Pool & Deck Feed');
     }
 
     if (q.includes('driveway') || q.includes('garage') || q.includes('car')) {
-      return {
-        reply: 'Driveway camera reports your vehicle is secured in the garage. Bicycles are mounted on the rack. Perimeter is quiet.',
-        cameraCheck: 'driveway',
-        actions: [{ type: 'camera_inspect', cameraId: 'driveway', description: 'Analyzed Garage & Driveway Feed' }]
-      };
+      return cameraResult(cameras, 'driveway', 'Analyzed Garage & Driveway Feed');
     }
 
-    // 3. Device Actions / Direct Controls
+    // 3. Direct device controls
     const actions: AiAction[] = [];
-    let reply = '';
 
     // Lights
     if (q.includes('light') || q.includes('lights') || q.includes('sconce') || q.includes('lamp') || q.includes('bright') || q.includes('dim')) {
       const isOff = q.includes('off') || q.includes('turn off') || q.includes('shut down');
-
-      // Extract percentage if any (e.g., "50%", "30 percent")
       const percentMatch = q.match(/(\d+)\s*(?:%|percent)/);
       const brightnessVal = percentMatch?.[1] ? parseInt(percentMatch[1], 10) : (isOff ? 0 : 80);
 
@@ -147,14 +99,14 @@ export class LocalAiService {
         }
       });
 
-      reply = isOff
+      const reply = isOff
         ? `Turned off all ${targetRoom === 'All' ? 'lights in your home' : `${targetRoom} lights`}.`
         : `Adjusted ${targetRoom === 'All' ? 'lights' : `${targetRoom} lights`} to ${brightnessVal}%.`;
 
       return { reply, actions };
     }
 
-    // Locks & Security
+    // Locks & security
     if (q.includes('lock') || q.includes('door') || q.includes('security')) {
       const shouldLock = !q.includes('unlock');
       actions.push({
@@ -163,22 +115,28 @@ export class LocalAiService {
         updates: { isOn: shouldLock, value: shouldLock ? 1 : 0, statusText: shouldLock ? 'Locked' : 'Unlocked' },
         description: `${shouldLock ? 'Locked' : 'Unlocked'} Front Door`
       });
-      reply = shouldLock ? 'Front Door has been securely locked.' : 'Front Door has been unlocked.';
-      return { reply, actions };
+      return {
+        reply: shouldLock ? 'Front Door has been securely locked.' : 'Front Door has been unlocked.',
+        actions
+      };
     }
 
-    // Climate / Thermostat
+    // Climate / thermostat — reply reflects the device's actual current reading
     if (q.includes('temperature') || q.includes('temp') || q.includes('thermostat') || q.includes('degrees') || q.includes('cool') || q.includes('heat') || q.includes('warmer') || q.includes('colder')) {
       const tempMatch = q.match(/(\d{2})/);
       const targetTemp = tempMatch?.[1] ? parseInt(tempMatch[1], 10) : 70;
+      const thermostat = devices.find(d => d.id === 'lr-thermostat');
+      const currentTemp = thermostat?.currentTemp;
       actions.push({
         type: 'device_update',
         deviceId: 'lr-thermostat',
         updates: { targetTemp, value: targetTemp, statusText: `${targetTemp}° • Set` },
         description: `Set Living Room Thermostat to ${targetTemp}°F`
       });
-      reply = `Living Room Thermostat adjusted to ${targetTemp}°F.`;
-      return { reply, actions };
+      return {
+        reply: `Living Room Thermostat set to ${targetTemp}°F${currentTemp !== undefined ? ` (currently ${currentTemp}°F)` : ''}.`,
+        actions
+      };
     }
 
     // Fans
@@ -190,16 +148,33 @@ export class LocalAiService {
         updates: { isOn: !isOff, value: isOff ? 0 : 100, statusText: isOff ? 'Off' : '100%' },
         description: `${isOff ? 'Turned off' : 'Turned on'} Entry Ceiling Fan`
       });
-      reply = isOff ? 'Entry Ceiling Fan is now turned off.' : 'Entry Ceiling Fan running at 100% speed.';
-      return { reply, actions };
+      return {
+        reply: isOff ? 'Entry Ceiling Fan is now turned off.' : 'Entry Ceiling Fan running at 100% speed.',
+        actions
+      };
     }
 
-    // Default conversational fallback
+    // Honest fallback: no fabricated confidence, no "all systems verified"
     return {
-      reply: `I couldn't match that to a known intent. You can ask me to control lights, adjust thermostats, check camera detection feeds, or trigger scenes!`,
+      reply: "I couldn't match that to a known intent. You can ask me to control lights, adjust thermostats, check camera detection feeds, or trigger scenes.",
       actions: []
     };
   }
 }
 
-export const localAi = new LocalAiService();
+const cameraResult = (cameras: Camera[], cameraId: string, description: string): AiResult => {
+  const camera = cameras.find(c => c.id === cameraId);
+  const detection = camera?.aiTag.replace(/^AI:\s*/, '') ?? 'no recent detections';
+  const latestEvent = camera?.recentEvents[0];
+  const reply = camera
+    ? `${camera.name}: ${detection}${latestEvent ? ` — ${latestEvent.toLowerCase()}` : ''}. (Simulated feed — detection data is sample data.)`
+    : `I couldn't find that camera.`;
+
+  return {
+    reply,
+    cameraCheck: cameraId,
+    actions: [{ type: 'camera_inspect', cameraId, description }]
+  };
+};
+
+export const builtinRuleEngine = new BuiltinRuleEngine();
