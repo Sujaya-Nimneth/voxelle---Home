@@ -1,0 +1,17 @@
+{
+  "name": "Voxelle Home",
+  "short_name": "Voxelle",
+  "description": "Smart home dashboard demo with frosted glassmorphism and a local-first AI assistant.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f1015",
+  "theme_color": "#121316",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

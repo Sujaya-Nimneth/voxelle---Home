@@ -1,210 +1,134 @@
 # Voxelle Home 🏡✨
 
-> **Next-Generation Smart Home Web Application with Modern Frosted Glassmorphic Design & 100% On-Device Local AI Model Intelligence.**
+> **A design-forward smart home dashboard demo with frosted glassmorphism, three device chassis, and a local-first AI assistant.**
 
-[![Vite](https://img.shields.io/badge/Vite-8.3.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![License](https://img.shields.io/badge/License-MIT-amber.svg)](LICENSE)
-[![Local AI](https://img.shields.io/badge/Local%20AI-Ollama%20%7C%20LM%20Studio%20%7C%20Built--in-10b981.svg)](#local-ai-model-engine)
-[![Privacy](https://img.shields.io/badge/Privacy-100%25%20On--Device-34d399.svg)](#privacy-first-architecture)
+[![CI](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/ci.yml/badge.svg)](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/deploy.yml/badge.svg)](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](tsconfig.json)
 
----
-
-## 🌟 Overview
-
-**Voxelle Home** is a smart home interface designed with refined frosted glassmorphism, dynamic ambient lighting, and fluid multi-device layouts, paired with a privacy-first **Local AI Model Engine**.
-
-Unlike conventional smart home hubs that transmit private camera feeds, audio recordings, and daily routines to remote cloud servers, Voxelle Home processes natural language intents, device mutations, scene orchestrations, and visual object detection **100% locally on your hardware**.
+**Live demo:** <https://sujaya-nimneth.github.io/voxelle---Home/> _(deployed from `main` by GitHub Actions)_
 
 ---
 
-## 📸 Interface Showcase
+## 🌟 What this is
 
-|                      Desktop Workspace                      |              Tablet Split View              |                       Mobile Chassis Frame                       |
-| :---------------------------------------------------------: | :-----------------------------------------: | :--------------------------------------------------------------: |
-| Full-featured sidebar, multi-column dashboard & camera grid | Floating glass navigation & responsive grid | Sleek mobile frame with dynamic cut-out, swipe bar & bottom tabs |
+Voxelle Home is a **frontend portfolio project**: an Apple-Home-inspired dashboard rendered with a
+frosted glassmorphic design system, switchable Mac / iPad / iPhone chassis, and a natural-language
+assistant that can genuinely drive the in-app home state.
 
-### Key Aesthetic Highlights:
+It is built to enterprise engineering standards — strict TypeScript, a pure reducer store with
+persistence, 46 unit/component tests plus Playwright e2e, WCAG-minded accessibility, CI on every
+push — while being honest about what is real and what is a demo.
 
-- **Liquid Ambient Wallpapers**: Dynamic blurred gradient backdrops including _Warm Amber Sunset_, _Emerald Aurora Flow_, and _Midnight OLED Dark_.
-- **Frosted Glassmorphism**: Tailored CSS tokens (`backdrop-filter: blur(32px)`, specular highlights, inset borders, and ambient light refraction).
-- **Iridescent Glowing Neural Orb**: Multilayer rotating gradient halo reflecting real-time local AI assistant activity.
-- **Micro-Animations & Visual Delight**: Spinning ceiling fan blades, glowing color-coordinated accessory states, and scene trigger confetti celebrations.
+### What's real vs. simulated
 
----
+| Capability                          | Status       | Notes                                                                                               |
+| :---------------------------------- | :----------- | :-------------------------------------------------------------------------------------------------- |
+| Built-in rule engine                | ✅ Real      | Deterministic NLU: scenes, lights/locks/climate/fans, camera intents. Runs fully in-browser.        |
+| Ollama bridge                       | ✅ Real      | Live `/api/tags` health check + `/api/chat` structured command execution against your local Ollama. |
+| LM Studio bridge                    | ✅ Real      | `/v1/models` + `/v1/chat/completions` (OpenAI-compatible) against your local server.                |
+| Voice input / spoken replies        | ✅ Real      | Web Speech API (recognition + synthesis), browser support dependent.                                |
+| Scene orchestration & device state  | ✅ Real      | Reducer-backed state with localStorage persistence; scenes mutate real app state.                   |
+| Camera feeds & detection overlays   | 🎬 Simulated | Still images with sample detection tags/bounding boxes. Badged "DEMO" in the UI.                    |
+| Accessory discovery (Matter/Thread) | 🎬 Simulated | The Add button reports that discovery is simulated.                                                 |
+| Automation execution                | 🎬 Simulated | Automations are stored and persisted; triggers do not execute on real events.                       |
 
-## 🚀 Key Features
+## 🚀 Key features
 
-### 1. 🎛️ Glassmorphic Tile Controls & Status Hierarchy
+- **Glassmorphic accessory tiles** — one-tap toggles with stateful glows, dimmer sliders, color
+  temperature swatches, thermostat dial with modes, and lock/unlock controls.
+- **Six scenes** (Arrive Home, Wake Up, Leave Home, Movie Night, Goodnight, Focus Work) that
+  synchronously update device state — with confetti.
+- **Camera inspector** with intercom/siren/snapshot affordances (demo actions) and a simulated
+  detection timeline.
+- **AI assistant** with three interchangeable providers, measured health/latency display, model
+  picker, honest error reporting, and one-click fallback to the offline engine.
+- **Three chassis** — Mac desktop, iPad, iPhone (dynamic island + tab bar) — switchable live.
+- **Ambient wallpapers** and an iridescent assistant orb, all WebP-optimized and self-hosted.
 
-- **Header Status Pills**: Real-time counts for `Climate 68° - 72°`, `Lights X On`, `Security Armed/Unlocked`, `Speakers 1 Playing`, `Water All Off`, and `Local AI 100% Private`.
-- **One-Tap Scenes**: Quick scene buttons (_Arrive Home_, _Wake Up_, _Leave Home_, _Movie Night_, _Goodnight_, _Focus Work_) that instantly synchronize multiple accessories.
-- **Interactive Accessory Tiles**: One-tap toggles with stateful glows (Amber for warm lights, Cyan for fans, Emerald for security locks, Purple for media).
-- **Fine-Grained Detail Sheets**:
-  - Smooth vertical touch sliders for granular brightness (0–100%) and fan speeds.
-  - Atmosphere color spectrum swatches (from 2200K warm candlelight to 5000K daylight and vibrant neon hues).
-  - Circular thermostat dials with Cool, Heat, Auto, and Eco modes.
-  - Interactive deadbolt locks with secure lock/unlock confirmations.
+## 🛠️ Tech stack
 
-### 2. 📹 Multi-Camera Live Grid & Local Vision AI
-
-- **High-Resolution Realistic Feeds**:
-  - **Front Porch Doorbell**: Fisheye lens with AI package detection bounding box (`Package Delivered 99%`).
-  - **Garage & Driveway**: Wide-angle overview with vehicle security monitoring (`SUV Secured 98%`).
-  - **Pool & Deck**: Outdoor water clarity and temperature monitoring (`82°F`).
-  - **Interior Lounge**: Living room motion and ambient lighting analysis.
-- **Camera Inspector Modal**: Equipped with **Two-Way Intercom (Push to Talk)**, **Emergency Siren**, **Instant Snapshot Capture**, and **Local AI Event Timeline**.
-
-### 3. 🧠 Privacy-First Local AI Model Engine ("Voxelle Neural")
-
-- **3 Execution Providers**:
-  1. **Built-in Local Neural Engine**: Instant sub-5ms semantic parsing with intent extraction and device action execution that runs completely offline with zero setup.
-  2. **Ollama Local Bridge**: Real-time ping and model switcher for `http://localhost:11434` (supporting `llama3.2`, `mistral`, `phi3`, `gemma2`, `qwen2.5`).
-  3. **LM Studio / LocalAI Connector**: Compatible with local OpenAI-compatible endpoints at `http://localhost:1234/v1`.
-- **Voice Dictation & Speech Synthesis**: Integrated with Web Speech API for hands-free voice commands and voice feedback.
-- **Direct Tool Calling**: Translates natural language into smart home state mutations with visual execution chips (e.g. _"Dim the living room lights to 25% and turn on fan"_).
-
-### 4. ⚡ Natural Language Automations Synthesizer
-
-- **Smart Event Triggers**: Schedule or geo-fence rules (Sunset ambiance, geofence arrivals, night-time security sentry).
-- **AI Automation Generator**: Describe an automation in plain English (e.g., _"Turn on backyard lights and notify me if the pool gate opens after 9 PM"_), and the local engine synthesizes the rule automatically.
-
-### 5. 📱 Multi-Device Chassis Switcher
-
-- Test and experience the app across three distinct device form factors via the top window toolbar:
-  - **Desktop Mode**: Full window view with window controls, persistent translucent sidebar, and expanded grid.
-  - **Tablet Mode**: Rounded tablet chassis with split-view layout and floating navigation.
-  - **Mobile Mode**: Smartphone chassis with working dynamic cut-out, bottom navigation tabs, and home indicator swipe bar.
-
----
-
-## 🛠️ Architecture & Tech Stack
+- **React 19 + TypeScript (strict)** — `noUncheckedIndexedAccess`, zero `any`
+- **Vite 8** — production build ~95 kB gzipped app code, split vendor chunks, relative base for Pages
+- **State** — pure reducer (`src/store/homeReducer.ts`) + memoized context, versioned localStorage persistence
+- **Styling** — hand-rolled CSS design system in `src/styles/` (no Tailwind), self-hosted variable fonts
+- **AI** — provider abstraction under `src/services/ai/` with timeout/abort-guarded fetches
+- **Testing** — Vitest + React Testing Library (46 tests) + Playwright e2e (6 scenarios)
+- **Tooling** — oxlint (correctness presets, jsx-a11y), Prettier, husky + lint-staged, GitHub Actions CI/CD
 
 ```
-voxelle-home/
-├── public/
-│   └── assets/                     # High-res camera feeds & dynamic wallpapers
-│       ├── camera_pool.jpg
-│       ├── camera_driveway.jpg
-│       ├── camera_livingroom.jpg
-│       ├── camera_porch.jpg
-│       ├── wallpaper_amber.jpg
-│       └── wallpaper_aurora.jpg
-├── src/
-│   ├── components/
-│   │   ├── AccessoryTile.jsx       # Frosted glass interactive accessory tile
-│   │   ├── AutomationsView.jsx     # Automation rules & AI synthesizer
-│   │   ├── CameraDetailModal.jsx   # 4K live feed inspector with intercom & AI vision
-│   │   ├── CameraGrid.jsx          # Live camera carousel/grid
-│   │   ├── DeviceDetailModal.jsx   # Dimmer sliders, dials, and color swatches
-│   │   ├── DiscoverView.jsx        # Ecosystem & local architecture overview
-│   │   ├── HomeDashboard.jsx       # Main dashboard layout
-│   │   ├── LocalAiModal.jsx        # Iridescent neural AI assistant HUD
-│   │   ├── ScenesBar.jsx           # Glowing scene trigger pills
-│   │   ├── Sidebar.jsx             # Translucent frosted glass sidebar
-│   │   ├── StatusPills.jsx         # Category status chips
-│   │   └── TopHeader.jsx           # Top window bar, viewport & theme switchers
-│   ├── context/
-│   │   └── HomeContext.jsx         # Central reactive state management
-│   ├── services/
-│   │   └── localAiEngine.js        # Offline neural intent executor & Ollama bridge
-│   ├── App.jsx                     # Top-level viewport chassis coordinator
-│   ├── index.css                   # Vanilla CSS glassmorphic design system
-│   └── main.jsx                    # Application entry point
-├── index.html                      # PWA meta tags & modern typography fonts
-└── package.json                    # Project dependencies
+src/
+├── components/        # Dashboard views, tiles, modals, toasts
+├── context/           # HomeContext — typed store facade
+├── data/              # Seed devices, scenes, cameras, automations, rooms
+├── hooks/             # useModalDialog (focus trap, Escape, restore)
+├── services/ai/       # Rule engine + Ollama + LM Studio providers
+├── store/             # Pure reducer + persistence
+├── styles/            # tokens / layout / sidebar / dashboard / cameras /
+│                      # scenes / accessories / modals / toast
+├── test/              # Vitest setup
+└── types/             # Domain model
+e2e/                   # Playwright smoke suite
 ```
 
-- **Frontend**: React 19 + Vite 8
-- **Styling**: Vanilla CSS with customized glassmorphic tokens (Zero Tailwind, maximum CSS control)
-- **Icons**: Lucide Icons (Curated minimalist icon set)
-- **Delight**: Canvas Confetti
-- **Local AI**: Browser Speech APIs, Local Fetch bridges for Ollama & LM Studio, In-Memory Semantic Parser
+## 🏁 Getting started
 
----
-
-## 🚦 Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (version 18.0.0 or higher)
-- [npm](https://www.npmjs.com/) (version 9.0.0 or higher)
-- _(Optional)_ [Ollama](https://ollama.com/) or [LM Studio](https://lmstudio.ai/) for running external local LLMs.
-
-### 1. Clone & Install Dependencies
+Requires Node 22+ (see `.nvmrc`).
 
 ```bash
-git clone https://github.com/Sujaya-Nimneth/voxelle---Home.git
-cd "voxelle - Home"
 npm install
+npm run dev        # http://localhost:5173
 ```
 
-### 2. Start Local Development Server
+All quality gates:
 
 ```bash
-npm run dev
+npm run lint          # oxlint
+npm run typecheck     # tsc --noEmit
+npm test              # Vitest unit + component
+npm run build         # production build
+npm run test:e2e      # Playwright against vite preview (builds first)
 ```
 
-Open your browser and navigate to:
+### Environment configuration
 
-```
-http://localhost:5173/
-```
+Copy [.env.example](.env.example) to `.env` to point at non-default local AI endpoints:
 
-### 3. Build for Production
+| Variable            | Default                  | Purpose                   |
+| :------------------ | :----------------------- | :------------------------ |
+| `VITE_OLLAMA_URL`   | `http://localhost:11434` | Ollama server base URL    |
+| `VITE_LMSTUDIO_URL` | `http://localhost:1234`  | LM Studio server base URL |
 
-To generate an optimized production bundle:
+## 🤖 Connecting a local LLM
+
+**Ollama:**
 
 ```bash
-npm run build
+ollama run llama3.2
+# Allow browser origins if needed:
+OLLAMA_ORIGINS="*" ollama serve
 ```
 
-To preview the production build locally:
+Then open the assistant → **Ollama Bridge** tab → the health chip shows measured round-trip latency
+and a model picker populated from your installation. Commands are answered as strict JSON and
+validated before touching home state; anything unreadable surfaces an honest error with a
+fallback to the built-in engine.
 
-```bash
-npm run preview
-```
+**LM Studio:** start the local server (port 1234), then pick the **LM Studio Bridge** tab.
 
----
+No server running? The **Built-in Rule Engine** works offline with zero configuration.
 
-## 🤖 Connecting Local AI Models (Ollama / LM Studio)
+## 🔒 Privacy posture
 
-Voxelle Home includes a **built-in zero-configuration local engine** that works immediately without installing external software. If you would like to connect larger local LLMs:
+- No analytics, no trackers, no third-party CDNs — fonts are self-hosted via @fontsource.
+- The only network calls the app can make are to `localhost` endpoints you configure.
+- All home state lives in your browser's localStorage; the reset button clears it.
 
-### Using Ollama:
+## 🤝 Contributing
 
-1. Install Ollama from [ollama.com](https://ollama.com/).
-2. Pull your preferred model:
-   ```bash
-   ollama run llama3.2
-   ```
-3. Ensure Ollama allows web origin requests (if needed):
-   ```bash
-   OLLAMA_ORIGINS="*" ollama serve
-   ```
-4. In Voxelle Home, click the **Voxelle AI** glowing orb in the top bar, switch the provider tab to **Ollama Bridge (localhost:11434)**, and click **Check localhost:11434**.
-
-### Using LM Studio:
-
-1. Open LM Studio and start the **Local Inference Server** on port `1234`.
-2. In Voxelle Home, select the **LM Studio Bridge** tab in the AI Assistant modal.
-
----
-
-## 🔒 Privacy & Security
-
-- **Zero Cloud Outbound**: Smart home states, accessory commands, camera snapshots, and voice recognition are kept entirely on your local machine.
-- **Local Vision Analysis**: AI detection tags (_Package Delivered_, _Vehicle Secured_) simulate edge AI running on local smart cameras.
-- **No Tracking or Analytics**: No external telemetry scripts or third-party ad pixels.
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security disclosures: [SECURITY.md](SECURITY.md).
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-  <sub>Crafted with ❤️ for modern, private, and beautiful smart home experiences.</sub>
-</div>
+MIT — see [LICENSE](LICENSE).
