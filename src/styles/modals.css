@@ -1,0 +1,464 @@
+/* =========================================================
+   LOCAL AI MODAL / POPUP (APPLE INTELLIGENCE HUD)
+   ========================================================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modal-fade-in 0.2s ease;
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ai-modal-container {
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  background: rgba(24, 25, 33, 0.88);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 32px 80px -10px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Glowing iridescent border animation for AI Modal */
+.ai-modal-iridescent-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    45deg,
+    rgba(236, 72, 153, 0.4),
+    rgba(139, 92, 246, 0.4),
+    rgba(59, 130, 246, 0.4),
+    rgba(16, 185, 129, 0.4),
+    rgba(245, 158, 11, 0.4)
+  );
+  z-index: -1;
+  filter: blur(14px);
+  opacity: 0.7;
+}
+
+.ai-modal-header {
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ai-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ai-modal-header-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ai-modal-header-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ai-modal-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ai-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* AI Model Engine Selector Bar */
+.ai-engine-tabs {
+  display: flex;
+  align-items: center;
+  padding: 10px 24px;
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.ai-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ai-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ai-tab-btn.active {
+  color: #fff;
+  background: rgba(245, 158, 11, 0.25);
+  border-color: rgba(245, 158, 11, 0.5);
+  font-weight: 600;
+}
+
+/* Chat History / Log */
+.ai-chat-body {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 300px;
+}
+
+.ai-message {
+  display: flex;
+  gap: 12px;
+  max-width: 88%;
+}
+
+.ai-message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.ai-message.assistant {
+  align-self: flex-start;
+}
+
+.ai-message-bubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.ai-message.user .ai-message-bubble {
+  background: #2563eb;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.ai-message.assistant .ai-message-bubble {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-bottom-left-radius: 4px;
+}
+
+.ai-action-chip {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* Quick prompt suggestion pills */
+.ai-suggestions-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ai-suggestions-row::-webkit-scrollbar {
+  display: none;
+}
+
+.ai-suggestion-pill {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-suggestion-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* AI Input Bar */
+.ai-input-form {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-input-field {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-pill);
+  padding: 10px 18px;
+  color: #ffffff;
+  font-size: 13.5px;
+  transition: all 0.2s ease;
+}
+
+.ai-input-field:focus {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.ai-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f59e0b;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s var(--transition-snappy);
+}
+
+.ai-send-btn:hover {
+  transform: scale(1.05);
+  background: #fbbf24;
+}
+
+.ai-mic-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ai-mic-btn.is-listening {
+  background: #ef4444;
+  animation: pulse-dot 1.2s infinite;
+}
+/* =========================================================
+   ACCESSORY DETAIL MODAL (SLIDERS, DIALS, COLOR PICKERS)
+   ========================================================= */
+
+.detail-modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(26, 27, 34, 0.85);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.65), var(--glass-specular);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.detail-modal-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.detail-modal-subtitle {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Vertical / Apple Slider */
+.apple-slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 0;
+}
+
+.apple-slider-track {
+  position: relative;
+  width: 100px;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 36px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: ns-resize;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.apple-slider-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 0 0 34px 34px;
+  transition: height 0.1s linear;
+}
+
+.apple-slider-fill.amber {
+  background: linear-gradient(to top, #f59e0b, #fef08a);
+}
+
+.apple-slider-fill.cyan {
+  background: linear-gradient(to top, #06b6d4, #a5f3fc);
+}
+
+.apple-slider-value-badge {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+/* Color presets palette */
+.color-swatches-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.color-swatch-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.color-swatch-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch-dot.active {
+  border-color: #ffffff;
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+/* Thermostat Dial Control */
+.thermostat-dial-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.thermostat-dial-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(20, 21, 26, 0.8) 70%);
+  border: 8px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.25), inset 0 0 20px rgba(245, 158, 11, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.dial-temp-text {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #ffffff;
+}
+
+.dial-mode-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.thermostat-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.temp-adjust-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.15s ease;
+}
+
+.temp-adjust-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}

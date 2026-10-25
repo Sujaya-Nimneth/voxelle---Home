@@ -1,0 +1,230 @@
+/* =========================================================
+   DASHBOARD CONTENT WORKSPACE
+   ========================================================= */
+
+.voxelle-content-area {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.device-frame-iphone .voxelle-content-area {
+  padding: 54px 16px 80px;
+  gap: 20px;
+}
+
+/* Header Area (Home Title, Status Pills & Action Icons) */
+.dashboard-top-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-name-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.home-name-text {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.device-frame-iphone .home-name-text {
+  font-size: 24px;
+}
+
+.home-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all 0.2s var(--transition-snappy);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.action-circle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.action-circle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Siri / Apple Intelligence Animated Floating Trigger */
+.ai-trigger-orb-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(20, 20, 26, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
+  cursor: pointer;
+  transition: all 0.25s var(--transition-smooth);
+}
+
+.ai-trigger-orb-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  border-color: rgba(245, 158, 11, 0.7);
+  box-shadow: 0 6px 26px rgba(245, 158, 11, 0.4);
+}
+
+.glowing-orb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #ec4899 0deg,
+    #8b5cf6 72deg,
+    #3b82f6 144deg,
+    #10b981 216deg,
+    #f59e0b 288deg,
+    #ec4899 360deg
+  );
+  box-shadow: 0 0 16px rgba(236, 72, 153, 0.6), inset 0 0 6px rgba(255, 255, 255, 0.8);
+  animation: orb-spin 4s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes orb-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.ai-trigger-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  background: linear-gradient(135deg, #ffffff, #fed7aa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Status Chips / Category Pills (Row of Climate, Lights, Security, etc.) */
+.status-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+  scrollbar-width: none;
+}
+.status-pills-row::-webkit-scrollbar {
+  display: none;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(30, 30, 38, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  transition: all 0.2s var(--transition-snappy);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), var(--glass-specular);
+  cursor: pointer;
+}
+
+.status-pill:hover {
+  background: rgba(45, 45, 58, 0.6);
+  border-color: var(--glass-border-light);
+  transform: translateY(-1px);
+}
+
+.status-pill.active {
+  background: rgba(255, 255, 255, 0.92);
+  color: #111216;
+  border-color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+}
+
+.status-pill.active .status-pill-sub {
+  color: #4b5563;
+}
+
+.status-pill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-pill-title {
+  font-weight: 600;
+}
+
+.status-pill-sub {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+}
+
+/* =========================================================
+   CAMERAS SECTION & CAROUSEL / GRID
+   ========================================================= */
+
+.dashboard-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dashboard-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-chevron {
+  opacity: 0.6;
+}

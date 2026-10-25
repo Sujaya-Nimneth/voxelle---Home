@@ -1,0 +1,178 @@
+/* =========================================================
+   ROOM SECTIONS & ACCESSORY TILES
+   ========================================================= */
+
+.room-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.room-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+}
+
+.room-temp-pill {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.16);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.accessory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.device-frame-iphone .accessory-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* Individual Accessory Card (Apple Home Tile) */
+.accessory-tile {
+  height: 94px;
+  border-radius: var(--radius-md);
+  background: rgba(28, 29, 38, 0.42);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), var(--glass-specular);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s var(--transition-snappy);
+}
+
+.accessory-tile:hover {
+  background: rgba(42, 44, 56, 0.55);
+  border-color: var(--glass-border-light);
+  transform: translateY(-2px);
+}
+
+/* Active State: Apple-style full bright white/gold tile */
+.accessory-tile.is-active {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+.accessory-tile.is-active.theme-amber {
+  background: linear-gradient(145deg, #ffffff, #fffbeb);
+}
+
+.accessory-tile.is-active.theme-cyan {
+  background: linear-gradient(145deg, #ffffff, #ecfeff);
+}
+
+.accessory-tile.is-active.theme-emerald {
+  background: linear-gradient(145deg, #ffffff, #ecfdf5);
+}
+
+.accessory-tile.is-active.theme-purple {
+  background: linear-gradient(145deg, #ffffff, #faf5ff);
+}
+
+/* Top row inside tile: Icon and Quick Detail Trigger */
+.accessory-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.accessory-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+}
+
+.accessory-tile.is-active .accessory-icon-circle {
+  background: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
+}
+
+.accessory-tile.is-active.theme-cyan .accessory-icon-circle {
+  background: #06b6d4;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.45);
+}
+
+.accessory-tile.is-active.theme-emerald .accessory-icon-circle {
+  background: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
+}
+
+.accessory-tile.is-active.theme-purple .accessory-icon-circle {
+  background: #a855f7;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);
+}
+
+.accessory-more-dots {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 4px;
+}
+
+.accessory-tile:hover .accessory-more-dots {
+  opacity: 1;
+}
+
+.accessory-tile.is-active .accessory-more-dots {
+  color: #6b7280;
+}
+
+/* Bottom info in tile */
+.accessory-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.accessory-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.accessory-tile.is-active .accessory-name {
+  color: #111216;
+}
+
+.accessory-state {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 400;
+  transition: color 0.2s ease;
+}
+
+.accessory-tile.is-active .accessory-state {
+  color: #4b5563;
+  font-weight: 500;
+}
