@@ -416,9 +416,13 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
         const updated = { ...dev, ...updates };
         if (updates.value !== undefined && dev.type === 'light') {
           updated.isOn = updates.value > 0;
-          updated.statusText = updated.isOn ? `${updates.value}%` : 'Off';
+          if (updates.statusText === undefined) {
+            updated.statusText = updated.isOn ? `${updates.value}%` : 'Off';
+          }
         } else if (updates.targetTemp !== undefined && dev.type === 'thermostat') {
-          updated.statusText = `${updates.targetTemp}° • ${updated.mode || 'Cooling'}`;
+          if (updates.statusText === undefined) {
+            updated.statusText = `${updates.targetTemp}° • ${updated.mode ?? 'Cooling'}`;
+          }
           updated.value = updates.targetTemp;
         }
         return updated;
