@@ -12,3 +12,21 @@ afterEach(() => {
 if (typeof window !== 'undefined' && !window.Element.prototype.scrollIntoView) {
   window.Element.prototype.scrollIntoView = () => {};
 }
+
+// jsdom does not implement the native <dialog> API that Astryx Dialog uses.
+// Mirror just the open/close contract so modal content remains queryable.
+if (typeof window !== 'undefined') {
+  const proto = window.HTMLDialogElement?.prototype;
+  if (proto) {
+    if (!proto.showModal) {
+      proto.showModal = function showModal() {
+        this.open = true;
+      };
+    }
+    if (!proto.close) {
+      proto.close = function close() {
+        this.open = false;
+      };
+    }
+  }
+}
