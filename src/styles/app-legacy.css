@@ -1,0 +1,27 @@
+/* Legacy hand-rolled CSS belongs in the lowest (`reset`) layer so it can never
+   override Astryx component styles, per migration/migration-setup. Top-level
+   `layer()` imports are required: nesting @import inside an @layer block is
+   invalid CSS and bundlers drop it. Deleted in Phase 7 once every view is
+   Astryx-native. */
+@import './tokens.css' layer(reset);
+@import './layout.css' layer(reset);
+@import './sidebar.css' layer(reset);
+@import './dashboard.css' layer(reset);
+@import './cameras.css' layer(reset);
+@import './scenes.css' layer(reset);
+@import './accessories.css' layer(reset);
+@import './modals.css' layer(reset);
+@import './toast.css' layer(reset);
+
+/* Bridge: tokens.css hardcodes #fff text on a dark body. Until Phase 7 deletes
+   it, let the Astryx theme own the page ground and ink so light mode renders.
+   Placed in the theme layer so it wins over the legacy reset but not over
+   astryx-base component styles. */
+@layer astryx-theme {
+  html,
+  body {
+    color: var(--color-text-primary);
+    background-color: var(--color-background-body);
+    font-family: var(--font-family-body);
+  }
+}
