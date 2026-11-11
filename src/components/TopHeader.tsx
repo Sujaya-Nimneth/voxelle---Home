@@ -1,5 +1,4 @@
 import { TopNav } from '@astryxdesign/core/TopNav';
-import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
 import { HStack } from '@astryxdesign/core/Stack';
@@ -18,7 +17,7 @@ export const TopHeader = () => {
   return (
     <TopNav
       label="Voxelle Home"
-      heading={<Heading level={1}>Voxelle Home</Heading>}
+      heading={<Text type="label" weight="bold">Voxelle Home</Text>}
       startContent={
         <HStack gap={1.5} vAlign="center">
           <StatusDot

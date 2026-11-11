@@ -1,7 +1,23 @@
-import { useHome } from '../context/HomeContext';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
+import { Icon } from '@astryxdesign/core/Icon';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Heading } from '@astryxdesign/core/Heading';
 import { Thermometer, Lightbulb, Shield, ShieldAlert, Volume2, Droplets, Cpu } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { useHome } from '../context/HomeContext';
 import type { DeviceCategory } from '../types';
 
+interface StatusRow {
+  id: DeviceCategory | 'ai';
+  label: string;
+  detail: string;
+  icon: LucideIcon;
+  status: 'success' | 'warning' | 'error' | 'accent' | 'neutral';
+}
+
+/** House-state summary as dense rows, not card-wrapped pills (AGENTS.md). */
 export const StatusPills = () => {
   const {
     activeCategory,
@@ -14,90 +30,82 @@ export const StatusPills = () => {
     setIsAiModalOpen
   } = useHome();
 
-  const handlePillClick = (cat: DeviceCategory) => {
-    setActiveCategory(activeCategory === cat ? null : cat);
-  };
+  const rows: StatusRow[] = [
+    {
+      id: 'climate',
+      label: 'Climate',
+      detail: climateSummary,
+      icon: Thermometer,
+      status: 'neutral'
+    },
+    {
+      id: 'lights',
+      label: 'Lights',
+      detail: `${activeLightsCount} on`,
+      icon: Lightbulb,
+      status: activeLightsCount > 0 ? 'accent' : 'neutral'
+    },
+    {
+      id: 'security',
+      label: 'Security',
+      detail: unlockedDoorsCount > 0 ? `${unlockedDoorsCount} unlocked` : 'Armed & locked',
+      icon: unlockedDoorsCount > 0 ? ShieldAlert : Shield,
+      status: unlockedDoorsCount > 0 ? 'error' : 'success'
+    },
+    {
+      id: 'speakers',
+      label: 'Speakers & TVs',
+      detail: `${playingSpeakersCount} playing`,
+      icon: Volume2,
+      status: playingSpeakersCount > 0 ? 'accent' : 'neutral'
+    },
+    {
+      id: 'water',
+      label: 'Water',
+      detail: waterStatus,
+      icon: Droplets,
+      status: waterStatus === 'Active' ? 'accent' : 'neutral'
+    },
+    {
+      id: 'ai',
+      label: 'Local AI',
+      detail: '100% private · on-device',
+      icon: Cpu,
+      status: 'success'
+    }
+  ];
 
   return (
-    <div className="status-pills-row">
-      {/* Climate Pill */}
-      <button
-        className={`status-pill ${activeCategory === 'climate' ? 'active' : ''}`}
-        onClick={() => handlePillClick('climate')}
-      >
-        <span className="status-pill-icon" style={{ color: '#06b6d4' }}>
-          <Thermometer size={15} />
-        </span>
-        <span className="status-pill-title">Climate</span>
-        <span className="status-pill-sub">{climateSummary}</span>
-      </button>
-
-      {/* Lights Pill */}
-      <button
-        className={`status-pill ${activeCategory === 'lights' ? 'active' : ''}`}
-        onClick={() => handlePillClick('lights')}
-      >
-        <span className="status-pill-icon" style={{ color: '#f59e0b' }}>
-          <Lightbulb size={15} />
-        </span>
-        <span className="status-pill-title">Lights</span>
-        <span className="status-pill-sub">{activeLightsCount} On</span>
-      </button>
-
-      {/* Security Pill */}
-      <button
-        className={`status-pill ${activeCategory === 'security' ? 'active' : ''}`}
-        onClick={() => handlePillClick('security')}
-      >
-        <span className="status-pill-icon" style={{ color: unlockedDoorsCount > 0 ? '#ef4444' : '#10b981' }}>
-          {unlockedDoorsCount > 0 ? <ShieldAlert size={15} /> : <Shield size={15} />}
-        </span>
-        <span className="status-pill-title">Security</span>
-        <span className="status-pill-sub">
-          {unlockedDoorsCount > 0 ? `${unlockedDoorsCount} Unlocked` : 'Armed & Locked'}
-        </span>
-      </button>
-
-      {/* Speakers & TVs Pill */}
-      <button
-        className={`status-pill ${activeCategory === 'speakers' ? 'active' : ''}`}
-        onClick={() => handlePillClick('speakers')}
-      >
-        <span className="status-pill-icon" style={{ color: '#a855f7' }}>
-          <Volume2 size={15} />
-        </span>
-        <span className="status-pill-title">Speakers & TVs</span>
-        <span className="status-pill-sub">{playingSpeakersCount} Playing</span>
-      </button>
-
-      {/* Water Pill */}
-      <button
-        className={`status-pill ${activeCategory === 'water' ? 'active' : ''}`}
-        onClick={() => handlePillClick('water')}
-      >
-        <span className="status-pill-icon" style={{ color: '#38bdf8' }}>
-          <Droplets size={15} />
-        </span>
-        <span className="status-pill-title">Water</span>
-        <span className="status-pill-sub">{waterStatus}</span>
-      </button>
-
-      {/* Local AI Offline Neural Indicator Pill */}
-      <button
-        className="status-pill"
-        onClick={() => setIsAiModalOpen(true)}
-        style={{ borderColor: 'rgba(245, 158, 11, 0.4)', background: 'rgba(245, 158, 11, 0.12)' }}
-        title="100% Local Inference • Zero Cloud Telemetry"
-      >
-        <span className="status-pulse-dot" style={{ background: '#34d399' }} />
-        <span className="status-pill-icon" style={{ color: '#fbbf24' }}>
-          <Cpu size={15} />
-        </span>
-        <span className="status-pill-title">Local AI</span>
-        <span className="status-pill-sub" style={{ color: '#34d399', fontWeight: 600 }}>
-          100% Private
-        </span>
-      </button>
-    </div>
+    <List
+      density="compact"
+      hasDividers
+      header={<Heading level={2}>House status</Heading>}
+    >
+      {rows.map((row) => {
+        const isCategory = row.id !== 'ai';
+        const isSelected = isCategory && activeCategory === row.id;
+        return (
+          <Item
+            key={row.id}
+            label={row.label}
+            description={row.detail}
+            isSelected={isSelected}
+            onClick={() =>
+              isCategory
+                ? setActiveCategory(isSelected ? null : (row.id as DeviceCategory))
+                : setIsAiModalOpen(true)
+            }
+            startContent={<Icon icon={row.icon} size="sm" color="secondary" />}
+            endContent={
+              isCategory ? (
+                <StatusDot variant={row.status} label={`${row.label}: ${row.detail}`} />
+              ) : (
+                <Badge label="On-device" variant="success" />
+              )
+            }
+          />
+        );
+      })}
+    </List>
   );
 };

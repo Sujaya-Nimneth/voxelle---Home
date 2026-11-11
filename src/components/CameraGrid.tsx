@@ -1,6 +1,15 @@
 import { memo } from 'react';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { AspectRatio } from '@astryxdesign/core/AspectRatio';
+import { Item } from '@astryxdesign/core/Item';
+import { Icon } from '@astryxdesign/core/Icon';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Heading } from '@astryxdesign/core/Heading';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Maximize2 } from 'lucide-react';
 import { useHome } from '../context/HomeContext';
-import { ChevronRight, Sparkles, Maximize2 } from 'lucide-react';
 import type { Camera } from '../types';
 
 /** Memoized: a card re-renders only when its camera object changes. */
@@ -12,60 +21,34 @@ const CameraCard = memo(function CameraCard({
   onOpen: (camera: Camera) => void;
 }) {
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      aria-label={`Open ${camera.name} camera feed, ${camera.location}. Simulated demo feed.`}
-      className="camera-card"
-      onClick={() => onOpen(camera)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onOpen(camera);
+    <Card padding={0} variant="default">
+      <AspectRatio ratio={16 / 9} fit="cover">
+        <img
+          src={camera.image}
+          alt={`${camera.name} still frame, ${camera.location}`}
+          width={1376}
+          height={768}
+          loading="lazy"
+          decoding="async"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      </AspectRatio>
+      <Item
+        label={camera.name}
+        description={camera.location}
+        onClick={() => onOpen(camera)}
+        startContent={<Badge label="Demo" variant="warning" />}
+        endContent={
+          <IconButton
+            icon={<Icon icon={Maximize2} size="sm" />}
+            label={`Open ${camera.name}`}
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpen(camera)}
+          />
         }
-      }}
-    >
-      <img
-        src={camera.image}
-        alt={`${camera.name} still frame`}
-        className="camera-image"
-        width={1376}
-        height={768}
-        loading="lazy"
-        decoding="async"
       />
-
-      {/* Top Overlay: Live badge and AI vision detection */}
-      <div className="camera-overlay-top">
-        <span className="camera-live-badge">
-          <span className="live-dot" aria-hidden="true"></span>
-          DEMO
-        </span>
-        <span className="camera-ai-tag">
-          <Sparkles size={11} />
-          <span>{camera.aiTag}</span>
-        </span>
-      </div>
-
-      {/* Bottom Overlay: Title, location, maximize hint */}
-      <div className="camera-overlay-bottom">
-        <div>
-          <div className="camera-name">{camera.name}</div>
-          <div className="camera-location">{camera.location}</div>
-        </div>
-        <button
-          className="action-circle-btn"
-          style={{ width: 28, height: 28, background: 'rgba(0,0,0,0.4)' }}
-          aria-label={`Open ${camera.name}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpen(camera);
-          }}
-        >
-          <Maximize2 size={13} />
-        </button>
-      </div>
-    </div>
+    </Card>
   );
 });
 
@@ -73,19 +56,13 @@ export const CameraGrid = () => {
   const { cameras, setSelectedCamera } = useHome();
 
   return (
-    <div className="cameras-section">
-      <div className="dashboard-section-header">
-        <h2 className="dashboard-section-title">
-          <span>Cameras</span>
-          <ChevronRight size={16} className="section-chevron" />
-        </h2>
-      </div>
-
-      <div className="camera-grid">
-        {cameras.map((cam) => (
-          <CameraCard key={cam.id} camera={cam} onOpen={setSelectedCamera} />
+    <VStack gap={2}>
+      <Heading level={2}>Cameras</Heading>
+      <Grid columns={{ minWidth: 240 }} gap={3}>
+        {cameras.map((camera) => (
+          <CameraCard key={camera.id} camera={camera} onOpen={setSelectedCamera} />
         ))}
-      </div>
-    </div>
+      </Grid>
+    </VStack>
   );
 };
