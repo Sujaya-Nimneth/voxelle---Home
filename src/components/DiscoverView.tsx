@@ -1,107 +1,103 @@
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { Section } from '@astryxdesign/core/Section';
+import { Card } from '@astryxdesign/core/Card';
+import { Grid } from '@astryxdesign/core/Grid';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Icon } from '@astryxdesign/core/Icon';
+import { Button } from '@astryxdesign/core/Button';
+import { VStack } from '@astryxdesign/core/Stack';
 import { ShieldCheck, Cpu, Wifi, Sparkles } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { useToast } from './Toast';
 
-const FEATURE_CARDS = [
+interface Capability {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+const CAPABILITIES: Capability[] = [
   {
     icon: Cpu,
-    iconBackground: 'rgba(16, 185, 129, 0.2)',
-    iconColor: '#10b981',
-    title: 'Local Neural Models',
+    title: 'Local neural models',
     description:
       'Plug and play with Ollama, LM Studio, or the built-in rule engine for natural language home control.'
   },
   {
     icon: Wifi,
-    iconBackground: 'rgba(59, 130, 246, 0.2)',
-    iconColor: '#3b82f6',
     title: 'Matter 1.3 & Thread',
     description:
-      'Seamless cross-platform interoperability with Apple HomeKit, Google Home, and Home Assistant accessories.'
+      'Cross-platform interoperability with Apple HomeKit, Google Home, and Home Assistant accessories.'
   },
   {
     icon: ShieldCheck,
-    iconBackground: 'rgba(245, 158, 11, 0.2)',
-    iconColor: '#f59e0b',
-    title: 'Zero Cloud Outbound',
+    title: 'Zero cloud outbound',
     description:
-      'Camera feeds are processed with local bounding box neural detection. No video leaves your local network.'
+      'Vision analysis and device reasoning run locally. No camera feed leaves your network.'
   }
 ];
 
 export const DiscoverView = () => {
+  const { notify } = useToast();
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div className="dashboard-title-row">
-        <div>
-          <h1 className="home-name-text">Discover Voxelle</h1>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
-            Next-generation privacy-first home automation architecture.
-          </p>
-        </div>
-      </div>
+    <VStack gap={5} width="100%">
+      <VStack gap={0.5}>
+        <Heading level={1}>Discover Voxelle</Heading>
+        <Text type="supporting">
+          Next-generation privacy-first home automation architecture.
+        </Text>
+      </VStack>
 
-      {/* Hero Card */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(6, 182, 212, 0.18))',
-          borderRadius: 24,
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: 28,
-          backdropFilter: 'blur(30px)'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#f59e0b', fontWeight: 700 }}>
-          <Sparkles size={18} />
-          <span>VOXELLE PRIVACY ARCHITECTURE</span>
-        </div>
-        <h2 style={{ fontSize: 26, fontWeight: 800, marginTop: 8, marginBottom: 12 }}>
-          Your home data stays on your hardware. Forever.
-        </h2>
-        <p style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6, maxWidth: 650 }}>
-          Unlike traditional smart homes that send camera feeds, voice recordings, and device usage to remote
-          cloud servers, Voxelle Home runs completely offline. Vision analysis, natural language scene
-          orchestration, and device state reasoning execute inside your browser and local Ollama/LM Studio
-          instances.
-        </p>
-      </div>
+      <Card padding={5} variant="muted">
+        <VStack gap={2}>
+          <Icon icon={Sparkles} size="md" color="accent" />
+          <Heading level={2}>Your home data stays on your hardware</Heading>
+          <Text>
+            Unlike traditional smart homes that send camera feeds, voice recordings, and device usage
+            to remote servers, Voxelle Home runs offline. Vision analysis, natural language scene
+            orchestration, and device state reasoning execute inside your browser and local
+            Ollama/LM Studio instances.
+          </Text>
+        </VStack>
+      </Card>
 
-      {/* Feature Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-        {FEATURE_CARDS.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.title}
-              style={{
-                background: 'rgba(30, 31, 40, 0.45)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: 20,
-                padding: 22,
-                backdropFilter: 'blur(20px)'
-              }}
-            >
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  background: card.iconBackground,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: card.iconColor,
-                  marginBottom: 14
-                }}
-              >
-                <Icon size={22} />
-              </div>
-              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{card.title}</div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
-                {card.description}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+      <Section variant="transparent" padding={0}>
+        <VStack gap={2}>
+          <Heading level={2}>Capabilities</Heading>
+          <Grid columns={{ minWidth: 260 }} gap={3}>
+            {CAPABILITIES.map((capability) => (
+              <Card key={capability.title} padding={4}>
+                <VStack gap={1.5}>
+                  <Icon icon={capability.icon} size="md" color="secondary" />
+                  <Text type="label" weight="semibold">
+                    {capability.title}
+                  </Text>
+                  <Text type="supporting">{capability.description}</Text>
+                </VStack>
+              </Card>
+            ))}
+          </Grid>
+        </VStack>
+      </Section>
+
+      <Section variant="transparent" padding={0}>
+        <EmptyState
+          title="No accessories found"
+          description="Accessory discovery is simulated in this demo build. No real hardware is scanned."
+          icon={<Icon icon={Wifi} size="lg" />}
+          actions={
+            <Button
+              label="Scan for accessories"
+              variant="secondary"
+              onClick={() =>
+                notify('Accessory discovery is simulated in this demo build — no real hardware is scanned.')
+              }
+            />
+          }
+        />
+      </Section>
+    </VStack>
   );
 };
