@@ -37,14 +37,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         <Card padding={6} maxWidth={520}>
           <VStack gap={3} hAlign="center">
             <Heading level={1}>Voxelle hit an unexpected error</Heading>
-            <Text type="supporting">
-              {this.state.message || 'An unknown error interrupted the app.'}
-            </Text>
-            <Button
-              label="Reload Voxelle"
-              variant="primary"
-              onClick={() => window.location.reload()}
-            />
+            <Text type="supporting">{this.state.message || 'An unknown error interrupted the app.'}</Text>
+            <Button label="Reload Voxelle" variant="primary" onClick={() => window.location.reload()} />
           </VStack>
         </Card>
       </Center>

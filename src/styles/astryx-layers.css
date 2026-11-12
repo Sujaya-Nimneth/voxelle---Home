@@ -1,4 +1,0 @@
-/* Cascade layer order must be declared before any @import, in its own file.
-   Vite hoists CSS imports, so an inline @layer line in globals.css would arrive
-   too late. Unlayered styles beat every named layer regardless of specificity. */
-@layer reset, astryx-base, astryx-theme, app;

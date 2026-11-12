@@ -1,14 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 import confetti from 'canvas-confetti';
-import type {
-  Automation,
-  Camera,
-  Device,
-  DeviceCategory,
-  DeviceUpdates,
-  Scene,
-  ViewId
-} from '../types';
+import type { Automation, Camera, Device, DeviceCategory, DeviceUpdates, Scene, ViewId } from '../types';
 import { createInitialHomeState, homeReducer } from '../store/homeReducer';
 import { clearPersistedState, loadPersistedState, savePersistedState } from '../store/persistence';
 

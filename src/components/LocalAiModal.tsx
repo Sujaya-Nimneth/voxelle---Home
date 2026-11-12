@@ -308,7 +308,13 @@ export const LocalAiModal = () => {
             ))}
             {activeProvider.requiresServer && (
               <Button
-                label={checking ? 'Checking…' : health?.online ? `Online · ${health.latencyMs}ms` : 'Check connection'}
+                label={
+                  checking
+                    ? 'Checking…'
+                    : health?.online
+                      ? `Online · ${health.latencyMs}ms`
+                      : 'Check connection'
+                }
                 variant={health?.online ? 'secondary' : 'ghost'}
                 size="sm"
                 icon={<Icon icon={RefreshCw} size="sm" />}
@@ -323,8 +329,8 @@ export const LocalAiModal = () => {
               <StatusDot variant="error" label="Server unreachable" />
               <Text type="supporting">
                 {activeProvider.name} is not reachable
-                {health.error ? ` (${health.error})` : ''}. Start the server locally, or use the
-                built-in engine.
+                {health.error ? ` (${health.error})` : ''}. Start the server locally, or use the built-in
+                engine.
               </Text>
             </HStack>
           )}
@@ -356,11 +362,7 @@ export const LocalAiModal = () => {
         >
           {messages.map((msg) => (
             <HStack key={msg.id} hAlign={msg.sender === 'user' ? 'end' : 'start'} width="100%">
-              <Card
-                padding={2}
-                variant={msg.sender === 'user' ? 'muted' : 'default'}
-                maxWidth="80%"
-              >
+              <Card padding={2} variant={msg.sender === 'user' ? 'muted' : 'default'} maxWidth="80%">
                 <VStack gap={1}>
                   <Text color={msg.error ? 'accent' : 'primary'}>{msg.text}</Text>
                   {msg.actions.length > 0 && (

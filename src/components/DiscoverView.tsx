@@ -33,8 +33,7 @@ const CAPABILITIES: Capability[] = [
   {
     icon: ShieldCheck,
     title: 'Zero cloud outbound',
-    description:
-      'Vision analysis and device reasoning run locally. No camera feed leaves your network.'
+    description: 'Vision analysis and device reasoning run locally. No camera feed leaves your network.'
   }
 ];
 
@@ -45,9 +44,7 @@ export const DiscoverView = () => {
     <VStack gap={5} width="100%">
       <VStack gap={0.5}>
         <Heading level={1}>Discover Voxelle</Heading>
-        <Text type="supporting">
-          Next-generation privacy-first home automation architecture.
-        </Text>
+        <Text type="supporting">Next-generation privacy-first home automation architecture.</Text>
       </VStack>
 
       <Card padding={5} variant="muted">
@@ -55,10 +52,9 @@ export const DiscoverView = () => {
           <Icon icon={Sparkles} size="md" color="accent" />
           <Heading level={2}>Your home data stays on your hardware</Heading>
           <Text>
-            Unlike traditional smart homes that send camera feeds, voice recordings, and device usage
-            to remote servers, Voxelle Home runs offline. Vision analysis, natural language scene
-            orchestration, and device state reasoning execute inside your browser and local
-            Ollama/LM Studio instances.
+            Unlike traditional smart homes that send camera feeds, voice recordings, and device usage to
+            remote servers, Voxelle Home runs offline. Vision analysis, natural language scene orchestration,
+            and device state reasoning execute inside your browser and local Ollama/LM Studio instances.
           </Text>
         </VStack>
       </Card>

@@ -161,10 +161,7 @@ export const DeviceDetailModal = () => {
 
         {device.type === 'lock' && (
           <VStack gap={3} hAlign="center">
-            <StatusDot
-              variant={isPowered ? 'success' : 'error'}
-              label={isPowered ? 'Locked' : 'Unlocked'}
-            />
+            <StatusDot variant={isPowered ? 'success' : 'error'} label={isPowered ? 'Locked' : 'Unlocked'} />
             <Icon icon={isPowered ? Lock : Unlock} size="lg" />
             <Button
               label={isPowered ? 'Unlock door' : 'Lock door'}

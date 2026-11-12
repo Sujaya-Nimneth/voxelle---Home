@@ -17,7 +17,11 @@ export const TopHeader = () => {
   return (
     <TopNav
       label="Voxelle Home"
-      heading={<Text type="label" weight="bold">Voxelle Home</Text>}
+      heading={
+        <Text type="label" weight="bold">
+          Voxelle Home
+        </Text>
+      }
       startContent={
         <HStack gap={1.5} vAlign="center" aria-live="polite" aria-atomic="true">
           <StatusDot

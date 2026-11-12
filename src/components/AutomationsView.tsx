@@ -56,9 +56,7 @@ export const AutomationsView = () => {
       <HStack hAlign="between" vAlign="center" wrap="wrap" gap={2}>
         <VStack gap={0.5}>
           <Heading level={1}>Automations</Heading>
-          <Text type="supporting">
-            Local event triggers executed on-device with zero cloud delay.
-          </Text>
+          <Text type="supporting">Local event triggers executed on-device with zero cloud delay.</Text>
         </VStack>
         <Button
           label="Ask AI to build an automation"
@@ -77,8 +75,8 @@ export const AutomationsView = () => {
             </Text>
           </HStack>
           <Text type="supporting">
-            Describe a condition in plain language. The rule is stored locally; triggers do not
-            execute on real events in this demo.
+            Describe a condition in plain language. The rule is stored locally; triggers do not execute on
+            real events in this demo.
           </Text>
           <HStack gap={2} vAlign="end" wrap="wrap">
             <TextInput
@@ -110,11 +108,7 @@ export const AutomationsView = () => {
               title="No automations yet"
               description="Describe a rule above or ask the assistant to build one."
               actions={
-                <Button
-                  label="Ask Voxelle AI"
-                  variant="secondary"
-                  onClick={() => setIsAiModalOpen(true)}
-                />
+                <Button label="Ask Voxelle AI" variant="secondary" onClick={() => setIsAiModalOpen(true)} />
               }
             />
           ) : (

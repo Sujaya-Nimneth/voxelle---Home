@@ -76,11 +76,7 @@ export const StatusPills = () => {
   ];
 
   return (
-    <List
-      density="compact"
-      hasDividers
-      header={<Heading level={2}>House status</Heading>}
-    >
+    <List density="compact" hasDividers header={<Heading level={2}>House status</Heading>}>
       {rows.map((row) => {
         const isCategory = row.id !== 'ai';
         const isSelected = isCategory && activeCategory === row.id;

@@ -1,12 +1,4 @@
-import type {
-  Automation,
-  Camera,
-  Device,
-  DeviceCategory,
-  DeviceUpdates,
-  Scene,
-  ViewId
-} from '../types';
+import type { Automation, Camera, Device, DeviceCategory, DeviceUpdates, Scene, ViewId } from '../types';
 import { SEED_DEVICES } from '../data/devices';
 import { SEED_SCENES } from '../data/scenes';
 import { SEED_CAMERAS } from '../data/cameras';

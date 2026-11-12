@@ -43,13 +43,7 @@ const AppContent = () => {
 
   return (
     <>
-      <AppShell
-        height="fill"
-        variant="wash"
-        contentPadding={4}
-        topNav={<TopHeader />}
-        sideNav={<Sidebar />}
-      >
+      <AppShell height="fill" variant="wash" contentPadding={4} topNav={<TopHeader />} sideNav={<Sidebar />}>
         <Layout height="fill">
           <LayoutContent label={VIEW_TITLES[activeNav]}>{renderActiveView()}</LayoutContent>
         </Layout>

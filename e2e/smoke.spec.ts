@@ -67,9 +67,7 @@ test('generated automations survive navigation (regression)', async ({ page }) =
   await automationNav.click();
   await expect(page.getByRole('heading', { name: 'Automations', exact: true })).toBeVisible();
 
-  await page
-    .getByPlaceholder(/pool gate opens/i)
-    .fill('Turn on backyard lights after sunset');
+  await page.getByPlaceholder(/pool gate opens/i).fill('Turn on backyard lights after sunset');
   await page.getByRole('button', { name: 'Generate' }).click();
   await expect(page.getByText('Turn on backyard lights after sunset')).toBeVisible();
 

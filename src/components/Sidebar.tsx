@@ -1,9 +1,4 @@
-import {
-  SideNav,
-  SideNavHeading,
-  SideNavItem,
-  SideNavSection
-} from '@astryxdesign/core/SideNav';
+import { SideNav, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
@@ -50,7 +45,7 @@ const VIEWS: Array<{ id: ViewId; label: string; icon: LucideIcon }> = [
   { id: 'discover', label: 'Discover', icon: Compass }
 ];
 
-/** Astryx-native application side navigation. Replaces the glass sidebar. */
+/** Astryx-native application side navigation. */
 export const Sidebar = () => {
   const {
     activeNav,
@@ -111,9 +106,7 @@ export const Sidebar = () => {
               setActiveCategory(null);
             }}
             endContent={
-              view.id === 'automations' ? (
-                <Badge label={automationCount} variant="neutral" />
-              ) : undefined
+              view.id === 'automations' ? <Badge label={automationCount} variant="neutral" /> : undefined
             }
           />
         ))}
