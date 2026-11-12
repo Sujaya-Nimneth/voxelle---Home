@@ -12,4 +12,4 @@ What does this PR change and why?
 
 ## Screenshots
 
-For visual changes, before/after screenshots across chassis modes.
+For visual changes, before/after screenshots at desktop and phone widths.

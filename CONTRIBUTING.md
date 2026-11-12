@@ -53,4 +53,4 @@ WebP variants; reference the `.webp` files in code.
 
 ## Reporting bugs
 
-Use the issue templates. Include the chassis mode and AI provider if relevant.
+Use the issue templates. Include the active view and AI provider if relevant.

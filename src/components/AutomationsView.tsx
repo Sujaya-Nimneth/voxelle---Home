@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { useHome } from '../context/HomeContext';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { Section } from '@astryxdesign/core/Section';
+import { Card } from '@astryxdesign/core/Card';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Button } from '@astryxdesign/core/Button';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Icon } from '@astryxdesign/core/Icon';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Sparkles } from 'lucide-react';
+import { useHome } from '../context/HomeContext';
 import { AUTOMATION_ICONS, GENERATED_AUTOMATION_ICON } from '../data/automations';
 import type { Automation } from '../types';
 
@@ -14,17 +26,13 @@ export const AutomationsView = () => {
   // Clear any in-flight synthesis timer when navigating away.
   useEffect(
     () => () => {
-      if (generateTimer.current !== null) {
-        window.clearTimeout(generateTimer.current);
-      }
+      if (generateTimer.current !== null) window.clearTimeout(generateTimer.current);
     },
     []
   );
 
-  const handleCreateWithAi = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateWithAi = () => {
     if (!aiPrompt.trim() || isGenerating) return;
-
     setIsGenerating(true);
     generateTimer.current = window.setTimeout(() => {
       const newAuto: Automation = {
@@ -34,7 +42,7 @@ export const AutomationsView = () => {
         action: aiPrompt,
         icon: GENERATED_AUTOMATION_ICON,
         enabled: true,
-        color: '#10b981'
+        color: 'var(--color-text-success)'
       };
       addAutomation(newAuto);
       setAiPrompt('');
@@ -44,149 +52,90 @@ export const AutomationsView = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div className="dashboard-title-row">
-        <div>
-          <h1 className="home-name-text">Automations</h1>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
-            Local event triggers executed on-device with zero cloud delay.
-          </p>
-        </div>
-
-        <button
-          className="viewport-btn active"
-          style={{ padding: '8px 16px', background: '#f59e0b', color: '#111', fontWeight: 700 }}
+    <VStack gap={5} width="100%">
+      <HStack hAlign="between" vAlign="center" wrap="wrap" gap={2}>
+        <VStack gap={0.5}>
+          <Heading level={1}>Automations</Heading>
+          <Text type="supporting">Local event triggers executed on-device with zero cloud delay.</Text>
+        </VStack>
+        <Button
+          label="Ask AI to build an automation"
+          variant="primary"
+          icon={<Icon icon={Sparkles} size="sm" />}
           onClick={() => setIsAiModalOpen(true)}
-        >
-          <Sparkles size={14} />
-          <span>Ask AI to Build Automation</span>
-        </button>
-      </div>
+        />
+      </HStack>
 
-      {/* AI Automation Generator Card */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(168, 85, 247, 0.15))',
-          border: '1px solid rgba(245, 158, 11, 0.3)',
-          borderRadius: 20,
-          padding: 20,
-          backdropFilter: 'blur(20px)'
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            marginBottom: 8,
-            color: '#fbbf24',
-            fontWeight: 700,
-            fontSize: 14
-          }}
-        >
-          <Sparkles size={16} />
-          <span>Natural Language Automation Synthesizer</span>
-        </div>
-        <form onSubmit={handleCreateWithAi} style={{ display: 'flex', gap: 10 }}>
-          <input
-            type="text"
-            className="ai-input-field"
-            placeholder="e.g. Turn on backyard lights and notify me if the pool gate opens after 9 PM..."
-            value={aiPrompt}
-            onChange={(e) => setAiPrompt(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="viewport-btn active"
-            style={{ padding: '0 20px', background: '#f59e0b', color: '#111', fontWeight: 700 }}
-            disabled={isGenerating || !aiPrompt.trim()}
-          >
-            <span>{isGenerating ? 'Synthesizing...' : 'Generate'}</span>
-          </button>
-        </form>
-      </div>
+      <Card padding={4} variant="muted">
+        <VStack gap={2}>
+          <HStack gap={1.5} vAlign="center">
+            <Icon icon={Sparkles} size="sm" color="accent" />
+            <Text type="label" weight="semibold">
+              Natural language automation synthesizer
+            </Text>
+          </HStack>
+          <Text type="supporting">
+            Describe a condition in plain language. The rule is stored locally; triggers do not execute on
+            real events in this demo.
+          </Text>
+          <HStack gap={2} vAlign="end" wrap="wrap">
+            <TextInput
+              label="Describe an automation"
+              isLabelHidden
+              placeholder="e.g. Turn on backyard lights if the pool gate opens after 9 PM"
+              value={aiPrompt}
+              onChange={setAiPrompt}
+              onEnter={handleCreateWithAi}
+              hasClear
+              width="100%"
+            />
+            <Button
+              label={isGenerating ? 'Synthesizing' : 'Generate'}
+              variant="primary"
+              isLoading={isGenerating}
+              isDisabled={!aiPrompt.trim() || isGenerating}
+              onClick={handleCreateWithAi}
+            />
+          </HStack>
+        </VStack>
+      </Card>
 
-      {/* Automations List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {automations.map((auto) => {
-          const Icon = AUTOMATION_ICONS[auto.icon] ?? Sparkles;
-          return (
-            <div
-              key={auto.id}
-              style={{
-                background: 'rgba(30, 31, 40, 0.45)',
-                backdropFilter: 'blur(24px)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: 18,
-                padding: '16px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
-                    background: `${auto.color}22`,
-                    border: `1px solid ${auto.color}55`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: auto.color
-                  }}
-                >
-                  <Icon size={22} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>{auto.title}</div>
-                  <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>
-                    <span style={{ color: '#fbbf24', fontWeight: 600 }}>Trigger:</span> {auto.trigger}
-                  </div>
-                  <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.65)' }}>
-                    <span style={{ color: '#34d399', fontWeight: 600 }}>Action:</span> {auto.action}
-                  </div>
-                </div>
-              </div>
-
-              {/* Toggle Switch */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={auto.enabled}
-                aria-label={`${auto.enabled ? 'Disable' : 'Enable'} automation: ${auto.title}`}
-                onClick={() => toggleAutomation(auto.id)}
-                style={{
-                  width: 52,
-                  height: 30,
-                  borderRadius: 15,
-                  background: auto.enabled ? '#10b981' : 'rgba(255,255,255,0.18)',
-                  position: 'relative',
-                  transition: 'all 0.2s ease',
-                  cursor: 'pointer'
-                }}
-              >
-                <div
-                  style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: '#fff',
-                    position: 'absolute',
-                    top: 3,
-                    left: auto.enabled ? 25 : 3,
-                    transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                  }}
-                />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+      <Section variant="transparent" padding={0}>
+        <VStack gap={2}>
+          <Heading level={2}>Your automations</Heading>
+          {automations.length === 0 ? (
+            <EmptyState
+              title="No automations yet"
+              description="Describe a rule above or ask the assistant to build one."
+              actions={
+                <Button label="Ask Voxelle AI" variant="secondary" onClick={() => setIsAiModalOpen(true)} />
+              }
+            />
+          ) : (
+            <List density="spacious" hasDividers>
+              {automations.map((auto) => {
+                const AutoIcon = AUTOMATION_ICONS[auto.icon] ?? Sparkles;
+                return (
+                  <Item
+                    key={auto.id}
+                    label={auto.title}
+                    description={`Trigger: ${auto.trigger} · Action: ${auto.action}`}
+                    startContent={<Icon icon={AutoIcon} size="sm" color="secondary" />}
+                    endContent={
+                      <Switch
+                        value={auto.enabled}
+                        onChange={() => toggleAutomation(auto.id)}
+                        label={`${auto.enabled ? 'Disable' : 'Enable'} ${auto.title}`}
+                        isLabelHidden
+                      />
+                    }
+                  />
+                );
+              })}
+            </List>
+          )}
+        </VStack>
+      </Section>
+    </VStack>
   );
 };

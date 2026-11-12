@@ -5,7 +5,7 @@ const STATE_VERSION = 1;
 
 /**
  * Only user-mutable home state is persisted. UI state (active filters,
- * chassis, modals) intentionally resets on reload.
+ * modals) intentionally resets on reload.
  */
 export interface PersistedHomeState {
   version: number;

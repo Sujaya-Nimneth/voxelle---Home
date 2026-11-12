@@ -26,5 +26,5 @@ What actually happened (screenshots help).
 
 - Browser + version:
 - OS:
-- Chassis (Mac / iPad / iPhone):
+- Active view (Home / Automation / Discover):
 - AI provider (built-in / Ollama / LM Studio):

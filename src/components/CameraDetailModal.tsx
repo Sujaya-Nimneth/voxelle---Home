@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'react';
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { AspectRatio } from '@astryxdesign/core/AspectRatio';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { ToggleButton } from '@astryxdesign/core/ToggleButton';
+import { Icon } from '@astryxdesign/core/Icon';
+import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@astryxdesign/core/Heading';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Mic, ShieldAlert, Camera, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
 import { useHome } from '../context/HomeContext';
-import { useModalDialog } from '../hooks/useModalDialog';
-import { X, Mic, ShieldAlert, Camera, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
 
 export const CameraDetailModal = () => {
   const { selectedCamera, setSelectedCamera } = useHome();
@@ -10,281 +21,102 @@ export const CameraDetailModal = () => {
   const [snapshotTaken, setSnapshotTaken] = useState(false);
   const [clock, setClock] = useState(() => new Date().toLocaleTimeString());
 
-  const dialogRef = useModalDialog(!!selectedCamera, () => setSelectedCamera(null));
-
-  // Ticking overlay clock (the old implementation rendered a timestamp
-  // frozen at mount, pretending to be live).
+  // Ticking overlay clock so the "live" stamp is not frozen at mount.
   useEffect(() => {
     const tick = window.setInterval(() => setClock(new Date().toLocaleTimeString()), 1000);
     return () => window.clearInterval(tick);
   }, []);
 
-  // Snapshot confirmation auto-dismiss, cleaned up on unmount.
   useEffect(() => {
     if (!snapshotTaken) return;
     const timer = window.setTimeout(() => setSnapshotTaken(false), 2500);
     return () => window.clearTimeout(timer);
   }, [snapshotTaken]);
 
-  if (!selectedCamera) return null;
+  const camera = selectedCamera;
+  const close = () => setSelectedCamera(null);
 
-  const handleTakeSnapshot = () => {
-    setSnapshotTaken(true);
-  };
+  if (!camera) return null;
 
   return (
-    <div className="modal-backdrop" onClick={() => setSelectedCamera(null)}>
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="camera-detail-title"
-        tabIndex={-1}
-        className="ai-modal-container"
-        style={{ maxWidth: 840 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="ai-modal-header">
-          <div className="ai-modal-header-left">
-            <div>
-              <div className="ai-modal-header-title" id="camera-detail-title">
-                {selectedCamera.name}
-              </div>
-              <div className="ai-modal-header-sub">
-                {selectedCamera.location} • demo feed • simulated detection overlay
-              </div>
-            </div>
-          </div>
-          <button className="ai-modal-close-btn" onClick={() => setSelectedCamera(null)}>
-            <X size={18} />
-          </button>
-        </div>
+    <Dialog isOpen onOpenChange={(open) => !open && close()} width={720} padding={0}>
+      <VStack gap={0}>
+        <DialogHeader
+          title={camera.name}
+          subtitle={`${camera.location} · demo feed · simulated detection overlay`}
+          onOpenChange={close}
+        />
 
-        {/* Video Canvas Container */}
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#000' }}>
-          <img
-            src={selectedCamera.image}
-            alt={selectedCamera.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+        <VStack gap={3} padding={4}>
+          <AspectRatio ratio={16 / 9} fit="cover">
+            <img
+              src={camera.image}
+              alt={`${camera.name} still frame, ${camera.location}`}
+              width={1376}
+              height={768}
+              decoding="async"
+            />
+          </AspectRatio>
 
-          {/* AI Detection Bounding Box Overlays */}
-          {selectedCamera.id === 'porch' && (
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '8%',
-                left: '52%',
-                width: '18%',
-                height: '24%',
-                border: '2px solid #10b981',
-                borderRadius: 8,
-                background: 'rgba(16, 185, 129, 0.15)',
-                pointerEvents: 'none'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: -24,
-                  left: 0,
-                  background: '#10b981',
-                  color: '#fff',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  padding: '2px 6px',
-                  borderRadius: 4
-                }}
-              >
-                PACKAGE (99%)
-              </div>
-            </div>
-          )}
+          <HStack hAlign="between" vAlign="center" wrap="wrap" gap={2}>
+            <HStack gap={1.5} vAlign="center">
+              <Badge label="Demo" variant="warning" />
+              <Text type="supporting" hasTabularNumbers>
+                {clock}
+              </Text>
+              <Badge label={camera.aiTag} variant="info" />
+            </HStack>
+            {snapshotTaken && (
+              <HStack gap={1} vAlign="center">
+                <Icon icon={CheckCircle2} size="sm" color="success" />
+                <Text type="supporting">Snapshot saved to camera roll</Text>
+              </HStack>
+            )}
+          </HStack>
 
-          {selectedCamera.id === 'driveway' && (
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '22%',
-                right: '4%',
-                width: '26%',
-                height: '42%',
-                border: '2px solid #3b82f6',
-                borderRadius: 8,
-                background: 'rgba(59, 130, 246, 0.15)',
-                pointerEvents: 'none'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: -24,
-                  left: 0,
-                  background: '#3b82f6',
-                  color: '#fff',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  padding: '2px 6px',
-                  borderRadius: 4
-                }}
-              >
-                SUV SECURED (98%)
-              </div>
-            </div>
-          )}
+          <HStack gap={1.5} wrap="wrap" vAlign="center">
+            <ToggleButton
+              label={isTalking ? 'Stop talking' : 'Push to talk'}
+              isPressed={isTalking}
+              onPressedChange={setIsTalking}
+              size="sm"
+              icon={<Icon icon={Mic} size="sm" />}
+            />
+            <ToggleButton
+              label={isSirenActive ? 'Stop siren' : 'Trigger siren'}
+              isPressed={isSirenActive}
+              onPressedChange={setIsSirenActive}
+              size="sm"
+              icon={<Icon icon={ShieldAlert} size="sm" />}
+            />
+            <Button
+              label="Capture snapshot"
+              variant="secondary"
+              size="sm"
+              icon={<Icon icon={Camera} size="sm" />}
+              onClick={() => setSnapshotTaken(true)}
+            />
+            <HStack gap={1} vAlign="center">
+              <StatusDot variant="success" label="Vision engine active" />
+              <Icon icon={Sparkles} size="sm" color="secondary" />
+              <Text type="supporting">Vision engine active</Text>
+            </HStack>
+          </HStack>
 
-          {/* Live Badge & Timestamp overlay */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 14,
-              left: 14,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8
-            }}
-          >
-            <span className="camera-live-badge">
-              <span className="live-dot" aria-hidden="true" /> DEMO
-            </span>
-            <span
-              style={{
-                background: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(10px)',
-                padding: '3px 8px',
-                borderRadius: 9999,
-                fontSize: 11,
-                fontWeight: 600,
-                color: '#fff'
-              }}
-            >
-              {clock}
-            </span>
-          </div>
-
-          {snapshotTaken && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 14,
-                right: 14,
-                background: '#10b981',
-                color: '#fff',
-                padding: '6px 12px',
-                borderRadius: 9999,
-                fontSize: 12,
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                boxShadow: '0 4px 14px rgba(0,0,0,0.3)'
-              }}
-            >
-              <CheckCircle2 size={14} /> Snapshot saved to camera roll
-            </div>
-          )}
-        </div>
-
-        {/* Action Controls & AI Timeline */}
-        <div style={{ padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', gap: 10 }}>
-              {/* Push-to-Talk */}
-              <button
-                className={`viewport-btn ${isTalking ? 'active' : ''}`}
-                style={{
-                  padding: '8px 16px',
-                  background: isTalking ? '#ef4444' : 'rgba(255,255,255,0.12)',
-                  fontSize: 13
-                }}
-                onClick={() => setIsTalking(!isTalking)}
-              >
-                <Mic size={16} />
-                <span>{isTalking ? 'Speaking (Live)' : 'Push to Talk'}</span>
-              </button>
-
-              {/* Siren */}
-              <button
-                className="viewport-btn"
-                style={{
-                  padding: '8px 16px',
-                  background: isSirenActive ? '#ef4444' : 'rgba(255,255,255,0.12)',
-                  fontSize: 13
-                }}
-                onClick={() => setIsSirenActive(!isSirenActive)}
-              >
-                <ShieldAlert size={16} color={isSirenActive ? '#fff' : '#f87171'} />
-                <span>{isSirenActive ? 'Siren Sounding' : 'Trigger Siren'}</span>
-              </button>
-
-              {/* Snapshot */}
-              <button
-                className="viewport-btn"
-                style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.12)', fontSize: 13 }}
-                onClick={handleTakeSnapshot}
-              >
-                <Camera size={16} />
-                <span>Capture Snapshot</span>
-              </button>
-            </div>
-
-            {/* Neural Vision Status */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                fontSize: 12,
-                color: '#34d399',
-                fontWeight: 600
-              }}
-            >
-              <Sparkles size={14} />
-              <span>Voxelle Vision Neural Engine Active</span>
-            </div>
-          </div>
-
-          {/* Recent Events Log */}
-          <div
-            style={{
-              background: 'rgba(0,0,0,0.25)',
-              padding: 12,
-              borderRadius: 14,
-              border: '1px solid rgba(255,255,255,0.08)'
-            }}
-          >
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.5)',
-                marginBottom: 6
-              }}
-            >
-              Recent Neural Timeline
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {selectedCamera.recentEvents.map((evt, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    fontSize: 12.5,
-                    color: 'rgba(255,255,255,0.85)'
-                  }}
-                >
-                  <Activity size={12} color="#f59e0b" />
-                  <span>{evt}</span>
-                </div>
+          <VStack gap={1.5}>
+            <Heading level={3}>Recent neural timeline</Heading>
+            <List density="compact" hasDividers>
+              {camera.recentEvents.map((event, index) => (
+                <Item
+                  key={`${event}-${index}`}
+                  label={event}
+                  startContent={<Icon icon={Activity} size="sm" color="accent" />}
+                />
               ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </List>
+          </VStack>
+        </VStack>
+      </VStack>
+    </Dialog>
   );
 };

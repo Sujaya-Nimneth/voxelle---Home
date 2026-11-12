@@ -108,8 +108,6 @@ export interface ConnectionCheck {
 // ---------------------------------------------------------------------------
 
 export type ViewId = 'home' | 'automations' | 'discover';
-export type DeviceFrame = 'mac' | 'ipad' | 'iphone';
-export type Wallpaper = 'amber' | 'aurora' | 'midnight';
 
 export interface ChatMessage {
   id: number;

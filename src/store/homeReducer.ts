@@ -1,14 +1,4 @@
-import type {
-  Automation,
-  Camera,
-  Device,
-  DeviceCategory,
-  DeviceFrame,
-  DeviceUpdates,
-  Scene,
-  ViewId,
-  Wallpaper
-} from '../types';
+import type { Automation, Camera, Device, DeviceCategory, DeviceUpdates, Scene, ViewId } from '../types';
 import { SEED_DEVICES } from '../data/devices';
 import { SEED_SCENES } from '../data/scenes';
 import { SEED_CAMERAS } from '../data/cameras';
@@ -22,8 +12,6 @@ export interface HomeState {
   activeCategory: DeviceCategory | null;
   activeRoom: string;
   activeNav: ViewId;
-  deviceFrame: DeviceFrame;
-  wallpaper: Wallpaper;
   selectedDevice: Device | null;
   selectedCamera: Camera | null;
   isAiModalOpen: boolean;
@@ -37,8 +25,6 @@ export const createInitialHomeState = (): HomeState => ({
   activeCategory: null,
   activeRoom: 'All',
   activeNav: 'home',
-  deviceFrame: 'mac',
-  wallpaper: 'amber',
   selectedDevice: null,
   selectedCamera: null,
   isAiModalOpen: false
@@ -158,8 +144,6 @@ export type HomeAction =
   | { type: 'SET_ACTIVE_CATEGORY'; category: DeviceCategory | null }
   | { type: 'SET_ACTIVE_ROOM'; room: string }
   | { type: 'SET_ACTIVE_NAV'; nav: ViewId }
-  | { type: 'SET_DEVICE_FRAME'; frame: DeviceFrame }
-  | { type: 'SET_WALLPAPER'; wallpaper: Wallpaper }
   | { type: 'SELECT_DEVICE'; device: Device | null }
   | { type: 'SELECT_CAMERA'; camera: Camera | null }
   | { type: 'SET_AI_MODAL_OPEN'; open: boolean }
@@ -214,13 +198,6 @@ export function homeReducer(state: HomeState, action: HomeAction): HomeState {
 
     case 'SET_ACTIVE_NAV':
       return { ...state, activeNav: action.nav };
-
-    case 'SET_DEVICE_FRAME':
-      return { ...state, deviceFrame: action.frame };
-
-    case 'SET_WALLPAPER':
-      return { ...state, wallpaper: action.wallpaper };
-
     case 'SELECT_DEVICE':
       return { ...state, selectedDevice: action.device };
 

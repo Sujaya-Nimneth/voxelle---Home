@@ -1,55 +1,57 @@
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Icon } from '@astryxdesign/core/Icon';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Plus, Sparkles, RotateCcw } from 'lucide-react';
 import { useHome } from '../context/HomeContext';
 import { useToast } from './Toast';
-import { Plus, Sparkles, RotateCcw } from 'lucide-react';
 
 interface QuickActionsProps {
   /** The header additionally exposes a demo-home reset; dashboard keeps it minimal. */
   showReset?: boolean;
+  /** The header owns the AI assistant action; the dashboard hides it. */
+  showAssistant?: boolean;
 }
 
-/**
- * Shared AI orb + accessory actions used by both the window header and the
- * dashboard title row (previously duplicated verbatim in both).
- */
-export const QuickActions = ({ showReset = false }: QuickActionsProps) => {
+/** Shared assistant + accessory actions used by the header and dashboard. */
+export const QuickActions = ({ showReset = false, showAssistant = true }: QuickActionsProps) => {
   const { setIsAiModalOpen, resetHome } = useHome();
   const { notify } = useToast();
 
   return (
-    <div className="home-actions-group">
-      <button
-        className="ai-trigger-orb-btn"
-        onClick={() => setIsAiModalOpen(true)}
-        title="Open Voxelle Local AI Assistant"
-      >
-        <div className="glowing-orb">
-          <Sparkles size={12} color="#ffffff" />
-        </div>
-        <span className="ai-trigger-text">Voxelle AI</span>
-      </button>
-
-      <button
-        className="action-circle-btn"
-        title="Add Accessory / Scene"
+    <HStack gap={1.5} hAlign="end">
+      {showAssistant && (
+        <Button
+          label="Ask Voxelle AI"
+          variant="primary"
+          size="sm"
+          icon={<Icon icon={Sparkles} size="sm" />}
+          onClick={() => setIsAiModalOpen(true)}
+        />
+      )}
+      <IconButton
+        icon={<Icon icon={Plus} size="sm" />}
+        label="Add accessory"
+        variant="secondary"
+        size="sm"
+        tooltip="Add Accessory / Scene"
         onClick={() =>
           notify('Accessory discovery is simulated in this demo build — no real hardware is scanned.')
         }
-      >
-        <Plus size={16} />
-      </button>
-
+      />
       {showReset && (
-        <button
-          className="action-circle-btn"
-          title="Reset demo home to its initial state"
+        <IconButton
+          icon={<Icon icon={RotateCcw} size="sm" />}
+          label="Reset demo home"
+          variant="secondary"
+          size="sm"
+          tooltip="Reset demo home to its initial state"
           onClick={() => {
             resetHome();
             notify('Demo home reset to its initial state.');
           }}
-        >
-          <RotateCcw size={14} />
-        </button>
+        />
       )}
-    </div>
+    </HStack>
   );
 };

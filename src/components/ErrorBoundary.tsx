@@ -1,4 +1,10 @@
 import React from 'react';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { Card } from '@astryxdesign/core/Card';
+import { Center } from '@astryxdesign/core/Center';
+import { VStack } from '@astryxdesign/core/Stack';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -9,10 +15,7 @@ interface ErrorBoundaryState {
   message: string;
 }
 
-/**
- * Root crash guard. Renders a styled fallback instead of a blank screen
- * when a render-time error escapes the component tree.
- */
+/** Root crash guard: an Astryx-native fallback instead of a blank screen. */
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { hasError: false, message: '' };
 
@@ -30,43 +33,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     }
 
     return (
-      <div
-        role="alert"
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 12,
-          background: '#121316',
-          color: '#fff',
-          fontFamily: 'inherit',
-          padding: 24,
-          textAlign: 'center'
-        }}
-      >
-        <div style={{ fontSize: 40 }}>🏡</div>
-        <h1 style={{ fontSize: 22, margin: 0 }}>Voxelle hit an unexpected error</h1>
-        <p style={{ color: 'rgba(255,255,255,0.65)', maxWidth: 480, margin: 0 }}>
-          {this.state.message || 'An unknown error interrupted the app.'}
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          style={{
-            marginTop: 8,
-            padding: '10px 24px',
-            borderRadius: 9999,
-            border: 'none',
-            background: '#f59e0b',
-            color: '#111',
-            fontWeight: 700,
-            cursor: 'pointer'
-          }}
-        >
-          Reload Voxelle
-        </button>
-      </div>
+      <Center axis="both" role="alert" height="100vh">
+        <Card padding={6} maxWidth={520}>
+          <VStack gap={3} hAlign="center">
+            <Heading level={1}>Voxelle hit an unexpected error</Heading>
+            <Text type="supporting">{this.state.message || 'An unknown error interrupted the app.'}</Text>
+            <Button label="Reload Voxelle" variant="primary" onClick={() => window.location.reload()} />
+          </VStack>
+        </Card>
+      </Center>
     );
   }
 }

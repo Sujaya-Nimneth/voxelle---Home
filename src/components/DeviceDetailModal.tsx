@@ -1,8 +1,20 @@
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { Slider } from '@astryxdesign/core/Slider';
+import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { ToggleButton } from '@astryxdesign/core/ToggleButton';
+import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@astryxdesign/core/Heading';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Icon } from '@astryxdesign/core/Icon';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Lock, Unlock, Snowflake, Flame, Minus, Plus } from 'lucide-react';
 import { useHome } from '../context/HomeContext';
-import { useModalDialog } from '../hooks/useModalDialog';
-import { X, Power, Minus, Plus, Lock, Unlock, Flame, Snowflake } from 'lucide-react';
 import type { ThermostatMode } from '../types';
 
+/** Color temperature presets. Values are data, not CSS surface colors. */
 const COLOR_SWATCHES = [
   { hex: '#fbbf24', name: 'Warm Amber 2700K' },
   { hex: '#f59e0b', name: 'Candlelight 2200K' },
@@ -14,235 +26,161 @@ const COLOR_SWATCHES = [
 ];
 
 const THERMOSTAT_MODES: ThermostatMode[] = ['Cool', 'Heat', 'Auto', 'Eco'];
+const FAN_SPEEDS = [0, 25, 50, 75, 100] as const;
 
 export const DeviceDetailModal = () => {
   const { selectedDevice, setSelectedDevice, updateDevice, toggleDevice } = useHome();
+  const device = selectedDevice;
+  const close = () => setSelectedDevice(null);
 
-  const dialogRef = useModalDialog(!!selectedDevice, () => setSelectedDevice(null));
+  if (!device) return null;
 
-  if (!selectedDevice) return null;
-
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value, 10);
-    updateDevice(selectedDevice.id, { value: val });
-  };
-
-  const handleTempAdjust = (delta: number) => {
-    const newTemp = (selectedDevice.targetTemp ?? selectedDevice.value) + delta;
-    updateDevice(selectedDevice.id, { targetTemp: newTemp });
-  };
-
-  const handleColorChange = (hex: string) => {
-    updateDevice(selectedDevice.id, { color: hex });
-  };
+  const isPowered = device.isOn;
 
   return (
-    <div className="modal-backdrop" onClick={() => setSelectedDevice(null)}>
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="device-detail-title"
-        tabIndex={-1}
-        className="detail-modal-card"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="detail-modal-header">
-          <div>
-            <div className="detail-modal-title" id="device-detail-title">
-              {selectedDevice.name}
-            </div>
-            <div className="detail-modal-subtitle">
-              {selectedDevice.room} • {selectedDevice.category.toUpperCase()}
-            </div>
-          </div>
-          <button className="ai-modal-close-btn" onClick={() => setSelectedDevice(null)}>
-            <X size={18} />
-          </button>
-        </div>
+    <Dialog isOpen onOpenChange={(open) => !open && close()} width={440}>
+      <VStack gap={4}>
+        <DialogHeader
+          title={device.name}
+          subtitle={`${device.room} · ${device.category}`}
+          onOpenChange={close}
+        />
 
-        {/* 1. THERMOSTAT CONTROLS */}
-        {selectedDevice.type === 'thermostat' && (
-          <div className="thermostat-dial-wrapper">
-            <div className="thermostat-dial-circle">
-              <span className="dial-temp-text">{selectedDevice.targetTemp ?? selectedDevice.value}°</span>
-              <span className="dial-mode-text">{selectedDevice.mode ?? 'Cooling'}</span>
-            </div>
-
-            <div className="thermostat-controls-row">
-              <button className="temp-adjust-btn" onClick={() => handleTempAdjust(-1)}>
-                <Minus size={18} />
-              </button>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Current Temp</div>
-                <div style={{ fontSize: 18, fontWeight: 700 }}>{selectedDevice.currentTemp ?? 69}°F</div>
-              </div>
-              <button className="temp-adjust-btn" onClick={() => handleTempAdjust(1)}>
-                <Plus size={18} />
-              </button>
-            </div>
-
-            {/* Mode Switcher */}
-            <div className="viewport-switchers" style={{ marginTop: 8 }}>
-              {THERMOSTAT_MODES.map((mode) => (
-                <button
-                  key={mode}
-                  className={`viewport-btn ${selectedDevice.mode === mode ? 'active' : ''}`}
-                  onClick={() => updateDevice(selectedDevice.id, { mode })}
-                >
-                  {mode === 'Cool' && <Snowflake size={12} />}
-                  {mode === 'Heat' && <Flame size={12} />}
-                  <span>{mode}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 2. LIGHT CONTROLS (Vertical Apple-style Dimmer Slider & Color Swatches) */}
-        {selectedDevice.type === 'light' && (
-          <div className="apple-slider-container">
-            <div className="apple-slider-value-badge">
-              {selectedDevice.isOn ? `${selectedDevice.value}%` : 'Off'}
-            </div>
-
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={selectedDevice.isOn ? selectedDevice.value : 0}
-                onChange={handleSliderChange}
-                style={{
-                  width: '100%',
-                  accentColor: selectedDevice.color || '#f59e0b',
-                  height: 12,
-                  borderRadius: 8,
-                  cursor: 'pointer'
-                }}
+        {device.type === 'thermostat' && (
+          <VStack gap={3}>
+            <HStack hAlign="center" gap={3}>
+              <Heading level={2}>{device.targetTemp ?? device.value}°</Heading>
+              <Text type="supporting">{device.mode ?? 'Cooling'}</Text>
+            </HStack>
+            <HStack hAlign="between" vAlign="center">
+              <IconButton
+                label="Lower target temperature"
+                variant="secondary"
+                icon={<Icon icon={Minus} size="sm" />}
+                onClick={() =>
+                  updateDevice(device.id, {
+                    targetTemp: (device.targetTemp ?? device.value) - 1
+                  })
+                }
               />
-            </div>
-
-            {/* Color swatches */}
-            <div style={{ marginTop: 8, width: '100%' }}>
-              <div
-                style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 8, textAlign: 'center' }}
-              >
-                Light Atmosphere & Spectrum
-              </div>
-              <div className="color-swatches-row">
-                {COLOR_SWATCHES.map((swatch) => (
-                  <button
-                    key={swatch.hex}
-                    className={`color-swatch-dot ${selectedDevice.color === swatch.hex ? 'active' : ''}`}
-                    style={{ background: swatch.hex }}
-                    aria-label={`Set light color to ${swatch.name}`}
-                    aria-pressed={selectedDevice.color === swatch.hex}
-                    onClick={() => handleColorChange(swatch.hex)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 3. FAN SPEED CONTROLS */}
-        {selectedDevice.type === 'fan' && (
-          <div className="apple-slider-container">
-            <div className="apple-slider-value-badge">
-              {selectedDevice.isOn ? `${selectedDevice.value}% Speed` : 'Off'}
-            </div>
-
-            <div
-              className="viewport-switchers"
-              style={{ width: '100%', justifyContent: 'space-around', padding: '6px' }}
+              <Text type="supporting" hasTabularNumbers>
+                Current {device.currentTemp ?? 69}°F
+              </Text>
+              <IconButton
+                label="Raise target temperature"
+                variant="secondary"
+                icon={<Icon icon={Plus} size="sm" />}
+                onClick={() =>
+                  updateDevice(device.id, {
+                    targetTemp: (device.targetTemp ?? device.value) + 1
+                  })
+                }
+              />
+            </HStack>
+            <SegmentedControl
+              label="Thermostat mode"
+              value={device.mode ?? 'Cool'}
+              onChange={(mode) => updateDevice(device.id, { mode: mode as ThermostatMode })}
+              layout="fill"
             >
-              {[0, 25, 50, 75, 100].map((speed) => (
-                <button
-                  key={speed}
-                  className={`viewport-btn ${selectedDevice.isOn && selectedDevice.value === speed ? 'active' : ''}`}
-                  onClick={() =>
-                    updateDevice(selectedDevice.id, {
-                      isOn: speed > 0,
-                      value: speed,
-                      statusText: speed > 0 ? `${speed}%` : 'Off'
-                    })
+              {THERMOSTAT_MODES.map((mode) => (
+                <SegmentedControlItem
+                  key={mode}
+                  value={mode}
+                  label={mode}
+                  icon={
+                    mode === 'Cool' ? (
+                      <Icon icon={Snowflake} size="sm" />
+                    ) : mode === 'Heat' ? (
+                      <Icon icon={Flame} size="sm" />
+                    ) : undefined
                   }
-                >
-                  <span>{speed === 0 ? 'Off' : `${speed}%`}</span>
-                </button>
+                />
               ))}
-            </div>
-          </div>
+            </SegmentedControl>
+          </VStack>
         )}
 
-        {/* 4. DOOR LOCK CONTROLS */}
-        {selectedDevice.type === 'lock' && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 16,
-              padding: '20px 0'
-            }}
-          >
-            <div
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                background: selectedDevice.isOn ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
-                border: `2px solid ${selectedDevice.isOn ? '#10b981' : '#ef4444'}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: selectedDevice.isOn ? '#10b981' : '#ef4444',
-                boxShadow: `0 0 24px ${selectedDevice.isOn ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`
-              }}
-            >
-              {selectedDevice.isOn ? <Lock size={36} /> : <Unlock size={36} />}
-            </div>
-
-            <button
-              className="viewport-btn active"
-              style={{
-                padding: '10px 24px',
-                fontSize: 14,
-                fontWeight: 700,
-                background: selectedDevice.isOn ? '#ef4444' : '#10b981'
-              }}
-              onClick={() => toggleDevice(selectedDevice.id)}
-            >
-              {selectedDevice.isOn ? 'Tap to Unlock' : 'Tap to Lock'}
-            </button>
-          </div>
+        {device.type === 'light' && (
+          <VStack gap={3}>
+            <Slider
+              label="Brightness"
+              value={isPowered ? device.value : 0}
+              onChange={(value: number) => updateDevice(device.id, { value })}
+              min={0}
+              max={100}
+              step={1}
+              valueDisplay="text"
+              formatValue={(value) => (value === 0 ? 'Off' : `${value}%`)}
+            />
+            <VStack gap={1.5}>
+              <Text type="label">Light atmosphere & spectrum</Text>
+              <HStack gap={1} wrap="wrap">
+                {COLOR_SWATCHES.map((swatch) => (
+                  <ToggleButton
+                    key={swatch.hex}
+                    label={`Set light color to ${swatch.name}`}
+                    isPressed={device.color === swatch.hex}
+                    onPressedChange={() => updateDevice(device.id, { color: swatch.hex })}
+                    size="sm"
+                  >
+                    {swatch.name.split(' ')[0]}
+                  </ToggleButton>
+                ))}
+              </HStack>
+            </VStack>
+          </VStack>
         )}
 
-        {/* Power Toggle Button at footer */}
-        <div
-          style={{
-            borderTop: '1px solid rgba(255,255,255,0.1)',
-            paddingTop: 16,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
-          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Accessory Power</span>
-          <button
-            className={`action-circle-btn ${selectedDevice.isOn ? 'active' : ''}`}
-            style={{
-              background: selectedDevice.isOn ? '#f59e0b' : 'rgba(255,255,255,0.1)',
-              color: selectedDevice.isOn ? '#111' : '#fff'
-            }}
-            onClick={() => toggleDevice(selectedDevice.id)}
-          >
-            <Power size={18} />
-          </button>
-        </div>
-      </div>
-    </div>
+        {device.type === 'fan' && (
+          <VStack gap={2}>
+            <Text type="label">Fan speed</Text>
+            <SegmentedControl
+              label="Fan speed"
+              value={String(isPowered ? device.value : 0)}
+              onChange={(speed) => {
+                const value = Number(speed);
+                updateDevice(device.id, {
+                  isOn: value > 0,
+                  value,
+                  statusText: value > 0 ? `${value}%` : 'Off'
+                });
+              }}
+              layout="fill"
+            >
+              {FAN_SPEEDS.map((speed) => (
+                <SegmentedControlItem
+                  key={speed}
+                  value={String(speed)}
+                  label={speed === 0 ? 'Off' : `${speed}%`}
+                />
+              ))}
+            </SegmentedControl>
+          </VStack>
+        )}
+
+        {device.type === 'lock' && (
+          <VStack gap={3} hAlign="center">
+            <StatusDot variant={isPowered ? 'success' : 'error'} label={isPowered ? 'Locked' : 'Unlocked'} />
+            <Icon icon={isPowered ? Lock : Unlock} size="lg" />
+            <Button
+              label={isPowered ? 'Unlock door' : 'Lock door'}
+              variant={isPowered ? 'destructive' : 'primary'}
+              onClick={() => toggleDevice(device.id)}
+            />
+          </VStack>
+        )}
+
+        <HStack hAlign="between" vAlign="center">
+          <Text type="label">Accessory power</Text>
+          <Switch
+            value={isPowered}
+            onChange={() => toggleDevice(device.id)}
+            label={`${device.name} power`}
+            labelPosition="start"
+          />
+        </HStack>
+      </VStack>
+    </Dialog>
   );
 };

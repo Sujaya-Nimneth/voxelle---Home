@@ -1,73 +1,78 @@
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { Section } from '@astryxdesign/core/Section';
+import { List } from '@astryxdesign/core/List';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { useHome } from '../context/HomeContext';
 import { StatusPills } from './StatusPills';
 import { CameraGrid } from './CameraGrid';
 import { ScenesBar } from './ScenesBar';
 import { AccessoryTile } from './AccessoryTile';
 import { QuickActions } from './QuickActions';
-import { ChevronDown } from 'lucide-react';
 import { PHYSICAL_ROOMS } from '../data/rooms';
 
+/** Home view: one question (is the house as I expect?) answered first. */
 export const HomeDashboard = () => {
   const { devices, activeCategory, activeRoom } = useHome();
 
-  // Filter devices by category and room
-  const filteredDevices = devices.filter((dev) => {
-    if (activeCategory && dev.category !== activeCategory) return false;
-    if (activeRoom !== 'All' && dev.room !== activeRoom) return false;
+  const filteredDevices = devices.filter((device) => {
+    if (activeCategory && device.category !== activeCategory) return false;
+    if (activeRoom !== 'All' && device.room !== activeRoom) return false;
     return true;
   });
 
-  // Group filtered devices by room
   const roomsList = activeRoom !== 'All' ? [activeRoom] : PHYSICAL_ROOMS;
+  const title = activeRoom !== 'All' ? activeRoom : 'My Home';
 
   return (
-    <div className="voxelle-content-area">
-      {/* Top Header Row with Home Name & Quick Actions */}
-      <div className="dashboard-top-bar">
-        <div className="dashboard-title-row">
-          <div className="home-name-dropdown">
-            <span className="home-name-text">{activeRoom !== 'All' ? activeRoom : 'My Home'}</span>
-            <ChevronDown size={22} color="rgba(255,255,255,0.7)" />
-          </div>
+    <VStack gap={5} width="100%">
+      <HStack hAlign="between" vAlign="center" wrap="wrap" gap={2}>
+        <VStack gap={0.5}>
+          <Heading level={1}>{title}</Heading>
+          <Text type="supporting">
+            {filteredDevices.filter((d) => d.isOn).length} of {filteredDevices.length} devices on
+          </Text>
+        </VStack>
+        <QuickActions showAssistant={false} />
+      </HStack>
 
-          <QuickActions />
-        </div>
-
-        {/* Top Status Chips */}
+      <Section variant="muted" padding={3}>
         <StatusPills />
-      </div>
+      </Section>
 
-      {/* Camera Grid (Only show when not filtered to specific narrow category, or when category is security) */}
-      {(!activeCategory || activeCategory === 'security') && activeRoom === 'All' && <CameraGrid />}
+      {(!activeCategory || activeCategory === 'security') && activeRoom === 'All' && (
+        <Section variant="transparent" padding={0}>
+          <CameraGrid />
+        </Section>
+      )}
 
-      {/* Scenes Row */}
       {!activeCategory && activeRoom === 'All' && <ScenesBar />}
 
-      {/* Room Device Grids */}
       {roomsList.map((room) => {
         const roomDevices = filteredDevices.filter((d) => d.room === room);
         if (roomDevices.length === 0) return null;
-
-        // Find room climate if any
-        const roomThermostat = devices.find((d) => d.room === room && d.type === 'thermostat');
+        const thermostat = devices.find((d) => d.room === room && d.type === 'thermostat');
 
         return (
-          <section key={room} className="room-section">
-            <div className="room-header">
-              <h2 className="room-title">{room}</h2>
-              {roomThermostat && (
-                <span className="room-temp-pill">{roomThermostat.targetTemp ?? roomThermostat.value}°</span>
-              )}
-            </div>
-
-            <div className="accessory-grid">
-              {roomDevices.map((device) => (
-                <AccessoryTile key={device.id} device={device} />
-              ))}
-            </div>
-          </section>
+          <Section key={room} variant="transparent" padding={0}>
+            <VStack gap={1.5}>
+              <HStack hAlign="between" vAlign="center">
+                <Heading level={2}>{room}</Heading>
+                {thermostat && (
+                  <Text type="supporting" hasTabularNumbers>
+                    {thermostat.targetTemp ?? thermostat.value}°
+                  </Text>
+                )}
+              </HStack>
+              <List density="balanced" hasDividers header={<Text type="label">Devices</Text>}>
+                {roomDevices.map((device) => (
+                  <AccessoryTile key={device.id} device={device} />
+                ))}
+              </List>
+            </VStack>
+          </Section>
         );
       })}
-    </div>
+    </VStack>
   );
 };

@@ -1,6 +1,11 @@
-import { useHome } from '../context/HomeContext';
-import { SunMedium, Sunrise, DoorClosed, Film, Moon, Zap, Sparkles, ChevronRight } from 'lucide-react';
+import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
+import { Section } from '@astryxdesign/core/Section';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Icon } from '@astryxdesign/core/Icon';
+import { VStack } from '@astryxdesign/core/Stack';
+import { SunMedium, Sunrise, DoorClosed, Film, Moon, Zap, Sparkles } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useHome } from '../context/HomeContext';
 
 const SCENE_ICONS: Record<string, LucideIcon> = {
   SunMedium,
@@ -11,35 +16,31 @@ const SCENE_ICONS: Record<string, LucideIcon> = {
   Zap
 };
 
+/** Scenes as one segmented control; the active scene is the selected segment. */
 export const ScenesBar = () => {
   const { scenes, triggerScene } = useHome();
+  const active = scenes.find((scene) => scene.isActive)?.id ?? '';
 
   return (
-    <div className="scenes-section">
-      <div className="dashboard-section-header">
-        <h2 className="dashboard-section-title">
-          <span>Scenes</span>
-          <ChevronRight size={16} className="section-chevron" />
-        </h2>
-      </div>
-
-      <div className="scenes-scroll-row">
-        {scenes.map((scene) => {
-          const IconComponent = SCENE_ICONS[scene.icon] ?? Sparkles;
-          return (
-            <button
+    <Section variant="transparent" padding={0}>
+      <VStack gap={2}>
+        <Heading level={2}>Scenes</Heading>
+        <SegmentedControl
+          label="Run a scene"
+          value={active}
+          onChange={(id) => triggerScene(id)}
+          layout="fill"
+        >
+          {scenes.map((scene) => (
+            <SegmentedControlItem
               key={scene.id}
-              className={`scene-tile ${scene.isActive ? 'active' : ''}`}
-              onClick={() => triggerScene(scene.id)}
-            >
-              <div className="scene-icon-bubble">
-                <IconComponent size={18} />
-              </div>
-              <span className="scene-tile-label">{scene.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
+              value={scene.id}
+              label={scene.label}
+              icon={<Icon icon={SCENE_ICONS[scene.icon] ?? Sparkles} size="sm" />}
+            />
+          ))}
+        </SegmentedControl>
+      </VStack>
+    </Section>
   );
 };

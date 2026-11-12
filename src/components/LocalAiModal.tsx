@@ -2,21 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { useHome } from '../context/HomeContext';
 import { localAi, AI_PROVIDER_INFO, AI_PROVIDERS } from '../services/ai/orchestrator';
 import type { ProviderHealth } from '../services/ai/types';
-import { useModalDialog } from '../hooks/useModalDialog';
 import { useToast } from './Toast';
-import {
-  X,
-  Send,
-  Mic,
-  MicOff,
-  Sparkles,
-  CheckCircle2,
-  Cpu,
-  RefreshCw,
-  Volume2,
-  VolumeX,
-  AlertTriangle
-} from 'lucide-react';
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { ToggleButton } from '@astryxdesign/core/ToggleButton';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Icon } from '@astryxdesign/core/Icon';
+import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Card } from '@astryxdesign/core/Card';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Mic, MicOff, CheckCircle2, Cpu, RefreshCw, Volume2, VolumeX, Send } from 'lucide-react';
 import type { AiProviderId, ChatMessage } from '../types';
 
 const SUGGESTIONS = [
@@ -74,12 +73,11 @@ export const LocalAiModal = () => {
   const [checking, setChecking] = useState(false);
   const [selectedModel, setSelectedModel] = useState('llama3.2');
 
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const chatEndRef = useRef<HTMLElement | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const healthRequestSeq = useRef(0);
   const lastQueryRef = useRef<string | null>(null);
 
-  const dialogRef = useModalDialog(isAiModalOpen, () => setIsAiModalOpen(false));
   const { notify } = useToast();
 
   const activeProvider = AI_PROVIDERS[provider];
@@ -267,202 +265,181 @@ export const LocalAiModal = () => {
 
   if (!isAiModalOpen) return null;
 
+  const close = () => setIsAiModalOpen(false);
+  const modelOptions = health?.models.map((model) => ({ value: model, label: model })) ?? [];
+
   return (
-    <div className="modal-backdrop" onClick={() => setIsAiModalOpen(false)}>
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="ai-modal-title"
-        tabIndex={-1}
-        className="ai-modal-container"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="ai-modal-iridescent-glow" />
-
-        {/* Header */}
-        <div className="ai-modal-header">
-          <div className="ai-modal-header-left">
-            <div className="glowing-orb" style={{ width: 32, height: 32 }}>
-              <Sparkles size={16} color="#ffffff" />
-            </div>
-            <div>
-              <div className="ai-modal-header-title" id="ai-modal-title">
-                Voxelle Assistant
-              </div>
-              <div className="ai-modal-header-sub">
-                Local-first intelligence • built-in engine, or your own Ollama / LM Studio server
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button
-              className="action-circle-btn"
-              style={{ width: 32, height: 32 }}
+    <Dialog
+      isOpen
+      onOpenChange={(open) => !open && close()}
+      width={640}
+      maxHeight="85dvh"
+      purpose="form"
+      padding={0}
+    >
+      <VStack gap={0} height="100%">
+        <DialogHeader
+          title="Voxelle Assistant"
+          subtitle="Local-first intelligence: built-in engine, or your own Ollama / LM Studio server"
+          onOpenChange={close}
+          endContent={
+            <IconButton
+              icon={<Icon icon={voiceReplyEnabled ? Volume2 : VolumeX} size="sm" />}
+              label={voiceReplyEnabled ? 'Disable voice feedback' : 'Enable voice feedback'}
+              variant="ghost"
+              size="sm"
+              tooltip={voiceReplyEnabled ? 'Disable Voice Feedback' : 'Enable Voice Feedback'}
               onClick={() => setVoiceReplyEnabled(!voiceReplyEnabled)}
-              title={voiceReplyEnabled ? 'Disable Voice Feedback' : 'Enable Voice Feedback'}
-              aria-pressed={voiceReplyEnabled}
-            >
-              {voiceReplyEnabled ? <Volume2 size={15} color="#34d399" /> : <VolumeX size={15} />}
-            </button>
+            />
+          }
+        />
 
-            <button className="ai-modal-close-btn" onClick={() => setIsAiModalOpen(false)}>
-              <X size={18} />
-            </button>
-          </div>
-        </div>
+        <VStack gap={2} padding={3}>
+          <HStack gap={1.5} wrap="wrap" vAlign="center">
+            {AI_PROVIDER_INFO.map((info) => (
+              <Button
+                key={info.id}
+                label={info.name}
+                variant={provider === info.id ? 'primary' : 'secondary'}
+                size="sm"
+                icon={<Icon icon={Cpu} size="sm" />}
+                onClick={() => handleProviderSwitch(info.id)}
+              />
+            ))}
+            {activeProvider.requiresServer && (
+              <Button
+                label={
+                  checking
+                    ? 'Checking…'
+                    : health?.online
+                      ? `Online · ${health.latencyMs}ms`
+                      : 'Check connection'
+                }
+                variant={health?.online ? 'secondary' : 'ghost'}
+                size="sm"
+                icon={<Icon icon={RefreshCw} size="sm" />}
+                isLoading={checking}
+                onClick={() => void checkHealth()}
+              />
+            )}
+          </HStack>
 
-        {/* Engine Provider Switcher Tabs */}
-        <div className="ai-engine-tabs">
-          {AI_PROVIDER_INFO.map((p) => (
-            <button
-              key={p.id}
-              className={`ai-tab-btn ${provider === p.id ? 'active' : ''}`}
-              onClick={() => handleProviderSwitch(p.id)}
-              title={p.status}
-            >
-              <Cpu size={12} />
-              <span>{p.name}</span>
-            </button>
-          ))}
-
-          {activeProvider.requiresServer && (
-            <button
-              className="ai-tab-btn"
-              style={{
-                marginLeft: 'auto',
-                background: health?.online ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'
-              }}
-              onClick={() => void checkHealth()}
-              title={`Ping ${activeProvider.name}`}
-            >
-              <RefreshCw size={11} className={checking ? 'spin-anim' : ''} />
-              <span>
-                {checking
-                  ? 'Checking…'
-                  : health?.online
-                    ? `Online • ${health.latencyMs}ms`
-                    : 'Check connection'}
-              </span>
-            </button>
+          {activeProvider.requiresServer && health && !health.online && (
+            <HStack gap={1.5} vAlign="center" wrap="wrap">
+              <StatusDot variant="error" label="Server unreachable" />
+              <Text type="supporting">
+                {activeProvider.name} is not reachable
+                {health.error ? ` (${health.error})` : ''}. Start the server locally, or use the built-in
+                engine.
+              </Text>
+            </HStack>
           )}
-        </div>
 
-        {/* Server provider status row: honest state + model picker */}
-        {activeProvider.requiresServer && health && !health.online && (
-          <div className="ai-provider-status offline">
-            <AlertTriangle size={12} />
-            <span>
-              {activeProvider.name} is not reachable{health.error ? ` (${health.error})` : ''}. Start the
-              server locally, or use the built-in engine.
-            </span>
-          </div>
-        )}
-        {activeProvider.requiresServer && health?.online && health.models.length > 0 && (
-          <div className="ai-provider-status online">
-            <span>Model:</span>
-            <select
-              className="ai-model-select"
-              value={selectedModel}
-              onChange={(e) => handleModelChange(e.target.value)}
-              aria-label="Selected model"
-            >
-              {health.models.map((model) => (
-                <option key={model} value={model}>
-                  {model}
-                </option>
-              ))}
-            </select>
-            <span className="ai-provider-latency">{health.latencyMs}ms round-trip</span>
-          </div>
-        )}
+          {activeProvider.requiresServer && health?.online && health.models.length > 0 && (
+            <HStack gap={2} vAlign="end" wrap="wrap">
+              <Selector
+                label="Model"
+                options={modelOptions}
+                value={selectedModel}
+                onChange={handleModelChange}
+                size="sm"
+              />
+              <Text type="supporting" hasTabularNumbers>
+                {health.latencyMs}ms round-trip
+              </Text>
+            </HStack>
+          )}
+        </VStack>
 
-        {/* Chat Body */}
-        <div className="ai-chat-body" aria-live="polite" aria-label="Assistant conversation">
+        <VStack
+          gap={2}
+          padding={3}
+          isScrollable
+          height="100%"
+          width="100%"
+          aria-live="polite"
+          aria-label="Assistant conversation"
+        >
           {messages.map((msg) => (
-            <div key={msg.id} className={`ai-message ${msg.sender}`}>
-              <div className={`ai-message-bubble ${msg.error ? 'error' : ''}`}>
-                <div>{msg.text}</div>
-
-                {msg.actions.length > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
-                    {msg.actions.map((act, index) => (
-                      <span key={index} className="ai-action-chip">
-                        <CheckCircle2 size={13} />
-                        <span>{act.description}</span>
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {msg.error && (
-                  <button className="ai-fallback-btn" onClick={runFallback}>
-                    Run with built-in engine
-                  </button>
-                )}
-              </div>
-            </div>
+            <HStack key={msg.id} hAlign={msg.sender === 'user' ? 'end' : 'start'} width="100%">
+              <Card padding={2} variant={msg.sender === 'user' ? 'muted' : 'default'} maxWidth="80%">
+                <VStack gap={1}>
+                  <Text color={msg.error ? 'accent' : 'primary'}>{msg.text}</Text>
+                  {msg.actions.length > 0 && (
+                    <HStack gap={1} wrap="wrap">
+                      {msg.actions.map((action, index) => (
+                        <Badge
+                          key={index}
+                          label={action.description}
+                          variant="success"
+                          icon={<Icon icon={CheckCircle2} size="sm" />}
+                        />
+                      ))}
+                    </HStack>
+                  )}
+                  {msg.error && (
+                    <Button
+                      label="Run with built-in engine"
+                      variant="secondary"
+                      size="sm"
+                      onClick={runFallback}
+                    />
+                  )}
+                </VStack>
+              </Card>
+            </HStack>
           ))}
 
           {isProcessing && (
-            <div className="ai-message assistant">
-              <div className="ai-message-bubble" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="live-dot" style={{ background: '#f59e0b' }} />
-                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
-                  {activeProvider.name} is thinking…
-                </span>
-              </div>
-            </div>
+            <HStack gap={1.5} vAlign="center">
+              <StatusDot variant="accent" label="Processing" isPulsing />
+              <Text type="supporting">{activeProvider.name} is thinking…</Text>
+            </HStack>
           )}
+          <VStack ref={chatEndRef} gap={0} />
+        </VStack>
 
-          <div ref={chatEndRef} />
-        </div>
+        <VStack gap={2} padding={3}>
+          <HStack gap={1} wrap="wrap">
+            {SUGGESTIONS.map((suggestion, index) => (
+              <Button
+                key={index}
+                label={suggestion}
+                variant="secondary"
+                size="sm"
+                onClick={() => void handleSendQuery(suggestion)}
+              />
+            ))}
+          </HStack>
 
-        {/* Quick Suggestion Pills */}
-        <div className="ai-suggestions-row">
-          {SUGGESTIONS.map((sug, i) => (
-            <button key={i} className="ai-suggestion-pill" onClick={() => void handleSendQuery(sug)}>
-              {sug}
-            </button>
-          ))}
-        </div>
-
-        {/* Input Bar */}
-        <form
-          className="ai-input-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleSendQuery();
-          }}
-        >
-          <input
-            type="text"
-            className="ai-input-field"
-            placeholder="Ask Voxelle to control lights, adjust climate, or check cameras..."
-            value={inputQuery}
-            onChange={(e) => setInputQuery(e.target.value)}
-          />
-
-          <button
-            type="button"
-            className={`ai-mic-btn ${isListening ? 'is-listening' : ''}`}
-            onClick={toggleSpeechRecognition}
-            title={isListening ? 'Listening... click to stop' : 'Speak natural language command'}
-          >
-            {isListening ? <MicOff size={16} /> : <Mic size={16} />}
-          </button>
-
-          <button
-            type="submit"
-            className="ai-send-btn"
-            disabled={!inputQuery.trim() || isProcessing}
-            title="Send command"
-          >
-            <Send size={16} />
-          </button>
-        </form>
-      </div>
-    </div>
+          <HStack gap={1.5} vAlign="end" width="100%">
+            <TextInput
+              label="Ask Voxelle"
+              isLabelHidden
+              placeholder="Ask Voxelle to control lights, adjust climate, or check cameras..."
+              value={inputQuery}
+              onChange={setInputQuery}
+              onEnter={() => void handleSendQuery()}
+              width="100%"
+            />
+            <ToggleButton
+              label={isListening ? 'Stop listening' : 'Speak a command'}
+              isPressed={isListening}
+              onPressedChange={() => toggleSpeechRecognition()}
+              size="sm"
+              isIconOnly
+              icon={<Icon icon={isListening ? MicOff : Mic} size="sm" />}
+            />
+            <IconButton
+              label="Send command"
+              icon={<Icon icon={Send} size="sm" />}
+              variant="primary"
+              isDisabled={!inputQuery.trim() || isProcessing}
+              onClick={() => void handleSendQuery()}
+            />
+          </HStack>
+        </VStack>
+      </VStack>
+    </Dialog>
   );
 };

@@ -1,16 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 import confetti from 'canvas-confetti';
-import type {
-  Automation,
-  Camera,
-  Device,
-  DeviceCategory,
-  DeviceFrame,
-  DeviceUpdates,
-  Scene,
-  ViewId,
-  Wallpaper
-} from '../types';
+import type { Automation, Camera, Device, DeviceCategory, DeviceUpdates, Scene, ViewId } from '../types';
 import { createInitialHomeState, homeReducer } from '../store/homeReducer';
 import { clearPersistedState, loadPersistedState, savePersistedState } from '../store/persistence';
 
@@ -25,10 +15,6 @@ export interface HomeContextValue {
   setActiveRoom: (room: string) => void;
   activeNav: ViewId;
   setActiveNav: (nav: ViewId) => void;
-  deviceFrame: DeviceFrame;
-  setDeviceFrame: (frame: DeviceFrame) => void;
-  wallpaper: Wallpaper;
-  setWallpaper: (wallpaper: Wallpaper) => void;
   selectedDevice: Device | null;
   setSelectedDevice: (device: Device | null) => void;
   selectedCamera: Camera | null;
@@ -73,12 +59,15 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
     []
   );
   const triggerScene = useCallback((sceneId: string) => {
-    confetti({
-      particleCount: 35,
-      spread: 60,
-      origin: { y: 0.8 },
-      colors: ['#f59e0b', '#fbbf24', '#06b6d4', '#10b981']
-    });
+    // Respect the user's reduced-motion preference; the scene still applies.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      confetti({
+        particleCount: 35,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: ['#f59e0b', '#fbbf24', '#06b6d4', '#10b981']
+      });
+    }
     dispatch({ type: 'APPLY_SCENE', sceneId });
   }, []);
   const addAutomation = useCallback(
@@ -96,14 +85,6 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const setActiveRoom = useCallback((room: string) => dispatch({ type: 'SET_ACTIVE_ROOM', room }), []);
   const setActiveNav = useCallback((nav: ViewId) => dispatch({ type: 'SET_ACTIVE_NAV', nav }), []);
-  const setDeviceFrame = useCallback(
-    (frame: DeviceFrame) => dispatch({ type: 'SET_DEVICE_FRAME', frame }),
-    []
-  );
-  const setWallpaper = useCallback(
-    (wallpaper: Wallpaper) => dispatch({ type: 'SET_WALLPAPER', wallpaper }),
-    []
-  );
   const setSelectedDevice = useCallback(
     (device: Device | null) => dispatch({ type: 'SELECT_DEVICE', device }),
     []
@@ -130,8 +111,6 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
       setActiveCategory,
       setActiveRoom,
       setActiveNav,
-      setDeviceFrame,
-      setWallpaper,
       setSelectedDevice,
       setSelectedCamera,
       setIsAiModalOpen,
@@ -153,8 +132,6 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
     setActiveCategory,
     setActiveRoom,
     setActiveNav,
-    setDeviceFrame,
-    setWallpaper,
     setSelectedDevice,
     setSelectedCamera,
     setIsAiModalOpen

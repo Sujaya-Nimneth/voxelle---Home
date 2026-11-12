@@ -1,4 +1,12 @@
-import { useHome } from '../context/HomeContext';
+import { SideNav, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Divider } from '@astryxdesign/core/Divider';
+import { NavIcon } from '@astryxdesign/core/NavIcon';
+import { Icon } from '@astryxdesign/core/Icon';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Text } from '@astryxdesign/core/Text';
+import { VStack } from '@astryxdesign/core/Stack';
 import {
   Home,
   Clock,
@@ -10,28 +18,34 @@ import {
   Droplets,
   Sparkles,
   Layers,
-  ArrowRight,
   Cpu
 } from 'lucide-react';
-import type { DeviceCategory } from '../types';
 import type { LucideIcon } from 'lucide-react';
+import { useHome } from '../context/HomeContext';
+import type { DeviceCategory, ViewId } from '../types';
 import { ROOMS } from '../data/rooms';
 
 interface CategoryDef {
   id: DeviceCategory;
   name: string;
   icon: LucideIcon;
-  color: string;
 }
 
 const CATEGORIES: CategoryDef[] = [
-  { id: 'climate', name: 'Climate', icon: Thermometer, color: '#06b6d4' },
-  { id: 'lights', name: 'Lights', icon: Lightbulb, color: '#f59e0b' },
-  { id: 'security', name: 'Security', icon: Shield, color: '#10b981' },
-  { id: 'speakers', name: 'Speakers & TVs', icon: Volume2, color: '#a855f7' },
-  { id: 'water', name: 'Water', icon: Droplets, color: '#38bdf8' }
+  { id: 'climate', name: 'Climate', icon: Thermometer },
+  { id: 'lights', name: 'Lights', icon: Lightbulb },
+  { id: 'security', name: 'Security', icon: Shield },
+  { id: 'speakers', name: 'Speakers & TVs', icon: Volume2 },
+  { id: 'water', name: 'Water', icon: Droplets }
 ];
 
+const VIEWS: Array<{ id: ViewId; label: string; icon: LucideIcon }> = [
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'automations', label: 'Automation', icon: Clock },
+  { id: 'discover', label: 'Discover', icon: Compass }
+];
+
+/** Astryx-native application side navigation. */
 export const Sidebar = () => {
   const {
     activeNav,
@@ -45,142 +59,114 @@ export const Sidebar = () => {
     setIsAiModalOpen
   } = useHome();
 
-  const getCategoryCount = (catId: DeviceCategory) => {
-    return devices.filter((d) => d.category === catId).length;
-  };
-
-  const getRoomCount = (roomName: string) => {
-    if (roomName === 'All') return devices.length;
-    return devices.filter((d) => d.room === roomName).length;
-  };
+  const categoryCount = (id: DeviceCategory) => devices.filter((d) => d.category === id).length;
+  const roomCount = (room: string) =>
+    room === 'All' ? devices.length : devices.filter((d) => d.room === room).length;
 
   return (
-    <aside className="voxelle-sidebar" aria-label="Home navigation">
-      {/* Brand */}
-      <div className="sidebar-header">
-        <div className="sidebar-brand">
-          <div className="brand-icon-wrapper">
-            <Home size={18} color="#ffffff" />
-          </div>
-          <span className="brand-name">Voxelle</span>
-        </div>
-        <span className="brand-badge">Neural</span>
-      </div>
+    <SideNav
+      collapsible
+      resizable={{ defaultWidth: 230, minWidth: 210, maxWidth: 292 }}
+      header={
+        <SideNavHeading
+          heading="Voxelle"
+          superheading="Smart Home"
+          icon={<NavIcon icon={<Icon icon={Home} size="sm" />} />}
+        />
+      }
+      footer={
+        <SideNavSection title="Assistant" isHeaderHidden>
+          <VStack gap={2} padding={2}>
+            <Text type="label" weight="semibold">
+              On-device AI
+            </Text>
+            <Text type="supporting">
+              Zero data leaves your local network. Offline semantic home automation is active.
+            </Text>
+            <Button
+              label="Ask Voxelle AI"
+              variant="primary"
+              size="sm"
+              icon={<Icon icon={Sparkles} size="sm" />}
+              onClick={() => setIsAiModalOpen(true)}
+            />
+          </VStack>
+        </SideNavSection>
+      }
+    >
+      <SideNavSection title="Views" isHeaderHidden>
+        {VIEWS.map((view) => (
+          <SideNavItem
+            key={view.id}
+            label={view.label}
+            icon={view.icon}
+            isSelected={activeNav === view.id && !activeCategory}
+            onClick={() => {
+              setActiveNav(view.id);
+              setActiveCategory(null);
+            }}
+            endContent={
+              view.id === 'automations' ? <Badge label={automationCount} variant="neutral" /> : undefined
+            }
+          />
+        ))}
+      </SideNavSection>
 
-      {/* Primary Navigation */}
-      <div className="sidebar-section">
-        <button
-          type="button"
-          className={`sidebar-nav-item ${activeNav === 'home' && !activeCategory ? 'active' : ''}`}
-          onClick={() => {
-            setActiveNav('home');
-            setActiveCategory(null);
-          }}
-        >
-          <span className="sidebar-nav-item-left">
-            <Home size={17} />
-            <span>Home</span>
-          </span>
-        </button>
+      <Divider />
 
-        <button
-          type="button"
-          className={`sidebar-nav-item ${activeNav === 'automations' ? 'active' : ''}`}
-          onClick={() => setActiveNav('automations')}
-        >
-          <span className="sidebar-nav-item-left">
-            <Clock size={17} />
-            <span>Automation</span>
-          </span>
-          <span className="sidebar-count-badge">{automationCount}</span>
-        </button>
-
-        <button
-          type="button"
-          className={`sidebar-nav-item ${activeNav === 'discover' ? 'active' : ''}`}
-          onClick={() => setActiveNav('discover')}
-        >
-          <span className="sidebar-nav-item-left">
-            <Compass size={17} />
-            <span>Discover</span>
-          </span>
-        </button>
-      </div>
-
-      {/* Categories */}
-      <div className="sidebar-section">
-        <div className="sidebar-section-title">Categories</div>
-        {CATEGORIES.map((cat) => {
-          const Icon = cat.icon;
-          const isCatActive = activeCategory === cat.id;
+      <SideNavSection title="Categories">
+        {CATEGORIES.map((category) => {
+          const isActive = activeCategory === category.id;
           return (
-            <button
-              type="button"
-              key={cat.id}
-              className={`sidebar-nav-item ${isCatActive ? 'active' : ''}`}
-              aria-pressed={isCatActive}
+            <SideNavItem
+              key={category.id}
+              label={category.name}
+              icon={category.icon}
+              isSelected={isActive}
               onClick={() => {
                 setActiveNav('home');
-                setActiveCategory(isCatActive ? null : cat.id);
+                setActiveCategory(isActive ? null : category.id);
               }}
-            >
-              <span className="sidebar-nav-item-left">
-                <Icon size={17} style={{ color: cat.color }} />
-                <span>{cat.name}</span>
-              </span>
-              <span className="sidebar-count-badge">{getCategoryCount(cat.id)}</span>
-            </button>
+              endContent={
+                <Badge label={categoryCount(category.id)} variant={isActive ? 'info' : 'neutral'} />
+              }
+            />
           );
         })}
-      </div>
+      </SideNavSection>
 
-      {/* Rooms */}
-      <div className="sidebar-section">
-        <div className="sidebar-section-title">Rooms</div>
+      <Divider />
+
+      <SideNavSection title="Rooms">
         {ROOMS.map((room) => {
-          const isRoomActive = activeRoom === room && !activeCategory;
+          const isActive = activeRoom === room && !activeCategory;
           return (
-            <button
-              type="button"
+            <SideNavItem
               key={room}
-              className={`sidebar-nav-item ${isRoomActive ? 'active' : ''}`}
-              aria-pressed={isRoomActive}
+              label={room}
+              icon={Layers}
+              isSelected={isActive}
               onClick={() => {
                 setActiveNav('home');
                 setActiveCategory(null);
                 setActiveRoom(room);
               }}
-            >
-              <span className="sidebar-nav-item-left">
-                <Layers size={17} />
-                <span>{room}</span>
-              </span>
-              <span className="sidebar-count-badge">{getRoomCount(room)}</span>
-            </button>
+              endContent={<Badge label={roomCount(room)} variant={isActive ? 'info' : 'neutral'} />}
+            />
           );
         })}
-      </div>
+      </SideNavSection>
 
-      {/* Local AI Intelligence Card */}
-      <div className="sidebar-ai-card">
-        <div className="ai-card-glow" />
-        <div className="ai-card-header">
-          <div className="ai-card-status">
-            <span className="status-pulse-dot" />
-            <span>100% On-Device</span>
-          </div>
-          <Cpu size={14} color="#fbbf24" />
-        </div>
-        <div className="ai-card-title">Voxelle Neural Model</div>
-        <div className="ai-card-desc">
-          Zero data leaves your local network. Offline semantic home automation active.
-        </div>
-        <button className="ai-card-button" onClick={() => setIsAiModalOpen(true)}>
-          <Sparkles size={13} color="#f59e0b" />
-          <span>Launch AI Assistant</span>
-          <ArrowRight size={12} />
-        </button>
-      </div>
-    </aside>
+      <Divider />
+
+      <SideNavSection title="Local AI status" isHeaderHidden>
+        <SideNavItem
+          label="Neural model ready"
+          icon={Cpu}
+          isDisabled
+          endContent={<StatusDot variant="success" label="On-device engine ready" />}
+        />
+      </SideNavSection>
+    </SideNav>
   );
 };
