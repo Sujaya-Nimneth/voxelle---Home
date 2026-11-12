@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "optimize:images": "node scripts/optimize-images.mjs",
+    "screenshots": "node scripts/take-screenshots.mjs",
     "preview": "vite preview",
     "prepare": "husky"
   },

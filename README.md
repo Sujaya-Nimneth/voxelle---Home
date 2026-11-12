@@ -22,6 +22,40 @@ It is built to enterprise engineering standards — strict TypeScript, a pure re
 persistence, 46 unit/component tests plus Playwright e2e, WCAG-minded accessibility, CI on every
 push — while being honest about what is real and what is a demo.
 
+## 📸 Screenshots
+
+**Home dashboard (desktop)** — house status rows, camera cards with demo badges, and scenes.
+
+![Voxelle Home dashboard on desktop](docs/screenshots/home-desktop.webp)
+
+<details>
+<summary>More views</summary>
+
+**Device detail dialog** — brightness `Slider`, color presets, and the power `Switch`.
+
+![Device detail dialog](docs/screenshots/device-detail.webp)
+
+**Automations** — natural-language synthesizer and rule rows with `Switch` controls.
+
+![Automations view](docs/screenshots/automations-desktop.webp)
+
+**Discover** — capability cards and the honest simulated-discovery empty state.
+
+![Discover view](docs/screenshots/discover-desktop.webp)
+
+**AI assistant** — three local providers, suggestions, and the built-in rule engine.
+
+![AI assistant dialog](docs/screenshots/ai-assistant.webp)
+
+**Home dashboard (phone)** — responsive shell with the mobile nav toggle.
+
+![Voxelle Home dashboard on phone](docs/screenshots/home-phone.webp)
+
+</details>
+
+Screenshots are committed under [docs/screenshots/](docs/screenshots/). Regenerate them with
+`npm run build && npm run preview` and `npm run screenshots` (requires Playwright's Chromium).
+
 ### What's real vs. simulated
 
 | Capability                          | Status       | Notes                                                                                               |
