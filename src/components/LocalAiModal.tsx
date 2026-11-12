@@ -73,7 +73,7 @@ export const LocalAiModal = () => {
   const [checking, setChecking] = useState(false);
   const [selectedModel, setSelectedModel] = useState('llama3.2');
 
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const chatEndRef = useRef<HTMLElement | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const healthRequestSeq = useRef(0);
   const lastQueryRef = useRef<string | null>(null);
@@ -345,52 +345,56 @@ export const LocalAiModal = () => {
           )}
         </VStack>
 
-        <VStack gap={2} padding={3} isScrollable height="100%">
-          <div aria-live="polite" aria-label="Assistant conversation" style={{ width: '100%' }}>
-            <VStack gap={2} width="100%">
-              {messages.map((msg) => (
-                <HStack key={msg.id} hAlign={msg.sender === 'user' ? 'end' : 'start'} width="100%">
-                  <Card
-                    padding={2}
-                    variant={msg.sender === 'user' ? 'muted' : 'default'}
-                    maxWidth="80%"
-                  >
-                    <VStack gap={1}>
-                      <Text color={msg.error ? 'accent' : 'primary'}>{msg.text}</Text>
-                      {msg.actions.length > 0 && (
-                        <HStack gap={1} wrap="wrap">
-                          {msg.actions.map((action, index) => (
-                            <Badge
-                              key={index}
-                              label={action.description}
-                              variant="success"
-                              icon={<Icon icon={CheckCircle2} size="sm" />}
-                            />
-                          ))}
-                        </HStack>
-                      )}
-                      {msg.error && (
-                        <Button
-                          label="Run with built-in engine"
-                          variant="secondary"
-                          size="sm"
-                          onClick={runFallback}
+        <VStack
+          gap={2}
+          padding={3}
+          isScrollable
+          height="100%"
+          width="100%"
+          aria-live="polite"
+          aria-label="Assistant conversation"
+        >
+          {messages.map((msg) => (
+            <HStack key={msg.id} hAlign={msg.sender === 'user' ? 'end' : 'start'} width="100%">
+              <Card
+                padding={2}
+                variant={msg.sender === 'user' ? 'muted' : 'default'}
+                maxWidth="80%"
+              >
+                <VStack gap={1}>
+                  <Text color={msg.error ? 'accent' : 'primary'}>{msg.text}</Text>
+                  {msg.actions.length > 0 && (
+                    <HStack gap={1} wrap="wrap">
+                      {msg.actions.map((action, index) => (
+                        <Badge
+                          key={index}
+                          label={action.description}
+                          variant="success"
+                          icon={<Icon icon={CheckCircle2} size="sm" />}
                         />
-                      )}
-                    </VStack>
-                  </Card>
-                </HStack>
-              ))}
+                      ))}
+                    </HStack>
+                  )}
+                  {msg.error && (
+                    <Button
+                      label="Run with built-in engine"
+                      variant="secondary"
+                      size="sm"
+                      onClick={runFallback}
+                    />
+                  )}
+                </VStack>
+              </Card>
+            </HStack>
+          ))}
 
-              {isProcessing && (
-                <HStack gap={1.5} vAlign="center">
-                  <StatusDot variant="accent" label="Processing" isPulsing />
-                  <Text type="supporting">{activeProvider.name} is thinking…</Text>
-                </HStack>
-              )}
-              <div ref={chatEndRef} />
-            </VStack>
-          </div>
+          {isProcessing && (
+            <HStack gap={1.5} vAlign="center">
+              <StatusDot variant="accent" label="Processing" isPulsing />
+              <Text type="supporting">{activeProvider.name} is thinking…</Text>
+            </HStack>
+          )}
+          <VStack ref={chatEndRef} gap={0} />
         </VStack>
 
         <VStack gap={2} padding={3}>

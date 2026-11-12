@@ -67,12 +67,15 @@ export const HomeProvider = ({ children }: { children: React.ReactNode }) => {
     []
   );
   const triggerScene = useCallback((sceneId: string) => {
-    confetti({
-      particleCount: 35,
-      spread: 60,
-      origin: { y: 0.8 },
-      colors: ['#f59e0b', '#fbbf24', '#06b6d4', '#10b981']
-    });
+    // Respect the user's reduced-motion preference; the scene still applies.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      confetti({
+        particleCount: 35,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: ['#f59e0b', '#fbbf24', '#06b6d4', '#10b981']
+      });
+    }
     dispatch({ type: 'APPLY_SCENE', sceneId });
   }, []);
   const addAutomation = useCallback(

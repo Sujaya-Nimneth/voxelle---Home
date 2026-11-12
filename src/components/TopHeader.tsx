@@ -19,7 +19,7 @@ export const TopHeader = () => {
       label="Voxelle Home"
       heading={<Text type="label" weight="bold">Voxelle Home</Text>}
       startContent={
-        <HStack gap={1.5} vAlign="center">
+        <HStack gap={1.5} vAlign="center" aria-live="polite" aria-atomic="true">
           <StatusDot
             variant={unlockedDoorsCount > 0 ? 'warning' : 'success'}
             label={unlockedDoorsCount > 0 ? 'Attention needed' : 'House is as expected'}

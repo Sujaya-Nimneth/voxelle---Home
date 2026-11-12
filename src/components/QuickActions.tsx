@@ -9,22 +9,26 @@ import { useToast } from './Toast';
 interface QuickActionsProps {
   /** The header additionally exposes a demo-home reset; dashboard keeps it minimal. */
   showReset?: boolean;
+  /** The header owns the AI assistant action; the dashboard hides it. */
+  showAssistant?: boolean;
 }
 
 /** Shared assistant + accessory actions used by the header and dashboard. */
-export const QuickActions = ({ showReset = false }: QuickActionsProps) => {
+export const QuickActions = ({ showReset = false, showAssistant = true }: QuickActionsProps) => {
   const { setIsAiModalOpen, resetHome } = useHome();
   const { notify } = useToast();
 
   return (
     <HStack gap={1.5} hAlign="end">
-      <Button
-        label="Ask Voxelle AI"
-        variant="primary"
-        size="sm"
-        icon={<Icon icon={Sparkles} size="sm" />}
-        onClick={() => setIsAiModalOpen(true)}
-      />
+      {showAssistant && (
+        <Button
+          label="Ask Voxelle AI"
+          variant="primary"
+          size="sm"
+          icon={<Icon icon={Sparkles} size="sm" />}
+          onClick={() => setIsAiModalOpen(true)}
+        />
+      )}
       <IconButton
         icon={<Icon icon={Plus} size="sm" />}
         label="Add accessory"

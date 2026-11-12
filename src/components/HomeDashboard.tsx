@@ -33,7 +33,7 @@ export const HomeDashboard = () => {
             {filteredDevices.filter((d) => d.isOn).length} of {filteredDevices.length} devices on
           </Text>
         </VStack>
-        <QuickActions />
+        <QuickActions showAssistant={false} />
       </HStack>
 
       <Section variant="muted" padding={3}>

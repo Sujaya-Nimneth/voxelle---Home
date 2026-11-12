@@ -30,7 +30,6 @@ const CameraCard = memo(function CameraCard({
           height={768}
           loading="lazy"
           decoding="async"
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </AspectRatio>
       <Item

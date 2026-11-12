@@ -1,5 +1,12 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+
+const showToast = vi.fn();
+
+vi.mock('@astryxdesign/core/Toast', () => ({
+  useToast: () => showToast
+}));
+
 import { ToastProvider, useToast } from './Toast';
 
 const NotifyButton = ({ message }: { message: string }) => {
@@ -15,49 +22,43 @@ const renderToast = (message = 'Saved to camera roll') =>
   );
 
 describe('ToastProvider', () => {
-  it('renders a toast inside a polite live region when notified', () => {
+  beforeEach(() => showToast.mockClear());
+
+  it('forwards a notification to Astryx useToast with an auto-hide info toast', () => {
     renderToast();
 
     fireEvent.click(screen.getByRole('button', { name: 'notify' }));
 
-    expect(screen.getByRole('status')).toBeInTheDocument();
-    expect(screen.getByText('Saved to camera roll')).toBeInTheDocument();
+    expect(showToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: 'Saved to camera roll',
+        type: 'info',
+        autoHideDuration: 3200
+      })
+    );
   });
 
-  it('caps the visible stack at three toasts', () => {
+  it('deduplicates repeated identical notifications', () => {
     renderToast();
 
     const trigger = screen.getByRole('button', { name: 'notify' });
     fireEvent.click(trigger);
     fireEvent.click(trigger);
-    fireEvent.click(trigger);
-    fireEvent.click(trigger);
 
-    expect(screen.getAllByRole('status')).toHaveLength(1); // single live region container
-    expect(screen.getAllByText(/Saved to camera roll/)).toHaveLength(3); // capped stack
+    expect(showToast).toHaveBeenCalledTimes(2);
+    expect(showToast).toHaveBeenLastCalledWith(
+      expect.objectContaining({ uniqueID: 'Saved to camera roll', collisionBehavior: 'overwrite' })
+    );
   });
 
-  it('dismisses on click and auto-dismisses after the TTL', () => {
-    vi.useFakeTimers();
-    try {
-      renderToast();
-      const trigger = screen.getByRole('button', { name: 'notify' });
+  it('preserves the caller-provided message', () => {
+    renderToast('Accessory discovery is simulated');
 
-      // Early dismissal by clicking the toast itself
-      fireEvent.click(trigger);
-      fireEvent.click(screen.getByText('Saved to camera roll'));
-      expect(screen.queryByText('Saved to camera roll')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'notify' }));
 
-      // Auto-dismissal via timer
-      fireEvent.click(trigger);
-      expect(screen.getByText('Saved to camera roll')).toBeInTheDocument();
-      act(() => {
-        vi.advanceTimersByTime(4000);
-      });
-      expect(screen.queryByText('Saved to camera roll')).not.toBeInTheDocument();
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(showToast).toHaveBeenCalledWith(
+      expect.objectContaining({ body: 'Accessory discovery is simulated' })
+    );
   });
 
   it('throws when useToast is used outside the provider', () => {

@@ -55,7 +55,6 @@ export const CameraDetailModal = () => {
               width={1376}
               height={768}
               decoding="async"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </AspectRatio>
 
