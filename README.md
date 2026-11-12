@@ -1,6 +1,6 @@
 # Voxelle Home 🏡✨
 
-> **A smart home dashboard demo built with the Astryx design system and a local-first AI assistant.**
+> **A smart home dashboard with a local-first AI assistant.**
 
 [![CI](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/ci.yml/badge.svg)](https://github.com/Sujaya-Nimneth/voxelle---Home/actions/workflows/ci.yml)
 [![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-000000?logo=vercel)](https://voxelle-home.vercel.app/)
@@ -13,9 +13,7 @@
 
 ## 🌟 What this is
 
-Voxelle Home is a **frontend portfolio project**: a smart home dashboard built entirely with the
-[Astryx](https://www.npmjs.com/package/@astryxdesign/core) design system (light-first
-`@astryxdesign/theme-neutral`) and a natural-language assistant that can genuinely drive the
+Voxelle Home is a **frontend portfolio project**: a smart home dashboard and a natural-language assistant that can genuinely drive the
 in-app home state.
 
 It is built to enterprise engineering standards — strict TypeScript, a pure reducer store with
@@ -131,14 +129,6 @@ npm run build         # production build
 npm run test:e2e      # Playwright against vite preview (builds first)
 npx astryx doctor --built dist   # Astryx build gate
 ```
-
-### Working with Astryx
-
-The generated [AGENTS.md](AGENTS.md) is the authoritative convention set for coding agents: start
-every page from a template, read `astryx component <Name>` before use, keep dense data in rows,
-style with component props first then tokens, and never hand-write `:root` palette overrides.
-Useful reads: `npx astryx docs getting-started`, `npx astryx docs principles`,
-`npx astryx docs layout`, `npx astryx docs is-my-code-good`.
 
 ### Environment configuration
 
